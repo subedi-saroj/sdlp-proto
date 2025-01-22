@@ -1,0 +1,13 @@
+# Ignore virtual environments
+.*venv
+.*env
+venv/
+
+# Ignore local test images
+test-local/
+
+# Python
+__pycache__
+
+# Word docs
+*.docx
