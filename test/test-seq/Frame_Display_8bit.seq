@@ -1,0 +1,162 @@
+# This version of scrolling displays a series of 1080p images (full inums)
+# in the forward direction (0 to NumImgs-1).
+# Registers Used:
+#     0 = delay loop count (for debug)
+#     1 = max iNums (NumImgs),
+#     2 = Starting iNum,
+# Light pulse duty cycle is set according to "duration" register and scroll speed.
+# Max Pulse frequency 18KHz (222 ticks).
+#
+# Pulse frequency for this file: 13.333 KHz (300 ticks = 75 us)
+# Duration 300=100%, 270=90%, 100=33% + scroll/print speed!
+#
+#------------------------------------------------------------------------
+#Command        1-4 Options                            Wait  Description
+#------------------------------------------------------------------------
+#
+AssignVarReg    ScrollStep 	 0                         1	# (new) Create Register for scrollStep; Number of rows to increment for each frame
+AssignVarReg    Inum    	 1                         1	# Create Register for iNum; Starting Image Number for sequence
+AssignVarReg    StepInumGrp	 2                         1	# (new) Create Register for StepInumGroup; 
+AssignVarReg    ScrollDir	 3                         1	# (new) Create Register for ScrollDirection; 1=forward, 0=backwards?
+AssignVarReg    NumImgs      4                         1	# Create Register for NumImgs; One less than Total number of images to show
+AssignVarReg    ScrollStpAbs 5                         1	# (new) Create Register for ??
+AssignVarReg    MemStartRow  6                         1	# Starting row in memory (from start of Inum) to begin reading data
+AssignVarReg    MaxRowCount  7                         1	# Total number of rows in the scrolled image
+AssignVarReg    maxDelay     9                         1	# Create Register for maxDelay; Number of repeats per image (to act as delay)
+AssignVar       delaycnt     0                         1	# counter for delaying each frame
+AssignVar       DmdStartRow  0                         1	# Starting row on the DMD to begin writing data
+AssignVar       NumRows      1080                      1    # Number of rows on the DMD to load
+AssignVar       Base         2                         1    # Bit plane base weight
+AssignVar       BitDepth     8                         1    # Total Bits + 1
+AssignVar       FirstBit     0                         1    # Just a constant
+AssignVar       BitPlanes    3                         1    # Total bit planes +1
+AssignVar       LastiNum     2                         1
+#
+Label StartOver                                        0    #
+#
+
+AssignVar       BitWeight    1                         1    # what is bit plane weight or number of LED strobes, serves as a counter 
+AssignVar       LastWeight   1                         1    #
+AssignVar       count        0                         1    #                           
+#
+# Beginning of display loop
+#
+Label           StartHere                              0    # begin of main loop
+Trig 		    0            4                         0    # Wait for Positive edge trigger (internal trigger=4, optical = 2)
+#LoadGlobal      count      173   # Requires (1080*0.040us)*(4tics/us)=172.8us to complete
+LoadRow         DmdStartRow  NumRows   count   MemStartRow   173   # Requires (1080*0.040us)*(4tics/us)=172.8us to complete
+ResetGlobal                                            40	# change to 1 if GPIO outputs are used
+#
+Label           LEDloop                                0    # Repeat the number of strobes based on bit-weight 
+#
+LightPulseWord  15                                     1    # Assert light 10 us (40 tics) after reset
+Add             BitWeight -1                           1    # Decrement LED loop counter
+JumpIf          BitWeight > FirstBit LEDloop           1    #  
+Add	            count	     4                         1	# Go to next image
+#   
+#
+ShiftLeft       LastWeight 1                            1   #
+AssignVar       BitWeight LastWeight                   1    # 
+Trig 		    0            4                         0    # Wait for Positive edge trigger (internal trigger=4, optical = 2)
+LoadRow         DmdStartRow  NumRows   count   MemStartRow   173   # Requires (1080*0.040us)*(4tics/us)=172.8us to complete
+ResetGlobal                                            40	# change to 1 if GPIO outputs are used
+#
+Label           LEDloop2                                0    # Repeat the number of strobes based on bit-weight 
+#
+LightPulseWord  15                                     1    # Assert light 10 us (40 tics) after reset
+Add             BitWeight -1                           1    # Decrement LED loop counter
+JumpIf          BitWeight > FirstBit LEDloop2          1    #  
+Add	            count	     4                         1	# Go to next image
+#   
+#
+ShiftLeft       LastWeight 1                            1   #
+AssignVar       BitWeight LastWeight                   1    # 
+Trig 		    0            4                         0    # Wait for Positive edge trigger (internal trigger=4, optical = 2)
+LoadRow         DmdStartRow  NumRows   count   MemStartRow   173   # Requires (1080*0.040us)*(4tics/us)=172.8us to complete
+ResetGlobal                                            40	# change to 1 if GPIO outputs are used
+#
+Label           LEDloop3                                0    # Repeat the number of strobes based on bit-weight 
+#
+LightPulseWord  15                                     1    # Assert light 10 us (40 tics) after reset
+Add             BitWeight -1                           1    # Decrement LED loop counter
+JumpIf          BitWeight > FirstBit LEDloop3          1    #  
+Add	            count	     4                         1	# Go to next image
+#   
+#
+ShiftLeft       LastWeight 1                            1   #
+AssignVar       BitWeight LastWeight                   1    # 
+Trig 		    0            4                         0    # Wait for Positive edge trigger (internal trigger=4, optical = 2)
+LoadRow         DmdStartRow  NumRows   count   MemStartRow   173   # Requires (1080*0.040us)*(4tics/us)=172.8us to complete
+ResetGlobal                                            40	# change to 1 if GPIO outputs are used
+#
+Label           LEDloop4                               0    # Repeat the number of strobes based on bit-weight 
+#
+LightPulseWord  15                                     1    # Assert light 10 us (40 tics) after reset
+Add             BitWeight -1                           1    # Decrement LED loop counter
+JumpIf          BitWeight > FirstBit LEDloop4          1    #  
+Add	            count	     4                         1	# Go to next image
+#   
+#
+ShiftLeft       LastWeight 1                            1   #
+AssignVar       BitWeight LastWeight                   1    # 
+Trig 		    0            4                         0    # Wait for Positive edge trigger (internal trigger=4, optical = 2)
+LoadRow         DmdStartRow  NumRows   count   MemStartRow   173   # Requires (1080*0.040us)*(4tics/us)=172.8us to complete
+ResetGlobal                                            40	# change to 1 if GPIO outputs are used
+#
+Label           LEDloop5                                0    # Repeat the number of strobes based on bit-weight 
+#
+LightPulseWord  15                                     1    # Assert light 10 us (40 tics) after reset
+Add             BitWeight -1                           1    # Decrement LED loop counter
+JumpIf          BitWeight > FirstBit LEDloop5          1    #  
+Add	            count	     4                         1	# Go to next image
+#   
+#
+ShiftLeft       LastWeight 1                            1   #
+AssignVar       BitWeight LastWeight                   1    # 
+Trig 		    0            4                         0    # Wait for Positive edge trigger (internal trigger=4, optical = 2)
+LoadRow         DmdStartRow  NumRows   count   MemStartRow   173   # Requires (1080*0.040us)*(4tics/us)=172.8us to complete
+ResetGlobal                                            40	# change to 1 if GPIO outputs are used
+#
+Label           LEDloop6                                0    # Repeat the number of strobes based on bit-weight 
+#
+LightPulseWord  15                                     1    # Assert light 10 us (40 tics) after reset
+Add             BitWeight -1                           1    # Decrement LED loop counter
+JumpIf          BitWeight > FirstBit LEDloop6          1    #  
+Add	            count	     4                         1	# Go to next image
+#   
+#
+ShiftLeft       LastWeight 1                            1   #
+AssignVar       BitWeight LastWeight                   1    # 
+Trig 		    0            4                         0    # Wait for Positive edge trigger (internal trigger=4, optical = 2)
+LoadRow         DmdStartRow  NumRows   count   MemStartRow   173   # Requires (1080*0.040us)*(4tics/us)=172.8us to complete
+ResetGlobal                                            40	# change to 1 if GPIO outputs are used
+#
+Label           LEDloop7                                0    # Repeat the number of strobes based on bit-weight 
+#
+LightPulseWord  15                                     1    # Assert light 10 us (40 tics) after reset
+Add             BitWeight -1                           1    # Decrement LED loop counter
+JumpIf          BitWeight > FirstBit LEDloop7          1    #  
+Add	            count	     4                         1	# Go to next image
+#   
+#
+ShiftLeft       LastWeight 1                            1   #
+AssignVar       BitWeight LastWeight                   1    # 
+Trig 		    0            4                         0    # Wait for Positive edge trigger (internal trigger=4, optical = 2)
+LoadRow         DmdStartRow  NumRows   count   MemStartRow   173   # Requires (1080*0.040us)*(4tics/us)=172.8us to complete
+ResetGlobal                                            40	# change to 1 if GPIO outputs are used
+#
+Label           LEDloop8                                0    # Repeat the number of strobes based on bit-weight 
+#
+LightPulseWord  15                                     1    # Assert light 10 us (40 tics) after reset
+Add             BitWeight -1                           1    # Decrement LED loop counter
+JumpIf          BitWeight > FirstBit LEDloop8          1    #  
+#
+#
+#
+#
+#
+#
+# Loop until all images have been displayed
+Label	        EndHere                                0
+Jump            StartOver                              1    # period = 222 + 78 = 300 tics = 75us = 13.333khz
+
