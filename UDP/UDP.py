@@ -99,7 +99,7 @@ class Record:
         
         # 5.2.1 Inum Size Records
         self.InumSize = {
-            # This record is used to set the size of the image number (inum) in the Luxbeam.             "set":,
+            # This record is used to set the size of the image number (inum) in the Luxbeam.
             "set": None,
             "request": None,
             "reply": self.ReplyAck["reply"]
