@@ -1,23 +1,67 @@
-from ..Records import Records
+import records
 import socket
 
 class Projector:
-    def __init__(self):
+    def __init__(self, server_ip, server_port, image_data_port, timeout=10):
+
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.SERVER_IP = '192.168.0.10'
-        self.SERVER_PORT = 52985
-        self.IMAGE_DATA_PORT = 52986
-        self.Records = Records
+        self.SERVER_IP = server_ip
+        self.SERVER_PORT = server_port
+        self.IMAGE_DATA_PORT = image_data_port
+        self.client_socket.settimeout(timeout)
+    
+    def send(self, bytes):
+        '''Send a message to the projector and return the response.'''
+        try:
+
+            self.client_socket.sendto(bytes, (self.SERVER_IP, self.SERVER_PORT))
+            reply = self.client_socket.recvfrom(1024)
+
+        except socket.timeout:
+            print("Timeout :(")
+            return None
+        
+        except socket.error as e:
+            print("Socket error: ", e)
+            return None
+        
+        return reply
+
+    def check_connection(self):
+
+        checks = [
+            records.RequestInumSize(),
+            records.RequestImageType()
+        ]
+        
+        for check in checks:
+            msg = self.send(check.bytes())
+            if msg is None:
+                return False
+            else:
+                print(msg)
+                print(check.reply(msg[0]))
+
+        print("Connection successful!")
+        return True
 
     def split_sequence_into_packets(self, file_path, chunk_size=1440):
+        
+        packets = []
         with open(file_path, 'rb') as file:
-            packets = []
-            while True:
-                chunk = file.read(chunk_size)
-                if not chunk: # if the chunk is empty, break the loop
-                    break
-                packets.append(chunk)
-            return packets
+            
+            for chunk in self._read_chunk(file, chunk_size):
+                    packets.append(chunk)
+        
+        return packets
+
+    def _read_chunk(self, file, chunk_size):
+        
+        while True:
+            chunk = file.read(chunk_size)
+            if not chunk:
+                break
+            yield chunk
     
     def read_bmp_file(self, file_path, size:int=1080):
         with open(file_path, 'rb') as file:
@@ -56,25 +100,20 @@ class Projector:
     #
     #
     #
-    #
-    #        
-    def send(self, bytes):
-        self.client_socket.sendto(bytes, (self.SERVER_IP, self.SERVER_PORT))
-        return self.client_socket.recvfrom(1024)
     
     def start_sequencer(self):
-        self.send(Records.SetSequencerState(2, False).bytes())
-        self.send(Records.SetSequencerState(1, True).bytes())
+        self.send(records.SetSequencerState(2, False).bytes())
+        self.send(records.SetSequencerState(1, True).bytes())
         return
 
     def stop_sequencer(self):
-        r = self.send(Records.SetSequencerState(1, False).bytes())
+        r = self.send(records.SetSequencerState(1, False).bytes())
     
     def reset_projector(self):
-        r = self.send(Records.SetSequencerState(2, True).bytes())
+        r = self.send(records.SetSequencerState(2, True).bytes())
 
     def enable_sequencer(self):
-        r = self.send(Records.SetSequencerState(2, False).bytes())
+        r = self.send(records.SetSequencerState(2, False).bytes())
     
 
     

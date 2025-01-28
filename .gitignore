@@ -4,10 +4,12 @@
 venv/
 
 # Ignore local test images
-test-local/
+# test-local/
 
 # Python
 __pycache__
+*.egg-info/
+*.egg/
 
 # Word docs
 *.docx

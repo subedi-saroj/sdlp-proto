@@ -7,5 +7,4 @@ IP = '192.168.0.10'
 DATA_PORT = 52985
 IMAGE_DATA_PORT = 52986
 
-from scripts import *
-from Record import *
+import projector
