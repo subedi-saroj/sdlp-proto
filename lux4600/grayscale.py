@@ -22,12 +22,12 @@ def split_image(img:Image, height, width, strip_width):
 
     for i in range(0, num_images):
         images.append(img.crop((i * strip_width, 0, (i + 1) * strip_width, height)))
-        
+
     return images
 
 if __name__ == '__main__':
         
-    file_path = r"..\test\test-repo\grayscale_split_test.bmp"
+    file_path = r"..\test\test-repo\grayscale_test.bmp"
 
     strip_width = 960
 
@@ -41,8 +41,8 @@ if __name__ == '__main__':
 
         imgs = split_image(new_img, height, width, strip_width)
         
-        for img in imgs:
-            input("Press Enter to display img...")
+        for i, img in enumerate(imgs):
+            input(f"Press Enter to display img #{i}...")
             img.show()
             
 
