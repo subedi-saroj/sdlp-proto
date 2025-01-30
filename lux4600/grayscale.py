@@ -63,7 +63,7 @@ if __name__ == '__main__':
         gray_imgs = multiply_image(_, 256)
 
         for i, img in enumerate(gray_imgs):
-            img.save(f"..\\test\\test-repo\\8-bit-splits\\{i + 1}.bmp")
+            img.save(f"..\\test\\test-grayscale\\{i + 1}.bmp")
             
 
 
