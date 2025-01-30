@@ -7,4 +7,4 @@ IP = '192.168.0.10'
 DATA_PORT = 52985
 IMAGE_DATA_PORT = 52986
 
-import projector
+import projector, records, bmp, grayscale, seq

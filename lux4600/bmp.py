@@ -1,7 +1,20 @@
+from PIL import Image
 #
 # Base code for handling .bmp files. 
 # Short scripts removed from classes to improve readability and clarity.# 
 #
+
+def read_bmp_file(file_path, size:int=1080):
+
+    with open(file_path, 'rb') as file:
+        s = len(file.read())
+        size = size*240
+        # Skip bitmap header (54 bytes for typical BMP)
+        if s != size: file.seek(s-size)
+
+        bmp_data = file.read()
+        print("Total number of bytes loaded from image: ", len(bmp_data))
+    return bmp_data
 
 def bmp_to_packets(inum: int, lines_per_packet: int, img: bytes, width:int=1920):
     """
@@ -78,3 +91,29 @@ def check_inum_size(inum: int):
                 f"""inum must be less than 65536."
                 {inum} bytes, 65535 max."""
                 )
+        
+def to_bmp(img:Image, size:int=1080, width:int=1920) -> bytes:
+    '''Converts an image to BMP format and returns the bytes.
+
+    Args:
+        img (Image): The image to convert.
+        size (int, optional): The desired height of the BMP image. Defaults to 1080.
+        width (int, optional): The desired width of the BMP image. Defaults to 1920.
+
+    Returns:
+        bytes: The bytes representing the BMP image.
+
+    Raises:
+        ValueError: If the number of bytes in the image does not match the specified size and width.
+    '''
+    # Resize and convert the image to 1-bit mode (black and white)
+    img = img.resize((width, size))
+    bmp_bytes = img.convert("1").tobytes()
+
+    # Check the number of bytes in the image (should never raise a ValueError due to resize)    
+    expected_bytes = size * (width // 8)
+
+    if len(bmp_bytes) != expected_bytes:
+        raise ValueError("The number of bytes in the image does not match the specified size and width.")
+
+    return bmp_bytes

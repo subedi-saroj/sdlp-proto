@@ -69,12 +69,12 @@ def bmp_to_packets(inum: int, lines_per_packet: int, data: bytes, width:int=1920
         packets.append(packet)
     return packets
 
-def to_bmp(file_path:str, size:int=1080, width:int=1920) -> bytes:
-    '''Converts an image file to BMP format and returns the bytes.
+def to_bmp(img:Image, size:int=1080, width:int=1920) -> bytes:
+    '''Converts an image to BMP format and returns the bytes.
 
     Args:
-        file_path (str): The path to the image file.
-        size (int, optional): The desired size of the BMP image. Defaults to 1080.
+        img (Image): The image to convert.
+        size (int, optional): The desired height of the BMP image. Defaults to 1080.
         width (int, optional): The desired width of the BMP image. Defaults to 1920.
 
     Returns:
@@ -84,9 +84,8 @@ def to_bmp(file_path:str, size:int=1080, width:int=1920) -> bytes:
         ValueError: If the number of bytes in the image does not match the specified size and width.
     '''
     # Resize and convert the image to 1-bit mode (black and white)
-    with Image.open(file_path) as img:
-        img = img.resize((width, size))
-        bmp_data = img.convert("1").tobytes()
+    img = img.resize((width, size))
+    bmp_data = img.convert("1").tobytes()
 
     # Check the number of bytes in the image (should never raise a ValueError due to resize)    
     expected_bytes = size * (width // 8)

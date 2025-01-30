@@ -20,7 +20,7 @@ class Projector:
             reply = self.client_socket.recvfrom(1024)
 
         except socket.timeout:
-            print("Timeout :(")
+            print("Timeout error.")
             return None
         
         except socket.error as e:
@@ -46,25 +46,6 @@ class Projector:
 
         print("Connection successful!")
         return True
-
-
-    def _read_chunk(self, file, chunk_size):
-        
-        while True:
-            chunk = file.read(chunk_size)
-            if not chunk:
-                break
-            yield chunk
-    
-    def read_bmp_file(self, file_path, size:int=1080):
-        with open(file_path, 'rb') as file:
-            s = len(file.read())
-            size = size*240
-            # Skip bitmap header (54 bytes for typical BMP)
-            if s != size: file.seek(s-size)
-            bmp_data = file.read()
-            print("Total number of bytes loaded from image: ", len(bmp_data))
-        return bmp_data
     
     def send_image(self, img:Image, inum:int=0):
         """Sends an image to the projector to be stored at position inum.
@@ -76,7 +57,9 @@ class Projector:
         Returns:
             None
         """
-        packets = bmp.bmp_to_packets(inum, 6, img.tobytes())
+        bmp_img = bmp.to_bmp(img)
+
+        packets = bmp.bmp_to_packets(inum, 6, bmp_img)
         
         for packet in packets:
             self.client_socket.sendto(packet, (self.SERVER_IP, self.IMAGE_DATA_PORT))
