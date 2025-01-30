@@ -1,5 +1,7 @@
-import records
+import records, bmp, seq
 import socket
+from PIL import Image
+
 
 class Projector:
     def __init__(self, server_ip, server_port, image_data_port, timeout=10):
@@ -45,15 +47,6 @@ class Projector:
         print("Connection successful!")
         return True
 
-    def split_sequence_into_packets(self, file_path, chunk_size=1440):
-        
-        packets = []
-        with open(file_path, 'rb') as file:
-            
-            for chunk in self._read_chunk(file, chunk_size):
-                    packets.append(chunk)
-        
-        return packets
 
     def _read_chunk(self, file, chunk_size):
         
@@ -72,34 +65,21 @@ class Projector:
             bmp_data = file.read()
             print("Total number of bytes loaded from image: ", len(bmp_data))
         return bmp_data
-
-
-    #
-    # The code below to be refined for clarity and efficiency
-    #
-    #
-    def split_img_into_packets(self, inum: int, lines_per_packet: int, data: bytes) -> list:
-        packets = []
-        lines = len(data) // 240  # Assuming each line is 1920 pixels wide and 1 bit per pixel = 240 bytes
-        num_packets = lines // lines_per_packet
-        for i in range(num_packets):
-            start = i * lines_per_packet * 240
-            end = (i + 1) * lines_per_packet * 240
-            offset = lines_per_packet*i
-            packet = b'\x05\xAE\x00\x68' + i.to_bytes(2, byteorder='big') + inum.to_bytes(2, byteorder='big') + offset.to_bytes(6, byteorder='big') + data[start:end]
-            packets.append(packet)
-        return packets
     
-    def send_image(self, packets):
-        print("Number of packets: ", len(packets))
-        print("Packet size: ", len(packets[0][14:]))
-        print("Sending image to inum ", int.from_bytes(packets[0][6:8], byteorder='big'))
+    def send_image(self, img:Image, inum:int=0):
+        """Sends an image to the projector to be stored at position inum.
+
+        Args:
+            img: A PIL Image object to be sent to the projector.
+            inum: The inum of the image to be sent.
+
+        Returns:
+            None
+        """
+        packets = bmp.bmp_to_packets(inum, 6, img.tobytes())
+        
         for packet in packets:
             self.client_socket.sendto(packet, (self.SERVER_IP, self.IMAGE_DATA_PORT))
-    #
-    #
-    #
-    #
     
     def start_sequencer(self):
         self.send(records.SetSequencerState(2, False).bytes())

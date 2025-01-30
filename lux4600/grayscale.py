@@ -16,14 +16,30 @@ def add_buffer(img:Image, height, img_width, strip_width):
 def split_image(img:Image, height, width, strip_width):
     
     # Split image into a list of images
-    images = []
-
+    
     num_images = width // strip_width
 
     for i in range(0, num_images):
-        images.append(img.crop((i * strip_width, 0, (i + 1) * strip_width, height)))
+        yield img.crop((i * strip_width, 0, (i + 1) * strip_width, height))
 
-    return images
+def multiply_image(img:Image, factor:int):
+
+    """
+    Multiply an image by a factor by splitting it into N images with thresholded grayscales.
+
+    Args:
+        img (Image): The image to be split.
+        factor (int): The number of images to split the image into.
+            WARNING: must be between 1 and 256. 0 will not generate any images.
+
+    Yields:
+        Image: The next image in the sequence of images. The image is split into N images with thresholded grayscales, where the threshold is calculated as i * 255 // factor.
+    """
+    for i in range(0, factor):
+
+        threshold = i * 255 // factor
+
+        yield img.point(lambda p: 255 if p > threshold else 0)
 
 if __name__ == '__main__':
         
@@ -40,10 +56,14 @@ if __name__ == '__main__':
         print(f"New image size: {new_img.size}\t|\t {strip_width}")
 
         imgs = split_image(new_img, height, width, strip_width)
+
+        _ = next(imgs)
+        _.show()
         
-        for i, img in enumerate(imgs):
-            input(f"Press Enter to display img #{i}...")
-            img.show()
+        gray_imgs = multiply_image(_, 256)
+
+        for i, img in enumerate(gray_imgs):
+            img.save(f"..\\test\\test-repo\\8-bit-splits\\{i + 1}.bmp")
             
 
 
