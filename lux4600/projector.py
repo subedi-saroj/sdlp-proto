@@ -69,25 +69,27 @@ class Projector:
 
         # Set into reset mode and prime for image receiving
         init_messages = [
-            records.SetImageType(1),
+            records.SetImageType(4),
             records.SetInumSize(strip.height),
             records.ResetSeqNo(),
             records.SetSequencerState(2, True)    
         ]
 
         for msg in init_messages:
-            self.send(msg.bytes())
-
+            reply = self.send(msg.bytes())
+            print(msg.reply(reply[0]))
 
         # Send image
-        packets = strip.to_packets(lines_per_packet=240) # Standard static value
+        packets = strip.to_packets(lines_per_packet=5) # TODO
+        strip.show()
         
-        for packet in packets:
-
+        for _, packet in enumerate(packets):
+            
+            print(f"Sending packet {_}, length: {len(packet)}")
             self.client_socket.sendto(packet, (self.SERVER_IP, self.IMAGE_DATA_PORT))
 
         # Request out-of-sequence packets
-        reply = self.send(records.RequestSeqNoError())
+        reply = self.send(records.RequestSeqNoError().bytes())
         
         if reply[0][4] == 0:
             print("No out of sequence packets")

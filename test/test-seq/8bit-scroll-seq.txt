@@ -1,7 +1,7 @@
 #--------------------------------------------------------------
 #Command        Parameters					Waitfor
 #--------------------------------------------------------------
-AssignVar       TotalRows   18000                       1
+AssignVar       TotalRows   3400                       1
 AssignVar       ScrollLoopCount   0                     1   
 AssignVar       TotalInums        255                   1
 AssignVar       MemStartRow 0                           1

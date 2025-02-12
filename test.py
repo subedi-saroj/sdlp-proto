@@ -5,9 +5,9 @@ from lux4600.seq import Sequencer
 from PIL import Image
 projector = Projector(IP, DATA_PORT, IMAGE_DATA_PORT, 5)
 
-# if not projector.check_connection():
-#     print('Connection unsuccessful. Exiting.')
-#     exit()
+if not projector.check_connection():
+    print('Connection unsuccessful. Exiting.')
+    exit()
 
 
 # Load the image
@@ -16,7 +16,7 @@ strip = Strip(Image.open(r".\test\test-grayscale\1.bmp"), 0)
 ##
 ## Prep the projector
 ##
-
+projector.send_strip(strip)
 
 
 #grayscale_image = Grayscale(r"..\test\test-repo\grayscale_test.bmp")

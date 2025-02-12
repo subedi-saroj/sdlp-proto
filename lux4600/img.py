@@ -36,12 +36,14 @@ class Strip:
         
         # Check inum and lines per packet
         StripValueError.check_inum_size(self.inum)
-        StripValueError.check_packet_size(lines_per_packet, self.tobytes())
+        StripValueError.check_packet_size(lines_per_packet, self.image.tobytes(), self.width)
 
         # Split into packets
-        lines = self.height // (self.width//8)  # Assuming each line is 1920 pixels wide and 1 bit per pixel = 240 bytes
+        
+        lines = self.height // (self.width//8)
         num_packets = lines // lines_per_packet
-
+        print(self.height, self.width, lines, num_packets, lines_per_packet)
+        
         for i in range(num_packets):
 
             # Calculate range of bytes to send
