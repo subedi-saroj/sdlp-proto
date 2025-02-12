@@ -48,7 +48,7 @@ if __name__ == '__main__':
         
     file_path = r"..\test\test-repo\grayscale_test.bmp"
 
-    strip_width = 960
+    strip_width = 1920
 
     with Image.open(file_path) as img:
         

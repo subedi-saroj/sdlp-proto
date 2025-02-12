@@ -4,9 +4,26 @@ import grayscale
 
 
 class Strip:
+    '''A class representing a 1-bit strip of an image to be sent to the projector.'''
 
     def __init__(self, image:Image.Image, inum:int):
+        """
+        Constructor for Strip class.
 
+        Args:
+            image (Image.Image): A PIL Image object representing the strip to be sent to the projector.
+                - The image will be converted to 1-bit mode
+                - The image should generally be 1920 pixels wide
+            inum (int): The inum of the strip to be sent to the projector.
+                - The inum should be less than 65536 and greater than or equal to 0
+
+        Attributes:
+            image (Image.Image): A PIL Image object representing the strip to be sent to the projector.
+            width (int): The width of the strip in pixels.
+            height (int): The height of the strip in pixels.
+            inum (int): The inum of the strip to be sent to the projector.
+            packets (Iterator[bytes]): A generator that yields the packets of the strip to be sent to the projector.
+        """
         self.image = image
 
         self.image.convert("1") # Convert to 1-bit bmp

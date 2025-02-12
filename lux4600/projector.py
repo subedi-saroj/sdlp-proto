@@ -1,8 +1,7 @@
-import records, lux4600.img as img, seq
 import socket
-from PIL import Image
-from .img import Strip
-from .seq import Sequencer
+import records
+from img import Strip
+from seq import Sequencer
 
 
 class Projector:
@@ -40,7 +39,13 @@ class Projector:
         ]
         
         for check in checks:
-            msg = self.send(check.bytes())
+            try:
+                msg = self.send(check.bytes())
+            except socket.error:
+                print(socket.error)
+                print("Connection unsuccessful.")
+                return False
+            
             if msg is None:
                 return False
             else:
@@ -61,11 +66,34 @@ class Projector:
             None
         """
 
+
+        # Set into reset mode and prime for image receiving
+        init_messages = [
+            records.SetImageType(1),
+            records.SetInumSize(strip.height),
+            records.ResetSeqNo(),
+            records.SetSequencerState(2, True)    
+        ]
+
+        for msg in init_messages:
+            self.send(msg.bytes())
+
+
+        # Send image
         packets = strip.to_packets(lines_per_packet=240) # Standard static value
         
         for packet in packets:
+
             self.client_socket.sendto(packet, (self.SERVER_IP, self.IMAGE_DATA_PORT))
+
+        # Request out-of-sequence packets
+        reply = self.send(records.RequestSeqNoError())
+        
+        if reply[0][4] == 0:
+            print("No out of sequence packets")
+        
         return
+    
 
     def confirm_strip_sent(self):
         self.send(records.RequestSeqNoError().bytes())
