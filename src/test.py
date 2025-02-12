@@ -1,5 +1,8 @@
-import lux4600 as lux
+from lux4600 import IP, DATA_PORT, IMAGE_DATA_PORT
+from lux4600.img import Grayscale, Strip
+from lux4600.projector import Projector
 
-proj = lux.projector.Projector(lux.IP, lux.DATA_PORT, lux.IMAGE_DATA_PORT, timeout=5) # default timeout set to ten
+projector = Projector(IP, DATA_PORT, IMAGE_DATA_PORT, 10)
 
-proj.check_connection()
+grayscale_image = Grayscale(r"..\test\test-repo\grayscale_test.bmp")
+

@@ -1,9 +1,12 @@
-import records, bmp, seq
+import records, lux4600.img as img, seq
 import socket
 from PIL import Image
+from .img import Strip
+from .seq import Sequencer
 
 
 class Projector:
+
     def __init__(self, server_ip, server_port, image_data_port, timeout=10):
 
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -47,7 +50,7 @@ class Projector:
         print("Connection successful!")
         return True
     
-    def send_image(self, img:Image, inum:int=0):
+    def send_strip(self, strip:Strip):
         """Sends an image to the projector to be stored at position inum.
 
         Args:
@@ -57,12 +60,31 @@ class Projector:
         Returns:
             None
         """
-        bmp_img = bmp.to_bmp(img)
 
-        packets = bmp.bmp_to_packets(inum, 6, bmp_img)
+        packets = strip.to_packets(lines_per_packet=240) # Standard static value
         
         for packet in packets:
             self.client_socket.sendto(packet, (self.SERVER_IP, self.IMAGE_DATA_PORT))
+        return
+
+    def confirm_strip_sent(self):
+        self.send(records.RequestSeqNoError().bytes())
+
+        try:
+            reply = self.client_socket.recvfrom(1024)
+
+        except socket.timeout:
+            raise RuntimeError("Timeout error while trying to confirm strip was sent to projector.")
+        
+        except socket.error as e:
+            raise RuntimeError("Socket error: ", e)
+
+        return records.RequestSeqNoError.reply(reply[0])
+    
+    def send_sequencer(self, seq:Sequencer):
+
+        for packet in seq.packets:
+            self.client_socket.sendto(packet, (self.SERVER_IP, self.SERVER_PORT))
     
     def start_sequencer(self):
         self.send(records.SetSequencerState(2, False).bytes())

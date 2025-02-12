@@ -1,7 +1,9 @@
-import scripts  
 from PIL import Image
+from typing import Iterator
 
-def add_buffer(img:Image, height, img_width, strip_width):
+def add_buffer(img:Image, strip_width) -> Image.Image:
+    
+    img_width, img_height = img.size
     
     # Calculate black-pixel buffer zones
     total_buffer = strip_width - img_width % strip_width # total amount of black pixel buffer needed
@@ -9,20 +11,21 @@ def add_buffer(img:Image, height, img_width, strip_width):
     buffer_right = total_buffer - buffer_left # right buffer... will have 1 more pixel if total_buffer is odd
 
     # Add buffer zones
-    new_img = Image.new('L', (img_width + buffer_left + buffer_right, height), 0)
+    new_img = Image.new('L', (img_width + buffer_left + buffer_right, img_height), 0)
     new_img.paste(img, (buffer_left, 0))
     return new_img
 
-def split_image(img:Image, height, width, strip_width):
+def split_image(img:Image, strip_width) -> Iterator[Image.Image]:
+    
+    width, height = img.size
     
     # Split image into a list of images
-    
     num_images = width // strip_width
 
     for i in range(0, num_images):
         yield img.crop((i * strip_width, 0, (i + 1) * strip_width, height))
 
-def multiply_image(img:Image, factor:int):
+def multiply_image(img:Image, factor:int) -> Iterator[Image.Image]:
 
     """
     Multiply an image by a factor by splitting it into N images with thresholded grayscales.
@@ -48,19 +51,19 @@ if __name__ == '__main__':
     strip_width = 960
 
     with Image.open(file_path) as img:
-        width, height = img.size
-
-        new_img = add_buffer(img, height, width, strip_width)
+        
+        new_img = add_buffer(img, strip_width)
+        
         width, height = new_img.size
 
         print(f"New image size: {new_img.size}\t|\t {strip_width}")
 
-        imgs = split_image(new_img, height, width, strip_width)
+        imgs = split_image(new_img, strip_width)
 
         _ = next(imgs)
         _.show()
         
-        gray_imgs = multiply_image(_, 256)
+        gray_imgs = multiply_image(_, 4)
 
         for i, img in enumerate(gray_imgs):
             img.save(f"..\\test\\test-grayscale\\{i + 1}.bmp")
