@@ -91,6 +91,8 @@ class Projector:
         
         if reply[0][4] == 0:
             print("No out of sequence packets")
+        else:
+            print(records.RequestSeqNoError().reply(reply[0]))
         
         return
     
