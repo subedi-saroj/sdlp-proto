@@ -32,34 +32,91 @@ class Strip:
 
         self.packets = self.to_packets(inum)
 
-    def to_packets(self, lines_per_packet:int=240) -> Iterator[bytes]:
+    def to_packets(self, lines_per_packet:int) -> Iterator[bytes]:
+        '''
+        Return a generator that yields the packets of the strip to be sent to the projector.
+        '''
         
         # Check inum and lines per packet
         StripValueError.check_inum_size(self.inum)
         StripValueError.check_packet_size(lines_per_packet, self.image.tobytes(), self.width)
 
-        # Split into packets
         
+        # Calculate the number of lines in the image and the number of packets
         lines = self.height // (self.width//8)
         num_packets = lines // lines_per_packet
-        print(self.height, self.width, lines, num_packets, lines_per_packet)
-        
-        for i in range(num_packets):
+
+        # Split the image into packets
+        for packet_idx in range(num_packets):
 
             # Calculate range of bytes to send
-            start = i * lines_per_packet * (self.width//8)
-            end = (i + 1) * lines_per_packet * (self.width//8)
-            offset = lines_per_packet * i
+            start, end, offset = self.get_packet_range(packet_idx, lines_per_packet)
 
-            # Create packet
-            packet = (b'\x05\xAE\x00\x68' + 
-                    i.to_bytes(2, byteorder='big') + 
-                    self.inum.to_bytes(2, byteorder='big') + 
-                    offset.to_bytes(6, byteorder='big') + 
-                    self.image.tobytes()[start:end] # Pull bytes from this strip
-                    )
+            # Yield the packet
+            yield self.get_packet(packet_idx, start, end, offset)
+
+
+    def get_packet_range(self, packet_idx:int, lines_per_packet:int) -> bytes:
+        """
+        Calculates the packet range for a given packet number.
+
+        Args:
+            packet_idx (int): The packet number to get.
+            lines_per_packet (int): The number of lines per packet.
+            packet_range (tuple): The range of bytes to get from the image.
+
+        Returns:
+            start (int): The start byte of the packet.
+            end (int): The end byte of the packet.
+            offset (int): The offset of the packet.
             
-            yield packet
+        """
+
+        # Calculate range of bytes to send
+        start = packet_idx * lines_per_packet * (self.width//8)
+        end = (packet_idx + 1) * lines_per_packet * (self.width//8)
+        offset = lines_per_packet * packet_idx
+
+        return start, end, offset
+    
+    def get_packet(self, packet_idx:int, start:int, end:int, offset:int) -> bytes:
+        """
+        Constructs a packet of image data.
+        Args:
+            packet_idx (int): The index of the packet.
+            lines_per_packet (int): The number of lines per packet.
+            start (int): The starting byte index of the image data to include in the packet.
+            end (int): The ending byte index of the image data to include in the packet.
+            offset (int): The offset value to include in the packet.
+        Returns:
+            bytes: The constructed packet containing the specified image data.
+        """
+
+        return (b'\x05\xAE\x00\x68' + 
+                packet_idx.to_bytes(2, byteorder='big') + 
+                self.inum.to_bytes(2, byteorder='big') + 
+                offset.to_bytes(6, byteorder='big') + 
+                self.image.tobytes()[start:end] # Pull bytes from this strip
+                )
+    
+    def get_bin_image_data(self, num_bytes:int=130) -> bytes:
+        """
+        Returns the binary image data (a 1-bit .bmp file with the bitmap header removed)
+
+        Args:
+            num_bytes (int): The number of bytes to remove from the image.
+                This is typically 62 bytes for a 1-bit .bmp file according to the luxbeam manual,
+                but I couldn't get it to work with 62 bytes. I use 130 bytes instead which works.
+                
+
+        Returns:
+            bytes: The binary image data with the bitmap header removed.
+        """
+        
+        # Remove bytes from the image
+        byte_data = self.image.tobytes()[num_bytes:]
+
+        return byte_data
     
     def show(self):
         self.image.show()
@@ -142,6 +199,7 @@ class Grayscale:
     
     def show(self):
         """Shows the image."""
+        
         self.image.show()
 
     def save_strips(self, directory:str):

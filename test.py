@@ -10,14 +10,19 @@ if not projector.check_connection():
     exit()
 
 
-# Load the image
-strip = Strip(Image.open(r".\test\test-grayscale\1.bmp"), 0)
+# strip = Strip(Image.open(r".\test\test-repo\1920x20000_Test1.bmp"), 0)
 
-##
-## Prep the projector
-##
-projector.send_strip(strip)
+# #
+# # Prep the projector
+# #
+# projector.send_strip(strip)
 
 
-#grayscale_image = Grayscale(r"..\test\test-repo\grayscale_test.bmp")
+# projector.start_sequencer()
 
+
+
+grayscale_image = Grayscale(r".\test\test-repo\grayscale_test.bmp")
+
+for strip in grayscale_image.strips:
+    projector.send_strip(strip)

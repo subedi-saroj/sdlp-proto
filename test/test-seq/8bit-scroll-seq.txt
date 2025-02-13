@@ -2,8 +2,7 @@
 #Command        Parameters					Waitfor
 #--------------------------------------------------------------
 AssignVar       TotalRows   3400                       1
-AssignVar       ScrollLoopCount   0                     1   
-AssignVar       TotalInums        255                   1
+AssignVar       LoopCount   0                           1   
 AssignVar       MemStartRow 0                           1
 AssignVar       Inum        0                           1
 AssignVar       DmdStartRow 0                           1
@@ -16,9 +15,28 @@ Trig            0 4                                     0
 ResetGlobal                                             40
 LightPulseWord  15                                      1
 LoadRow         DmdStartRow NoOfRows Inum MemStartRow   200
-Add             Inum 1                                  1
-JumpIf          Inum < TotalInums scrollforward         1
-AssignVar       Inum        0                           1
 Add             MemStartRow 1                           1 
-Add          	ScrollLoopCount 1					    1
-JumpIf          ScrollLoopCount < TotalRows scrollforward     1
+Add          	LoopCount 1								1
+JumpIf          LoopCount < TotalRows scrollforward     1
+#
+#--------------------------------------------------------------
+# Initiate variables for Scroll back
+AssignVar       MemStartRow 3400                       1
+AssignVar       LoopCount 0                             1   
+#
+#--------------------------------------------------------------
+# Scroll back
+Label           scrollback                              1
+Trig            0 4                                     0
+ResetGlobal                                             40
+LightPulseWord  15                                      1
+LoadRow         DmdStartRow NoOfRows Inum MemStartRow   200
+Add             MemStartRow -1                          1 
+Add             LoopCount 1                             1
+JumpIf          LoopCount < TotalRows scrollback        1
+#
+#--------------------------------------------------------------
+# Reset LoopCount and re-initiate MemStartRow
+AssignVar       LoopCount 0                             1
+AssignVar       MemStartRow 0                           1
+JumpIf          LoopCount < TotalRows scrollforward     1

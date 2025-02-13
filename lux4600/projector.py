@@ -69,10 +69,11 @@ class Projector:
 
         # Set into reset mode and prime for image receiving
         init_messages = [
-            records.SetImageType(4),
-            records.SetInumSize(strip.height),
-            records.ResetSeqNo(),
-            records.SetSequencerState(2, True)    
+            records.SetImageType(4), # 4 = 1-bit grayscale
+            records.SetInumSize(strip.height), # Set the inum size to the height of the image, i.e. the number of rows in the image
+            records.ResetSeqNo(), # Reset the sequencer number
+            records.SetSequencerState(1, False), # Halt the sequencer
+            records.SetSequencerState(2, True) # Set the sequencer to reset mode
         ]
 
         for msg in init_messages:
@@ -81,37 +82,27 @@ class Projector:
 
         # Send image
         packets = strip.to_packets(lines_per_packet=5) # TODO
-        strip.show()
         
+        count = 0 # TODO: get rid of this BS variable. Need something cleaner
+
         for _, packet in enumerate(packets):
             
             print(f"Sending packet {_}, length: {len(packet)}")
             self.client_socket.sendto(packet, (self.SERVER_IP, self.IMAGE_DATA_PORT))
+            count += 1
 
         # Request out-of-sequence packets
         reply = self.send(records.RequestSeqNoError().bytes())
         
-        if reply[0][4] == 0:
+        out_of_seq_packet = int.from_bytes(reply[0][5:], byteorder='big') + 1
+
+        if out_of_seq_packet == count:
             print("No out of sequence packets")
         else:
             print(records.RequestSeqNoError().reply(reply[0]))
+            raise RuntimeError(f"Out of sequence packet: {out_of_seq_packet}")
         
         return
-    
-
-    def confirm_strip_sent(self):
-        self.send(records.RequestSeqNoError().bytes())
-
-        try:
-            reply = self.client_socket.recvfrom(1024)
-
-        except socket.timeout:
-            raise RuntimeError("Timeout error while trying to confirm strip was sent to projector.")
-        
-        except socket.error as e:
-            raise RuntimeError("Socket error: ", e)
-
-        return records.RequestSeqNoError.reply(reply[0])
     
     def send_sequencer(self, seq:Sequencer):
 
