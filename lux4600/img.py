@@ -30,8 +30,6 @@ class Strip:
         self.width, self.height = self.image.size
         self.inum = inum
 
-        self.packets = self.to_packets(inum)
-
     def to_packets(self, lines_per_packet:int) -> Iterator[bytes]:
         '''
         Return a generator that yields the packets of the strip to be sent to the projector.
@@ -43,8 +41,8 @@ class Strip:
 
         
         # Calculate the number of lines in the image and the number of packets
-        lines = self.height // (self.width//8)
-        num_packets = lines // lines_per_packet
+        num_packets = self.height // lines_per_packet
+        print(num_packets)
 
         # Split the image into packets
         for packet_idx in range(num_packets):
@@ -99,22 +97,21 @@ class Strip:
                 self.image.tobytes()[start:end] # Pull bytes from this strip
                 )
     
-    def get_bin_image_data(self, num_bytes:int=130) -> bytes:
+    def get_bin_image_data(self, skip_header:int=130) -> bytes:
         """
         Returns the binary image data (a 1-bit .bmp file with the bitmap header removed)
 
         Args:
-            num_bytes (int): The number of bytes to remove from the image.
+            skip_header (int): The number of bytes to remove from the image.
                 This is typically 62 bytes for a 1-bit .bmp file according to the luxbeam manual,
                 but I couldn't get it to work with 62 bytes. I use 130 bytes instead which works.
-                
 
         Returns:
             bytes: The binary image data with the bitmap header removed.
         """
         
         # Remove bytes from the image
-        byte_data = self.image.tobytes()[num_bytes:]
+        byte_data = self.image.tobytes()[skip_header:]
 
         return byte_data
     
@@ -236,25 +233,3 @@ class GrayscaleValueError(ValueError):
                 f"""Level must be greater than 0.
                 {level} bytes, 1 min."""
                 )
-    
-
-
-
-#
-# 
-#
-if __name__ == '__main__':
-    
-    file_path = r"..\test\test-repo\grayscale_test.bmp"
-
-    strip_width = 960
-
-    gs = Grayscale(file_path, strip_width, 4)
-
-    gs.show()
-    print(gs.num_strips)
-
-    count = 0
-    for strip in gs.strips:
-        count += 1
-    print(count)

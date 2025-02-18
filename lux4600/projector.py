@@ -87,9 +87,10 @@ class Projector:
 
         for _, packet in enumerate(packets):
             
-            print(f"Sending packet {_}, length: {len(packet)}")
             self.client_socket.sendto(packet, (self.SERVER_IP, self.IMAGE_DATA_PORT))
             count += 1
+
+        print(f"Sent {count} packets, data length: {len(packet) - 14} per packet")
 
         # Request out-of-sequence packets
         reply = self.send(records.RequestSeqNoError().bytes())
@@ -102,12 +103,33 @@ class Projector:
             print(records.RequestSeqNoError().reply(reply[0]))
             raise RuntimeError(f"Out of sequence packet: {out_of_seq_packet}")
         
+        self.send(records.SetSequencerState(2, False).bytes()) # Take sequencer out of reset mode
+        
         return
     
-    def send_sequencer(self, seq:Sequencer):
+    def send_sequencer(self, packets):
+        """
+        Sends sequence packets to the client socket.
 
-        for packet in seq.packets:
-            self.client_socket.sendto(packet, (self.SERVER_IP, self.SERVER_PORT))
+        Args:
+            packets: The sequence packets to be sent.
+        """
+
+        init_messages = [
+            records.ResetSeqNo(), # 4 = 1-bit grayscale
+            records.SetSequencerState(1, False), # Set the inum size to the height of the image, i.e. the number of rows in the image
+            records.SetSequencerState(2, True), # Reset the sequencer number
+        ]
+
+        for msg in init_messages:
+            reply = self.send(msg.bytes())
+            print(msg.reply(reply[0]))
+
+        for packet in packets:
+            reply = self.send(packet)
+            print(msg.reply(reply[0]))
+            
+        self.send(records.SetSequencerState(2, False).bytes())
     
     def start_sequencer(self):
         self.send(records.SetSequencerState(2, False).bytes())
