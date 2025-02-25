@@ -43,7 +43,6 @@ AssignVar       count        0                         1    #
 #
 Label           StartHere                              0    # begin of main loop
 Trig 		    0            4                         0    # Wait for Positive edge trigger (internal trigger=4, optical = 2)
-#LoadGlobal      count      173   # Requires (1080*0.040us)*(4tics/us)=172.8us to complete
 LoadRow         DmdStartRow  NumRows   count   MemStartRow   173   # Requires (1080*0.040us)*(4tics/us)=172.8us to complete
 ResetGlobal                                            40	# change to 1 if GPIO outputs are used
 #

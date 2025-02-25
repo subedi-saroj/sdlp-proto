@@ -1,11 +1,10 @@
 #--------------------------------------------------------------
 #Command        Parameters					Waitfor
 #--------------------------------------------------------------
-AssignVar       TotalRows   18920                      1
+AssignVar       TotalRows   4320                       1
 AssignVar       LoopCount   0                           1   
 AssignVar       MemStartRow 0                           1
 AssignVar       Inum        0                           1
-AssignVar       Inum2       2                           1
 AssignVar       DmdStartRow 0                           1
 AssignVar       NoOfRows    1079                        1
 #  
@@ -22,7 +21,7 @@ JumpIf          LoopCount < TotalRows scrollforward     1
 #
 #--------------------------------------------------------------
 # Initiate variables for Scroll back
-AssignVar       MemStartRow 18920                       1
+AssignVar       MemStartRow 4320                       1
 AssignVar       LoopCount 0                             1   
 #
 #--------------------------------------------------------------
@@ -31,7 +30,7 @@ Label           scrollback                              1
 Trig            0 4                                     0
 ResetGlobal                                             40
 LightPulseWord  15                                      1
-LoadRow         DmdStartRow NoOfRows Inum2 MemStartRow  200
+LoadRow         DmdStartRow NoOfRows Inum MemStartRow   200
 Add             MemStartRow -1                          1 
 Add             LoopCount 1                             1
 JumpIf          LoopCount < TotalRows scrollback        1
