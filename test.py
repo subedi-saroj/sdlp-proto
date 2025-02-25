@@ -12,21 +12,16 @@ if not projector.check_connection():
 #
 # Load the image
 #
-test_image = Image.open(r".\test\test-repo\1_1920x6840_modified.bmp")
+test_image = Image.open(r".\test\test-repo\1_1920x6840.bmp")
 
 strip = Strip(test_image, 0)
 
 projector.send_strip(strip)
 print('image sent')
-#
+
 # Load the sequencer file
-#
-# seq = Sequencer(r".\test\test-seq\1bit-scroll-seq.txt", 1440)
-# projector.send_sequencer(seq.packets)
+
+seq = Sequencer(r".\test\test-seq\1bit-scroll-seq.txt", 1440)
+projector.send_sequencer(seq.packets)
 
 projector.start_sequencer()
-
-# grayscale_image = Grayscale(r".\test\test-repo\grayscale_test.bmp")
-
-# for strip in grayscale_image.strips:
-#     projector.send_strip(strip)

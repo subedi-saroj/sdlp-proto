@@ -1,7 +1,7 @@
 #--------------------------------------------------------------
 #Command        Parameters					Waitfor
 #--------------------------------------------------------------
-AssignVar       TotalRows   4320                       1
+AssignVar       TotalRows   5400                       1
 AssignVar       LoopCount   0                           1   
 AssignVar       MemStartRow 0                           1
 AssignVar       Inum        0                           1
@@ -21,7 +21,7 @@ JumpIf          LoopCount < TotalRows scrollforward     1
 #
 #--------------------------------------------------------------
 # Initiate variables for Scroll back
-AssignVar       MemStartRow 4320                       1
+AssignVar       MemStartRow 5400                       1
 AssignVar       LoopCount 0                             1   
 #
 #--------------------------------------------------------------

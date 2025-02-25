@@ -81,7 +81,7 @@ class Projector:
             print(msg.reply(reply[0]))
 
         # Send image
-        packets = strip.to_packets(lines_per_packet=5) # TODO
+        packets = strip.to_packets(lines_per_packet=6) # TODO
         
         count = 0 # TODO: get rid of this BS variable. Need something cleaner
 
