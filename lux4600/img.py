@@ -26,7 +26,8 @@ class Strip:
         """
         self.image = image
 
-        self.image.convert("1") # Convert to 1-bit bmp
+        self.image = self.image.convert("1") # Convert to 1-bit bmp
+        self.image.show()
         self.width, self.height = self.image.size
         self.inum = inum
 
