@@ -27,7 +27,7 @@ class Strip:
         self.image = image
 
         self.image = self.image.convert("1") # Convert to 1-bit bmp
-        self.image.show()
+
         self.width, self.height = self.image.size
         self.inum = inum
 
@@ -115,6 +115,7 @@ class Strip:
         byte_data = self.image.tobytes()[skip_header:]
 
         return byte_data
+    
     
     def show(self):
         self.image.show()

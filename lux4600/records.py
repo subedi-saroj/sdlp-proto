@@ -282,3 +282,13 @@ class RequestLedTemperature(Record):
             data = {"led_no": led_no, "led_temp": led_temp, "board_temp": board_temp, "read_ok": read_ok}
             return message, data
         
+class RequestSeqFileErrorLog(Record):
+    def __init__(self):
+        super().__init__(4, 307)
+
+    def reply(self, response: bytes) -> str:
+        data_size = response[:2]
+        error = response[2:].decode()
+        return data_size, error
+
+        

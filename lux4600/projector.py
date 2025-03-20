@@ -106,6 +106,7 @@ class Projector:
         self.send(records.SetSequencerState(2, False).bytes()) # Take sequencer out of reset mode
         
         return
+
     
     def send_sequencer(self, packets):
         """
@@ -130,6 +131,16 @@ class Projector:
             print(msg.reply(reply[0]))
             
         self.send(records.SetSequencerState(2, False).bytes())
+
+    def check_sequencer_error(self):
+
+        """Check for sequencer errors and print the error message if any."""
+
+        reply = self.send(records.RequestSeqFileErrorLog().bytes())
+        
+        for _ in reply: print(_)
+        
+            
     
     def start_sequencer(self):
         self.send(records.SetSequencerState(2, False).bytes())

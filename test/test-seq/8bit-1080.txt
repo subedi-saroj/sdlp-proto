@@ -1,0 +1,29 @@
+#--------------------------------------------------------------
+#Command        Parameters					Waitfor
+#--------------------------------------------------------------
+AssignVar       TotalRows   1080                        1
+AssignVar       LoopCount   0                           1   
+AssignVar       MemStartRow 0                           1
+AssignVar       Factor      4                           1
+AssignVar       Inum        0                           1
+AssignVar       DmdStartRow 0                           1
+AssignVar       LoadRows    1079                        1
+AssignVar       NoOfRows    1080                        1
+
+#
+#--------------------------------------------------------------
+#
+Label           grayloop                                1
+Trig            0 4                                     0
+ResetGlobal                                             40
+LightPulseWord  15                                      1
+LoadRow         DmdStartRow LoadRows Inum MemStartRow   200
+Add             LoopCount 1                             1
+Mult            MemStartRow LoopCount NoOfRows          1
+JumpIf          LoopCount < Factor grayloop             1
+#
+# Reset variables and jump back to start
+AssignVar       MemStartRow 0                           1
+AssignVar       LoopCount   0                           1 
+JumpIf          LoopCount < Factor grayloop             1
+
