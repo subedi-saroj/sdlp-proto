@@ -15,7 +15,7 @@ def add_buffer(img:Image, strip_width) -> Image.Image:
     new_img.paste(img, (buffer_left, 0))
     return new_img
 
-def split_image(img:Image, strip_width) -> Iterator[Image.Image]:
+def split_image(img:Image.Image, strip_width) -> Iterator[Image.Image]:
     
     width, height = img.size
     
@@ -44,29 +44,40 @@ def multiply_image(img:Image, factor:int) -> Iterator[Image.Image]:
 
         yield img.point(lambda p: 255 if p > threshold else 0)
 
+def stitch_images(images:Iterator[Image.Image]) -> Image.Image:
+    """
+    Stitch a list of images together vertically.
+
+    Args:
+        images (Iterator[Image.Image]): The images to be stitched together.
+
+    Returns:
+        Image.Image: The stitched image.
+    """
+
+    new_img = Image.new('L', (1920, 17280))
+
+    y_offset = 0
+    for img in images:
+        new_img.paste(img, (0, y_offset))
+        y_offset += img.height
+
+    return new_img
+
+
+
 if __name__ == '__main__':
         
-    file_path = r"..\test\test-repo\grayscale_test.bmp"
+    file_path = r"..\test\test-grayscale\1920x4320_gs4_B.bmp"
 
     strip_width = 1920
 
-    with Image.open(file_path) as img:
-        
-        new_img = add_buffer(img, strip_width)
-        
-        width, height = new_img.size
+    with Image.open(file_path) as img:   
 
-        print(f"New image size: {new_img.size}\t|\t {strip_width}")
-
-        imgs = split_image(new_img, strip_width)
-
-        _ = next(imgs)
-        _.show()
-        
-        gray_imgs = multiply_image(_, 4)
-
-        for i, img in enumerate(gray_imgs):
-            img.save(f"..\\test\\test-grayscale\\{i + 1}.bmp")
+        imgs = multiply_image(img, 4)
+        strip = stitch_images(imgs)
+        print(strip.size)
+        strip.save(r"..\test\test-grayscale\1920x4320_gs4_B_stitched.bmp")
             
 
 
