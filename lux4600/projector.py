@@ -108,13 +108,14 @@ class Projector:
         return
 
     
-    def send_sequencer(self, packets):
+    def send_sequencer(self, sequencer:Sequencer):
         """
         Sends sequence packets to the client socket.
 
         Args:
-            packets: The sequence packets to be sent.
+            sequencer: The sequence packets to be sent.
         """
+        packets = sequencer.packets
 
         init_messages = [
             records.ResetSeqNo(), # 4 = 1-bit grayscale

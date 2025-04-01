@@ -18,7 +18,7 @@ projector.send_strip(strip)
 
 sequencer = seq.Sequencer(r"test\test-seq\1920x4320_gs4_scroll.txt", 1440)
 
-projector.send_sequencer(sequencer.packets)
+projector.send_sequencer(sequencer)
 projector.check_sequencer_error()
 
 # Show a horizantally mirrored strip
