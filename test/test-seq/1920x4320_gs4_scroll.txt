@@ -1,11 +1,11 @@
 #--------------------------------------------------------------
 #Command        Parameters					Waitfor
 #--------------------------------------------------------------
-AssignVar       TotalRows   6480                        1
+AssignVar       TotalRows   4320                        1
 AssignVar       ScrollRow   0                           1
 AssignVar       LoopCount   0                           1   
 AssignVar       MemStartRow 0                           1
-AssignVar       Factor      2                           1
+AssignVar       Factor      4                           1
 AssignVar       Inum        0                           1
 AssignVar       DmdStartRow 0                           1
 AssignVar       LoadRows    1079                        1
@@ -24,10 +24,10 @@ Label           grayloopA                               1
 Trig            0 4                                     0
 ResetGlobal                                             40
 LightPulseWord  15                                      1
-LoadRow         DmdStartRow LoadRows Inum MemStartRow   200
-Add             LoopCount 1                             1
 Mult            MemStartRow LoopCount TotalRows         1
 Add             MemStartRow ScrollRow                   1
+LoadRow         DmdStartRow LoadRows Inum MemStartRow   200
+Add             LoopCount 1                             1
 JumpIf          LoopCount < Factor grayloopA            1
 #
 # Reset variables and jump back to start
@@ -47,16 +47,17 @@ Label           grayloopB                               1
 Trig            0 4                                     0
 ResetGlobal                                             40
 LightPulseWord  15                                      1
-LoadRow         DmdStartRow LoadRows Inum MemStartRow   200
-Add             LoopCount 1                             1
 Mult            MemStartRow LoopCount TotalRows          1
 Add             MemStartRow ScrollRow                   1
+LoadRow         DmdStartRow LoadRows Inum MemStartRow   200
+Add             LoopCount 1                             1
 JumpIf          LoopCount < Factor grayloopB            1
 #
 # Reset variables and jump back to start
 AssignVar       MemStartRow 0                           1
 AssignVar       LoopCount   0                           1
 Add             ScrollRow   -1                          1
+Add             MemStartRow ScrollRow                   1
 JumpIf          ScrollRow > Zero scrollback             1
 AssignVar       ScrollRow   0                           1
 JumpIf          ScrollRow < NoOfRows scrollforward      1

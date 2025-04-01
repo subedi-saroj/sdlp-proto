@@ -5,7 +5,7 @@ from lux4600.img import Strip
 from PIL import Image
 import time
 
-f1 = r"test\test-grayscale\1920x4320_gs4_B_stitched.bmp"
+f1 = r"test\test-grayscale\1920x4320_gs4_A_stitched.bmp"
 f2 = r"test\test-grayscale\1920x6480_gs2_A.bmp"
 img = Image.open(f1)
 
@@ -21,6 +21,9 @@ sequencer = seq.Sequencer(r"test\test-seq\1920x4320_gs4_scroll.txt", 1440)
 projector.send_sequencer(sequencer.packets)
 projector.check_sequencer_error()
 
+# Show a horizantally mirrored strip
+mirror = strip.image.transpose(Image.FLIP_LEFT_RIGHT)
+mirror.show()
 
 projector.start_sequencer()
 input("Press Enter to stop the sequencer...")
