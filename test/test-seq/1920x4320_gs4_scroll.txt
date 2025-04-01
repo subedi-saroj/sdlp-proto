@@ -15,7 +15,6 @@ Add             NoOfRows    TotalRows                   1
 Add             NoOfRows    -1080                       1
 # Placeholder for Zero
 AssignVar      Zero        0                            1
-
 #
 #--------------------------------------------------------------
 #
