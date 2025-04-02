@@ -55,7 +55,7 @@ def stitch_images(images:Iterator[Image.Image]) -> Image.Image:
         Image.Image: The stitched image.
     """
 
-    new_img = Image.new('L', (1920, 17280))
+    new_img = Image.new('L', (1920, 43200))
 
     y_offset = 0
     for img in images:
@@ -68,16 +68,16 @@ def stitch_images(images:Iterator[Image.Image]) -> Image.Image:
 
 if __name__ == '__main__':
         
-    file_path = r"..\test\test-grayscale\1920x4320_gs4_B.bmp"
+    file_path = r"..\test\test-grayscale\1920x4320_gs10_A.bmp"
 
     strip_width = 1920
 
     with Image.open(file_path) as img:   
 
-        imgs = multiply_image(img, 4)
+        imgs = multiply_image(img, 10)
         strip = stitch_images(imgs)
         print(strip.size)
-        strip.save(r"..\test\test-grayscale\1920x4320_gs4_B_stitched.bmp")
+        strip.save(r"..\test\test-grayscale\1920x4320_gs10_A_stitched.bmp")
             
 
 
