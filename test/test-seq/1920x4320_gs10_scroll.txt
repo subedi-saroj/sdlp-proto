@@ -5,7 +5,7 @@ AssignVar       TotalRows   4320                        1
 AssignVar       ScrollRow   0                           1
 AssignVar       LoopCount   0                           1   
 AssignVar       MemStartRow 0                           1
-AssignVar       Factor      4                           1
+AssignVar       Factor      10                           1
 AssignVar       Inum        0                           1
 AssignVar       DmdStartRow 0                           1
 AssignVar       LoadRows    1079                        1
