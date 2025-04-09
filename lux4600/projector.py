@@ -2,6 +2,7 @@ import socket
 import records
 from img import Strip
 from seq import Sequencer
+import time
 
 
 class Projector:
@@ -75,6 +76,8 @@ class Projector:
             records.SetSequencerState(1, False), # Halt the sequencer
             records.SetSequencerState(2, True) # Set the sequencer to reset mode
         ]
+        
+        time_elapsed = time.time() # timing the upload time
 
         for msg in init_messages:
             reply = self.send(msg.bytes())
@@ -105,6 +108,10 @@ class Projector:
         
         self.send(records.SetSequencerState(2, False).bytes()) # Take sequencer out of reset mode
         
+        # Display timing information
+        time_elapsed = time.time() - time_elapsed
+        print(f"Time elapsed to send strip: {time_elapsed:.2f} seconds")
+
         return
 
     
@@ -132,6 +139,8 @@ class Projector:
             print(msg.reply(reply[0]))
             
         self.send(records.SetSequencerState(2, False).bytes())
+
+        self.check_sequencer_error() # Check for errors
 
     def check_sequencer_error(self):
 

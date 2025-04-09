@@ -14,7 +14,7 @@ class ZaberAxes():
         YAxis: Zaber device for the y-axis.
     """
 
-    def __init__(self, COMPort:str="COM7"):
+    def __init__(self, COMPort:str):
 
         self.COMPort = COMPort
         self.connectionStatus = True # connection status
@@ -59,13 +59,7 @@ class ZaberAxes():
         
         # home all devices if they are connected successfully
         if self.connectionStatus:
-            c4 = self.ZAxis.home_async()
-            c1 = self.MAxis.home_async()
-            c2 = self.YAxis.home_async()
-            c3 = self.XAxis.home_async()
-            wait_all(c4) # for safety reasons to avoid collision between resin container and build platform
-            wait_all(c2, c3, c1)
-            print("All axes are connected")
+            print("Connected to all devices")
         else: print("WARNING: Some axes are not connected")
 
         return
@@ -132,6 +126,41 @@ class ZaberAxes():
         axis = getattr(self, f"{axis_name}Axis")
 
         return axis.get_position(Units.LENGTH_MILLIMETRES)
+
+    def home_all(self):
+        """
+        Home all axes.
+            (CURRENTLY DISABLED FOR METER LONG AXIS)
+
+        Returns:
+            None
+        """
+        # c1 = self.MAxis.home_async()
+        c2 = self.YAxis.home_async()
+        c3 = self.XAxis.home_async()
+        c4 = self.ZAxis.home_async()
+
+        # wait_all(c1, c2, c3, c4)
+        wait_all(c2, c3, c4)
+        return
     
+    def scroll(self, distance:int, velocity:int):
+        '''
+        Scroll the axes by a given distance at a given velocity.
+        Units are in mm, or mm/s.
+        '''
+        self.YAxis.move_relative(distance, Units.LENGTH_MILLIMETRES, True,
+                                velocity, Units.VELOCITY_MILLIMETRES_PER_SECOND)
+
+        return
     
+    def increment_layer(self, layer_height:int):
+        ''''
+        Increment the Z axis by a given layer height.
+        Units are in mm.
+        '''
+        self.ZAxis.move_relative(-layer_height, Units.LENGTH_MILLIMETRES)
+        return
+    
+
     

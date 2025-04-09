@@ -4,6 +4,7 @@ from lux4600.img import Strip
 from lux4600.seq import Sequencer
 from lux4600.grayscale import split_image, multiply_image, stitch_images
 from PIL import Image
+import time
 
 '''
 Author: David Alexander
@@ -34,65 +35,112 @@ The overall process is as follows:
     4. The grayscale images are stitched together to create a single image.
     5. The stitched image is then uploaded to the projector.
     6. The sequencer is then created and uploaded to the projector.
+    TODO
     7. The projector and axes are started simulteanously for a single layer.
     8. The projector and X-Y axes are stopped after the layer is complete. Z axes increments.
         - LAYER_HEIGHT = 0.5 (mm)
 
     --> Repeat steps 6 and 7 for some number of layers.
-        - LAYERS = 10
+        - LAYERS = 5
 '''
 
-# Constants
-FULL_WIDTH = 2880 # width of pre-processed grayscale image exported from Chitubox or GIMP as .bmp
-FULL_HEIGHT = 3240 # height of pre-processed grayscale image
+# # Constants
+# FULL_WIDTH = 2880 # width of pre-processed grayscale image
+# FULL_HEIGHT = 3240 # height of pre-processed grayscale image
 
-GS_STRIP_WIDTH = 1920 # width of each strip
-OVERLAP = 960 # overlap between the two strips
+# GS_STRIP_WIDTH = 1920 # width of each strip
+# OVERLAP = 960 # overlap between the two strips
 
-FACTOR = 6 # grayscale multiplication factor
-LAYER_HEIGHT = 0.5 # mm
-LAYERS = 10 # number of layers to print
+# FACTOR = 6 # grayscale multiplication factor
+# LAYER_HEIGHT = 0.5 # mm
+# LAYERS = 10 # number of layers to print
 
-# Step 0: Load the grayscale image
-full_grayscale_image = Image.open(r"test\test-dogbone\2880x3240_dogbone_A.bmp")
+# # Step 0: Load the grayscale image
+# full_grayscale_image = Image.open(r"test\test-dogbone\2880x3240_dogbone_A.bmp")
 
-# Step 1: Split the image into strips
-left_strip = Image.new('L', (GS_STRIP_WIDTH, FULL_HEIGHT), 0)  # 'L' mode ensures 8-bit grayscale
-left_strip.paste(full_grayscale_image.crop((0, 0, GS_STRIP_WIDTH, FULL_HEIGHT)), (0, 0))
+# # Step 1: Split the image into strips
+# left_strip = Image.new('L', (GS_STRIP_WIDTH, FULL_HEIGHT), 0)  # 'L' mode ensures 8-bit grayscale
+# left_strip.paste(full_grayscale_image.crop((0, 0, GS_STRIP_WIDTH, FULL_HEIGHT)), (0, 0))
 
-right_strip = Image.new('L', (GS_STRIP_WIDTH, FULL_HEIGHT), 0)  # 'L' mode ensures 8-bit grayscale
-right_strip.paste(full_grayscale_image.crop((GS_STRIP_WIDTH//2, 0, FULL_WIDTH, FULL_HEIGHT)), (0, 0))
+# right_strip = Image.new('L', (GS_STRIP_WIDTH, FULL_HEIGHT), 0)  # 'L' mode ensures 8-bit grayscale
+# right_strip.paste(full_grayscale_image.crop((GS_STRIP_WIDTH//2, 0, FULL_WIDTH, FULL_HEIGHT)), (0, 0))
 
-# Step 2: Scale the strips over the overlap
+# # Step 2: Scale the strips over the overlap
 
-f_left = lambda x, current: int((current / OVERLAP) * (OVERLAP - x)) # linear right strip scaling function
-f_right = lambda x, current: int((current / OVERLAP) * x) # linear left strip scaling function
+# def scale_overlap(strip:Image.Image, side:str) -> Image.Image:
+#     for y in range(0, FULL_HEIGHT):
 
-# Scale the strip overlap region
-def scale_overlap(strip:Image.Image, func, side:str) -> Image.Image:
-    for y in range(0, FULL_HEIGHT):
-
-        # Note: this indexing only works because the overlap is 960 pixels wide
-        # and the strips are 1920 pixels wide. If the overlap is changed, this
-        # indexing will need to be changed as well.
-        for x in range(0, OVERLAP):
-
-            if side == 'L':
-                pixel_x = x + OVERLAP
-            elif side == 'R':
-                pixel_x = x
-            else:
-                raise ValueError("Invalid side. Use 'L' or 'R'.")
-
-            pixel_y = y # for clarity
-
-            val = strip.getpixel((pixel_x, pixel_y)) # New grayscale value for left strip
+#         # Note: this indexing only works because the overlap is 960 pixels wide
+#         # and the strips are 1920 pixels wide. If the overlap is changed, this
+#         # indexing will need to be changed as well.
+#         for x in range(0, OVERLAP):
             
-            if val > 0:
-                strip.putpixel((pixel_x, pixel_y), func(x, val))
-    return strip
+#             # Linear overlap scaling functions
+#             if side == 'L':
+#                 func = lambda x, current: int((current / OVERLAP) * (OVERLAP - x))
+#                 pixel_x = x + OVERLAP
+#             elif side == 'R':
+#                 func = lambda x, current: int((current / OVERLAP) * x)
+#                 pixel_x = x
+#             else:
+#                 raise ValueError("Invalid side. Use 'L' or 'R'.")
 
-left_strip = scale_overlap(left_strip, f_right, 'L')
-right_strip = scale_overlap(right_strip, f_right, 'R')
+#             pixel_y = y # for clarity
 
+#             val = strip.getpixel((pixel_x, pixel_y)) # New grayscale value for left strip
+            
+#             if val > 0:
+#                 strip.putpixel((pixel_x, pixel_y), func(x, val))
+#     return strip
+
+# left_strip = scale_overlap(left_strip, 'L')
+# right_strip = scale_overlap(right_strip, 'R')
+
+# # Step 3: Multiply the strips by the factor
+# left_strip_images = multiply_image(left_strip, FACTOR)
+# grayscale_strip = Strip(stitch_images(left_strip_images, FULL_HEIGHT * FACTOR * 2), 0)
+
+# right_strip_images = multiply_image(right_strip, FACTOR)
+# right_strip_images = stitch_images(right_strip_images, FULL_HEIGHT * FACTOR)
+
+# # Step 4: Stitch the images together
+# grayscale_strip.image.paste(right_strip_images, (0, FULL_HEIGHT * FACTOR))
+
+# # Step 5: Upload the stitched image to the projector
+projector = Projector(IP, DATA_PORT, IMAGE_DATA_PORT)
+
+# projector.check_connection()
+
+# # Comment this out if image has already been uploaded since 
+# # the projector was last powered on to save time.
+# projector.send_strip(grayscale_strip)
+
+# # Step 6: Create and upload the sequencer
+sequencer = seq.Sequencer(r"test\test-seq\2880x3240_gs6_scroll.txt", 1440)
+projector.send_sequencer(sequencer)
+
+# TODO: Step 7: Start the projector and axes simultaneously for a single layer
+import axes
+from zaber_motion import Units, wait_all
+
+zaber_axes = axes.ZaberAxes("COM3")
+# zaber_axes.home_all()
+
+zaber_axes.ZAxis.move_absolute(150, Units.LENGTH_MILLIMETRES)
+zaber_axes.XAxis.move_absolute(60, Units.LENGTH_MILLIMETRES)
+zaber_axes.YAxis.move_absolute(30, Units.LENGTH_MILLIMETRES)
+
+LAYER_HEIGHT = 0.5
+LAYERS = 3
+SCROLLING_VELOCITY = 1.7 # mm/s
+SCROLLING_DIST = 18 # mm
+projector.start_sequencer()
+
+for i in range(LAYERS):
+    zaber_axes.scroll(SCROLLING_DIST, SCROLLING_VELOCITY)
+    zaber_axes.scroll(-SCROLLING_DIST, SCROLLING_VELOCITY)
+    zaber_axes.increment_layer(LAYER_HEIGHT)
+
+input("Done printing. Press Enter to stop the sequencer...")
+projector.stop_sequencer()
 

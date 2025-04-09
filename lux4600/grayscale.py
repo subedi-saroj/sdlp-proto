@@ -44,18 +44,20 @@ def multiply_image(img:Image, factor:int) -> Iterator[Image.Image]:
 
         yield img.point(lambda p: 255 if p > threshold else 0)
 
-def stitch_images(images:Iterator[Image.Image]) -> Image.Image:
+def stitch_images(images:Iterator[Image.Image], stitched_height) -> Image.Image:
     """
     Stitch a list of images together vertically.
 
     Args:
         images (Iterator[Image.Image]): The images to be stitched together.
+        stitched_height (int): The height of the stitched image.
+
 
     Returns:
         Image.Image: The stitched image.
     """
 
-    new_img = Image.new('L', (1920, 43200))
+    new_img = Image.new('L', (1920, stitched_height))
 
     y_offset = 0
     for img in images:
