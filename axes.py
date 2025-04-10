@@ -1,5 +1,7 @@
 from zaber_motion import Units, wait_all
 from zaber_motion.ascii import Axis, Connection, Device, Lockstep
+from typing import List
+import asyncio
 
 class ZaberAxes():
     """
@@ -17,19 +19,9 @@ class ZaberAxes():
     def __init__(self, COMPort:str):
 
         self.COMPort = COMPort
-        self.connectionStatus = True # connection status
-        try:
-            connection = Connection.open_serial_port(self.COMPort)
-            connection.enable_alerts()
+        self.connectionStatus = True
 
-            device_list = connection.detect_devices()
-            print("Found {} devices".format(len(device_list)))
-        
-        except Exception as e:
-            print(e)
-            print(f"Could not connect to {self.COMPort}")
-            self.connectionStatus = False
-            return
+        device_list = self._connect()
 
         try: 
             self.MAxis = device_list[0].get_axis(1)
@@ -57,42 +49,30 @@ class ZaberAxes():
             print("Could not get y axis"); self.connectionStatus = False
             self.YAxis = None
         
-        # home all devices if they are connected successfully
         if self.connectionStatus:
             print("Connected to all devices")
+            
+            self.axes:List[Axis] = [self.XAxis, self.YAxis, self.ZAxis] # excludes M Axis
+
         else: print("WARNING: Some axes are not connected")
 
         return
-
-    def _boundary_check(self, confirm_code):
-        """
-        Perform boundary check for all axes.
-
-        Args:
-            confirm_code: Confirmation code for boundary check.
-
-        Returns:
-            None
-
-        This is primarily for testing purposes and should not be used during printing operations.
-        Will move all axes to their maximum positions and then home them back to zero. If anything is
-        in the way, it will likely cause damage to the machine.
-        """
-
-        # c1 = self.MAxis.move_max_async()
-        # c2 = self.YAxis.move_max_async()
-        # c3 = self.XAxis.move_max_async()
-        # c4 = self.ZAxis.move_max_async()
+    
+    def _connect(self) -> list[Device]:
         
-        # wait_all(c1, c2, c3, c4)
+        try:
+            connection = Connection.open_serial_port(self.COMPort)
+            connection.enable_alerts()
 
-        # c1 = self.MAxis.home_async()
-        # c2 = self.YAxis.home_async()
-        # c3 = self.XAxis.home_async()
-        # c4 = self.ZAxis.home_async()
-
-        # wait_all(c1, c2, c3, c4)
-        return
+            device_list = connection.detect_devices()
+            print("Found {} devices".format(len(device_list)))
+        
+        except Exception as e:
+            print(e)
+            print(f"Could not connect to {self.COMPort}")
+            self.connectionStatus = False
+        
+        return device_list
 
     def getPositions(self):
         """
@@ -106,11 +86,11 @@ class ZaberAxes():
         positions = {"X": 0, "Y": 0, "Z": 0, "M": 0}
 
         for axis in positions.keys():
-            positions[axis] = self.getAxisPosition(axis)
+            positions[axis] = self.get_position(axis)
         return positions
 
 
-    def getAxisPosition(self, axis_name:str) -> float:
+    def get_position(self, axis_name:str) -> float:
         """
         Get the current position of a specific axis.
 
@@ -123,11 +103,11 @@ class ZaberAxes():
         Raises:
             AttributeError: If the axis does not exist.
         """
-        axis = getattr(self, f"{axis_name}Axis")
+        axis:Axis = getattr(self, f"{axis_name}Axis")
 
         return axis.get_position(Units.LENGTH_MILLIMETRES)
 
-    def home_all(self):
+    def home(self):
         """
         Home all axes.
             (CURRENTLY DISABLED FOR METER LONG AXIS)
@@ -135,13 +115,13 @@ class ZaberAxes():
         Returns:
             None
         """
-        # c1 = self.MAxis.home_async()
-        c2 = self.YAxis.home_async()
-        c3 = self.XAxis.home_async()
-        c4 = self.ZAxis.home_async()
 
-        # wait_all(c1, c2, c3, c4)
-        wait_all(c2, c3, c4)
+        wait_all(
+            self.YAxis.home_async(),
+            self.XAxis.home_async(),
+            self.ZAxis.home_async()
+        )
+
         return
     
     def scroll(self, distance:int, velocity:int):
@@ -161,6 +141,42 @@ class ZaberAxes():
         '''
         self.ZAxis.move_relative(-layer_height, Units.LENGTH_MILLIMETRES)
         return
+    
+    def increment_lateral(self, distance:int):
+        '''
+        Increment the X axis by a given distance.
+        Units are in mm.
+        '''
+        self.XAxis.move_relative(distance, Units.LENGTH_MILLIMETRES)
+        return
+    
+    def to_point(self, x:int, y:int, z:int):
+        '''
+        Move the axes to a given point asynchronously.
+        Units are in mm.
+        '''
+        wait_all(
+            self.XAxis.move_absolute_async(x, Units.LENGTH_MILLIMETRES),
+            self.YAxis.move_absolute_async(y, Units.LENGTH_MILLIMETRES),
+            self.ZAxis.move_absolute_async(z, Units.LENGTH_MILLIMETRES)
+        )
+
+        return
+    
+    def park(self):
+        '''
+        Park all axes in preperation for powering off.
+        When powered back on, the axes will not need to be homed.
+        '''
+
+        wait_all(
+            *[axis.park_async() for axis in self.axes]
+        )
+        
+        return
+    
+    
+
     
 
     
