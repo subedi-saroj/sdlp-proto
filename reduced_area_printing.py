@@ -106,7 +106,7 @@ The overall process is as follows:
 # # Step 4: Stitch the images together
 # grayscale_strip.image.paste(right_strip_images, (0, FULL_HEIGHT * FACTOR))
 
-# # Step 5: Upload the stitched image to the projector
+# Step 5: Upload the stitched image to the projector
 projector = Projector(IP, DATA_PORT, IMAGE_DATA_PORT)
 
 # projector.check_connection()
@@ -123,17 +123,24 @@ projector.send_sequencer(sequencer)
 import axes
 from zaber_motion import Units, wait_all
 
+input("Press Enter to start the projector and axes...")
 zaber_axes = axes.ZaberAxes("COM3")
-# zaber_axes.home_all()
+#zaber_axes.home()
 
-zaber_axes.ZAxis.move_absolute(150, Units.LENGTH_MILLIMETRES)
+zaber_axes.ZAxis.move_absolute(100, Units.LENGTH_MILLIMETRES)
 zaber_axes.XAxis.move_absolute(60, Units.LENGTH_MILLIMETRES)
 zaber_axes.YAxis.move_absolute(30, Units.LENGTH_MILLIMETRES)
 
 LAYER_HEIGHT = 0.5
-LAYERS = 3
-SCROLLING_VELOCITY = 1.7 # mm/s
-SCROLLING_DIST = 18 # mm
+LAYERS = 1
+
+#
+# THESE ARE CAREFULLY CALIBRATED VALUES
+#
+SCROLLING_VELOCITY = 1.8 # mm/s
+SCROLLING_DIST = 23.2 # mm
+#
+
 projector.start_sequencer()
 
 for i in range(LAYERS):
@@ -141,6 +148,5 @@ for i in range(LAYERS):
     zaber_axes.scroll(-SCROLLING_DIST, SCROLLING_VELOCITY)
     zaber_axes.increment_layer(LAYER_HEIGHT)
 
-input("Done printing. Press Enter to stop the sequencer...")
 projector.stop_sequencer()
 
