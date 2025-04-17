@@ -99,7 +99,7 @@ Add             MemStartRow ScrollRow                   1
 Add             MemStartRow LateralOffset               1
 LoadRow         DmdStartRow LoadRows Inum MemStartRow   200
 Add             LoopCount 1                             1
-JumpIf          LoopCount < Factor grayloopB2            1
+JumpIf          LoopCount < Factor grayloopB2           1
 #
 # Reset variables and jump back to start
 AssignVar       MemStartRow 0                           1

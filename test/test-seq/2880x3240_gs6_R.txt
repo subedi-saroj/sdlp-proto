@@ -1,0 +1,61 @@
+#--------------------------------------------------------------
+#Command        Parameters					Waitfor
+#--------------------------------------------------------------
+AssignVar       TotalRows   3240                        1
+AssignVar       ScrollRow   0                           1
+AssignVar       LoopCount   0                           1   
+AssignVar       MemStartRow 0                           1
+AssignVar       Factor      6                           1
+AssignVar       Inum        0                           1
+AssignVar       DmdStartRow 0                           1
+AssignVar       LoadRows    1079                        1
+# Variable that controls how many rows are skipped per grayscale loop
+AssignVar       NoOfRows    0                           1
+Add             NoOfRows    TotalRows                   1
+Add             NoOfRows    -1080                       1
+# Placeholder for Zero
+AssignVar      Zero        0                            1
+#
+# -------------scroll forward, strip 1 ------------------
+Label           scrollforward                           1
+Label           grayloopA                               1
+Trig            0 4                                     0
+ResetGlobal                                             40
+LightPulseWord  15                                      1
+Mult            MemStartRow LoopCount TotalRows         1
+Add             MemStartRow ScrollRow                   1 
+LoadRow         DmdStartRow LoadRows Inum MemStartRow   200
+Add             LoopCount 1                             1
+JumpIf          LoopCount < Factor grayloopA            1
+#
+# Reset variables and jump back to start
+AssignVar       MemStartRow 0                           1
+AssignVar       LoopCount   0                           1
+Add             ScrollRow   1                           1
+JumpIf          ScrollRow < NoOfRows scrollforward      1
+# ------------------------------------------------------------
+# Iniate variables for scroll back
+AssignVar       ScrollRow   0                           1
+Add             ScrollRow   NoOfRows                    1
+#
+#---------------scroll back, strip 1 -----------------------
+#
+Label           scrollback                              1
+Label           grayloopB                               1
+Trig            0 4                                     0
+ResetGlobal                                             40
+LightPulseWord  15                                      1
+Mult            MemStartRow LoopCount TotalRows         1
+Add             MemStartRow ScrollRow                   1
+LoadRow         DmdStartRow LoadRows Inum MemStartRow   200
+Add             LoopCount 1                             1
+JumpIf          LoopCount < Factor grayloopB            1
+#
+# Reset variables and jump back to start
+AssignVar       MemStartRow 0                           1
+AssignVar       LoopCount   0                           1
+Add             ScrollRow   -1                          1
+Add             MemStartRow ScrollRow                   1
+JumpIf          ScrollRow > Zero scrollback             1
+AssignVar       ScrollRow   0                           1
+Jump            scrollforward                           1

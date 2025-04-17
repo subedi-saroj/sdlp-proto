@@ -132,11 +132,10 @@ class Projector:
 
         for msg in init_messages:
             reply = self.send(msg.bytes())
-            print(msg.reply(reply[0]))
 
         for packet in packets:
             reply = self.send(packet)
-            print(msg.reply(reply[0]))
+
             
         self.send(records.SetSequencerState(2, False).bytes())
 

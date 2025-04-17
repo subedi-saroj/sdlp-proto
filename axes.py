@@ -139,7 +139,9 @@ class ZaberAxes():
         Increment the Z axis by a given layer height.
         Units are in mm.
         '''
-        self.ZAxis.move_relative(-layer_height, Units.LENGTH_MILLIMETRES)
+
+        # I have set this at a slow speed to compensate for material suction from resin path into print area
+        self.ZAxis.move_relative(-layer_height, Units.LENGTH_MILLIMETRES, True, 0.5, Units.VELOCITY_MILLIMETRES_PER_SECOND)
         return
     
     def increment_lateral(self, distance:int):
