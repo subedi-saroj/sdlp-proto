@@ -4,7 +4,7 @@ from lux4600.img import Strip
 from lux4600.seq import Sequencer
 from lux4600.grayscale import split_image, multiply_image, stitch_images
 from PIL import Image
-import time
+import time, sys
 
 '''
 Author: David Alexander
@@ -54,7 +54,7 @@ def preprocess_grayscale_image():
     FACTOR = 6 # grayscale multiplication factor
 
     # Step 0: Load the grayscale image
-    full_grayscale_image = Image.open(r"test\test-dogbone\2880x3240_dogbone_DIAG.bmp")
+    full_grayscale_image = Image.open(r"test\test-dogbone\2880x3240_dogbone_VERT.bmp")
 
     # Step 1: Split the image into strips
     left_strip = Image.new('L', (GS_STRIP_WIDTH, FULL_HEIGHT), 0)  # 'L' mode ensures 8-bit grayscale
@@ -111,10 +111,10 @@ projector = Projector(IP, DATA_PORT, IMAGE_DATA_PORT)
 
 projector.check_connection()
 
-# Comment this out if image has already been uploaded since 
-# the projector was last powered on to save time.
-grayscale_strip = preprocess_grayscale_image()
-projector.send_strip(grayscale_strip)
+# # Comment this out if image has already been uploaded since 
+# # the projector was last powered on to save time.
+# grayscale_strip = preprocess_grayscale_image()
+# projector.send_strip(grayscale_strip)
 
 # Step 6: Create the sequencer files for left and right strips
 sequencers = [
@@ -138,8 +138,8 @@ zaber_axes.ZAxis.move_absolute(Z_START, Units.LENGTH_MILLIMETRES)
 zaber_axes.XAxis.move_absolute(X_START, Units.LENGTH_MILLIMETRES)
 zaber_axes.YAxis.move_absolute(Y_START, Units.LENGTH_MILLIMETRES)
 
-LAYER_HEIGHT = 0.5
-LAYERS = 8
+LAYER_HEIGHT = 0.4
+LAYERS = 6
 
 # Set LED driver amplitude to 1500 (0 TO 4095)
 # Ensure water cooling system is functional if amplitude > 100
@@ -176,3 +176,5 @@ for i in range(LAYERS):
 
     zaber_axes.increment_layer(LAYER_HEIGHT)
 
+zaber_axes.ZAxis.move_absolute(30, Units.LENGTH_MILLIMETRES)
+projector.send(records.SetLedDriverAmplitude(0, 100).bytes()) # Set LED amplitude back to 100
