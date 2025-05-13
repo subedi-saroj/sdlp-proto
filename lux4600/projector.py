@@ -56,7 +56,7 @@ class Projector:
         print("Connection successful!")
         return True
     
-    def send_strip(self, strip:Strip):
+    def send_strip(self, strip:Strip, lines_per_packet:int=6):
         """Sends an image to the projector to be stored at position inum.
 
         Args:
@@ -84,7 +84,7 @@ class Projector:
             print(msg.reply(reply[0]))
 
         # Send image
-        packets = strip.to_packets(lines_per_packet=6) # TODO
+        packets = strip.to_packets(lines_per_packet) # TODO
         
         count = 0 # TODO: get rid of this BS variable. Need something cleaner
 

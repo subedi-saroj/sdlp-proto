@@ -1,0 +1,16 @@
+#--------------------------------------------------------------
+#Command        Parameters					Waitfor
+#--------------------------------------------------------------
+AssignVar       MemStartRow 0                           1
+AssignVar       Inum        0                           1
+AssignVar       DmdStartRow 0                           1
+AssignVar       NoOfRows    1079                        1
+#  
+#--------------------------------------------------------------
+# Scroll forward
+Label           resetAll                           1
+Trig            0 4                                     0
+ResetGlobal                                             40
+LightPulseWord  15                                      1
+LoadRow         DmdStartRow NoOfRows Inum MemStartRow   200
+Jump            resetAll                                1

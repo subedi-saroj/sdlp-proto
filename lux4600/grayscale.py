@@ -70,16 +70,16 @@ def stitch_images(images:Iterator[Image.Image], stitched_height) -> Image.Image:
 
 if __name__ == '__main__':
         
-    file_path = r"..\test\test-grayscale\1920x4320_gs10_A.bmp"
+    file_path = r"..\test\test-grayscale\1920x1080_gs10_static.bmp"
 
     strip_width = 1920
 
     with Image.open(file_path) as img:   
 
         imgs = multiply_image(img, 10)
-        strip = stitch_images(imgs)
+        strip = stitch_images(imgs, 1080 * 10)
         print(strip.size)
-        strip.save(r"..\test\test-grayscale\1920x4320_gs10_A_stitched.bmp")
+        strip.save(r"..\test\test-grayscale\1920x1080_gs10_static_stitched.bmp")
             
 
 
