@@ -49,7 +49,10 @@ def preprocess_grayscale_image():
     FULL_HEIGHT = 3240 # height of pre-processed grayscale image
 
     GS_STRIP_WIDTH = 1920 # width of each strip
-    OVERLAP = 960 # overlap between the two strips
+    # OVERLAP = 960 # overlap between the two strips
+    OVERLAP = GS_STRIP_WIDTH * 2 - FULL_WIDTH
+
+    # FULL_WIDTH = GS_STRIP_WIDTH * 2 - OVERLAP
 
     FACTOR = 6 # grayscale multiplication factor
 
