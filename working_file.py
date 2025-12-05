@@ -165,7 +165,7 @@ for i in range(LAYERS):
     grayscale_strip = preprocess_grayscale_image(r"test\test-dogbone\2880x3240_dogbone_VERT.bmp")
     projector.send_strip(grayscale_strip)  # Re-send the image to ensure no data loss
 
-    # projector.send(records.SetLedDriverAmplitude(0, 1500).bytes())  # Ensure LED amplitude is set
+    projector.send(records.SetLedDriverAmplitude(0, 1500).bytes())  # Ensure LED amplitude is set
 
     zaber_axes.XAxis.move_absolute(X_START, Units.LENGTH_MILLIMETRES)
 
