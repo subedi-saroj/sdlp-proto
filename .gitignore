@@ -13,3 +13,6 @@ __pycache__
 
 # Word docs
 *.docx
+
+# .vscode
+.vscode/
