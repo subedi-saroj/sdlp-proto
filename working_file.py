@@ -114,10 +114,10 @@ projector = Projector(IP, DATA_PORT, IMAGE_DATA_PORT)
 
 projector.check_connection()
 
-# Comment this out if image has already been uploaded since 
-# the projector was last powered on to save time.
-grayscale_strip = preprocess_grayscale_image()
-projector.send_strip(grayscale_strip)
+# # Comment this out if image has already been uploaded since 
+# # the projector was last powered on to save time.
+# grayscale_strip = preprocess_grayscale_image()
+# projector.send_strip(grayscale_strip)
 
 # Step 6: Create the sequencer files for left and right strips
 sequencers = [
@@ -133,7 +133,7 @@ input("Press Enter to start the projector and axes...")
 zaber_axes = axes.ZaberAxes("COM3")
 # zaber_axes.home()
 
-Z_START = 150 # mm, initial z position
+Z_START = 100 # mm, initial z position
 X_START = 60 # mm, initial x position
 Y_START = 50 # mm, initial y position
 

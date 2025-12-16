@@ -1,6 +1,6 @@
 from PIL import Image
 from typing import Iterator
-import grayscale
+from . import grayscale
 
 
 class Strip:
@@ -26,7 +26,7 @@ class Strip:
         """
         self.image = image
 
-        self.image = self.image.convert("1") # Convert to 1-bit bmp
+        self.image = self.image.convert("1", dither=Image.NONE) # Convert image to 1-bit mode with no dithering
 
         self.width, self.height = self.image.size
         self.inum = inum

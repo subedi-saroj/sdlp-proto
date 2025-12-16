@@ -1,9 +1,9 @@
 import socket
 import struct
-import records
-from img import Strip
-from seq import Sequencer
-from rle import encode_rle_image_type5
+from . import records
+from .img import Strip
+from .seq import Sequencer
+from .rle import encode_rle_image_type5
 import time
 
 
@@ -204,6 +204,11 @@ class Projector:
                 # Progress indicator every 100 packets
                 if packets_sent % 100 == 0:
                     print(f"  Sent {packets_sent} packets ({packets_sent * 100 // len(encoded_rows)}%)")
+
+                # Gentle throttle to reduce UDP loss/reordering on some networks
+                # Gentle throttle to reduce UDP loss/reordering on some networks
+                if packets_sent % 50 == 0:
+                    time.sleep(0.03)
 
             except socket.error as e:
                 print(f"Socket error sending packet {seq_no}: {e}")
