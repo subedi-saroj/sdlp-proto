@@ -29,9 +29,10 @@ def main():
 	
 	print(f"Uploading {width}x{height} image to inum 0...")
 	
-	# Upload using uncompressed Type 4
-	strip = Strip(test_image, 0)
-	projector.send_strip(strip, lines_per_packet=6)
+	# # Upload using uncompressed Type 4
+	# strip = Strip(test_image, 0)
+	# projector.send_strip(strip, lines_per_packet=6)
+	projector.send_image_rle(test_image, width=width, height=height, inum=0)
 	
 	print("Image upload complete. Starting sequencer...")
 	

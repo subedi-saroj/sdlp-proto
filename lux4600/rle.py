@@ -42,8 +42,8 @@ class RLEDescriptor:
             # RLE mode: bits 15=1, 14=data, 13:11=transition, 10:0=run_length
             word = (1 << 15) | (self.data << 14) | (self.transition << 11) | self.run_length
         else:
-            # RAW mode: bits 15=0, 7:0=data
-            word = self.data & 0xFF
+            # RAW mode: bits 15=0, bits 14:0=block length (number of raw bytes that follow)
+            word = self.run_length & 0x7FFF
         
         # Big-endian 16-bit word
         return struct.pack('>H', word)
@@ -65,64 +65,80 @@ class RLEDescriptor:
 
 def encode_rle_row_type5(line_data: bytes, width: int) -> bytes:
     """
-    Encode a single binary row using Visitech RLE Type 5 format (lb4k6).
+    Encode a single binary row using Visitech RLE Type 5 (lb4k6) bit-level format.
     
-    This format uses 16-bit descriptors to encode run-length and raw data.
-    RLE terminates at row boundaries.
+    Type 5 RLE format chains bit-run pairs across the entire row. Each 16-bit descriptor 
+    encodes TWO consecutive runs:
+      - Bit 0: data A (0 or 1)
+      - Bits 10-1: run length A (in BITS)
+      - Bit 11: data B
+      - Bits 15-12: run length B (in BITS)
     
-    Format (16-bit word, big-endian):
-        Bit 15    : RLE flag (1=RLE, 0=RAW)
-        Bit 14    : Data value (RLE only)
-        Bits 13:11: Transition position (RLE only) - position within byte
-        Bits 10:0 : Run length in bytes (RLE) or raw byte value (RAW)
+    Descriptors chain: bits flow from one descriptor to the next until the row 
+    is complete (1920 bits). The last descriptor ends exactly at row boundary.
     
     Args:
         line_data: Binary row data (width/8 bytes)
-        width: Pixel width (for validation)
+        width: Pixel width (for validation, typically 1920)
     
     Returns:
-        RLE-encoded row as bytes (multiple 16-bit descriptors)
+        RLE-encoded row as bytes (chained 16-bit descriptors)
     """
     bytes_per_line = width // 8
     if len(line_data) != bytes_per_line:
         raise ValueError(f"Expected {bytes_per_line} bytes, got {len(line_data)}")
     
+    # Convert bytes to bit array (MSB first)
+    bit_array = np.unpackbits(np.frombuffer(line_data, dtype=np.uint8), bitorder='big')
+    
     encoded = bytearray()
+    bit_pos = 0
     
-    # Convert bytes to bit array
-    bit_array = np.unpackbits(np.frombuffer(line_data, dtype=np.uint8))
-    
-    i = 0
-    while i < len(bit_array):
-        current_bit = bit_array[i]
+    while bit_pos < len(bit_array):
+        # Read first run (full length, no cap yet)
+        current_bit = bit_array[bit_pos]
+        run_length_a_full = 0
+        temp_pos = bit_pos
+        while temp_pos < len(bit_array) and bit_array[temp_pos] == current_bit:
+            run_length_a_full += 1
+            temp_pos += 1
         
-        # Count consecutive bits of same value
-        run_length_bits = 1
-        while (i + run_length_bits < len(bit_array) and 
-               bit_array[i + run_length_bits] == current_bit):
-            run_length_bits += 1
+        data_a = current_bit & 1
         
-        # Convert run length from bits to bytes
-        # transition position = where in byte the bit changes
-        start_byte = i // 8
-        end_bit_pos = (i + run_length_bits - 1) % 8
-        run_length_bytes = (i + run_length_bits + 7) // 8 - start_byte
-        transition_pos = end_bit_pos  # Position of last bit within byte
+        # Cap run_length_a to 10 bits (max 1023)
+        run_length_a = min(run_length_a_full, 1023)
+        bit_pos += run_length_a  # Advance by actual encoded length
         
-        if run_length_bytes > 0:
-            # Use RLE mode if we have multiple bytes or significant run
-            if run_length_bytes >= 2 or run_length_bits >= 8:
-                descriptor = RLEDescriptor(True, current_bit, transition_pos, run_length_bytes)
-                encoded.extend(descriptor.to_bytes())
-                i += run_length_bits
-            else:
-                # Use RAW mode for very short runs
-                raw_byte = line_data[start_byte]
-                descriptor = RLEDescriptor(False, raw_byte)
-                encoded.extend(descriptor.to_bytes())
-                i += min(8, len(bit_array) - i)
+        # Read second run (if any bits remain and we used full run_a)
+        if bit_pos < len(bit_array) and run_length_a == run_length_a_full:
+            current_bit = bit_array[bit_pos]
+            run_length_b_full = 0
+            temp_pos = bit_pos
+            while temp_pos < len(bit_array) and bit_array[temp_pos] == current_bit:
+                run_length_b_full += 1
+                temp_pos += 1
+            
+            data_b = current_bit & 1
+            # Cap run_length_b to 4 bits (max 15)
+            run_length_b = min(run_length_b_full, 15)
+            bit_pos += run_length_b  # Advance by actual encoded length
         else:
-            break
+            run_length_b = 0
+            data_b = 0
+        
+        # Pack into 16-bit descriptor:
+        # Bit 0: data_a
+        # Bits 10-1: run_length_a (10 bits)
+        # Bit 11: data_b
+        # Bits 15-12: run_length_b (4 bits)
+        word = (
+            (data_a & 1) |
+            ((run_length_a & 0x3FF) << 1) |
+            ((data_b & 1) << 11) |
+            ((run_length_b & 0x0F) << 12)
+        )
+        
+        encoded.extend(struct.pack('<H', word))
     
     return bytes(encoded)
 
