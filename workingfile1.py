@@ -2,18 +2,15 @@ from lux4600 import *
 from lux4600.projector import Projector
 from lux4600.img import Strip
 from lux4600.seq import Sequencer
-from lux4600.grayscale import stitch_images
 from PIL import Image
 import time, sys
 
 '''
 Author: David Alexander
 Date: 2025-12-05
-Last updated: 2025-12-05
+Last updated: 2025-12-16
 
-This script shows an example print for the reduced area printing process.
-It is a simplified version of the scrolling grayscale print, where only one grayscale
-strip is used in every layer.
+This script demonstrates 4-bit weighted grayscale printing with separate left/right bitplane uploads.
 
 The overall process is as follows:
     0. Before running this script, create an image 2880x3240 pixels in size.
@@ -24,24 +21,26 @@ The overall process is as follows:
     1. The image is split into two grayscale strips of 1920 pixels wide and 3240 rows tall. 
         - GS_STRIP_WIDTH = 1920
         - GS_STRIP_HEIGHT = FULL_HEIGHT
-       There will be an overlap of 960 pixels between the strips. (1920 * 2 = 2880 = 960 * 3)
+       There will be an overlap of 960 pixels between the strips.
         - OVERLAP = 960
 
     2. The two grayscale strips are "scaled" over the overlap, so that the sum of the two overlap
         regions is equal to the original value. 
-    3. The strips are then multiplied by 6 to create 6 grayscale images.
-        - FACTOR = 6
+    
+    3. Each strip is converted to 4 weighted bitplanes (binary 1/2/4/8 representation).
+        - BITPLANES = 4 (16 grayscale levels)
 
-    4. The grayscale images are stitched together to create a single image.
-    5. The stitched image is then uploaded to the projector.
-    6. The sequencer is then created and uploaded to the projector.
-    TODO
-    7. The projector and axes are started simulteanously for a single layer.
-    8. The projector and X-Y axes are stopped after the layer is complete. Z axes increments.
-        - LAYER_HEIGHT = 0.5 (mm)
+    4. Left bitplanes are uploaded to inums 0, 1699, 3398, 5097
+       Right bitplanes are uploaded to inums 6876, 8575, 10274, 11973
+    
+    5. Sequencer loads from these inums to display left and right simultaneously.
+    
+    6. The projector and axes are started simultaneously for a single layer.
+    7. The projector and X-Y axes are stopped after the layer is complete. Z axes increments.
+        - LAYER_HEIGHT = 0.4 (mm)
 
-    --> Repeat steps 6 and 7 for some number of layers.
-        - LAYERS = 5
+    --> Repeat for some number of layers.
+        - LAYERS = 6
 '''
 def preprocess_grayscale_image(filepath):
     # Constants
@@ -49,10 +48,7 @@ def preprocess_grayscale_image(filepath):
     FULL_HEIGHT = 3240 # height of pre-processed grayscale image
 
     GS_STRIP_WIDTH = 1920 # width of each strip
-    # OVERLAP = 960 # overlap between the two strips
     OVERLAP = GS_STRIP_WIDTH * 2 - FULL_WIDTH
-
-    # FULL_WIDTH = GS_STRIP_WIDTH * 2 - OVERLAP
 
     BITPLANES = 4 # number of weighted bitplanes (4 -> 16 levels)
 
@@ -102,38 +98,29 @@ def preprocess_grayscale_image(filepath):
         gray = img.convert('L')
         scaled = gray.point(lambda p: p >> 4)  # Scale 0-255 to 0-15 for 4 bits
         planes = []
-        for bit in range(bits):  # bit 0 = LSB, bit 3 = MSB
+        for bit in range(bits):  # bit 0 = LSB (weight 1), bit 3 = MSB (weight 8)
             planes.append(scaled.point(lambda p, b=bit: 255 if ((p >> b) & 1) else 0))
         return planes
 
-    left_strip_images = bitplane_images(left_strip, BITPLANES)
-    grayscale_strip = Strip(stitch_images(left_strip_images, FULL_HEIGHT * BITPLANES * 2), 0)
+    left_planes = bitplane_images(left_strip, BITPLANES)
+    right_planes = bitplane_images(right_strip, BITPLANES)
 
-    right_strip_images = bitplane_images(right_strip, BITPLANES)
-    right_strip_images = stitch_images(right_strip_images, FULL_HEIGHT * BITPLANES)
+    # Return both left and right plane lists (NOT stitched together)
+    return (left_planes, right_planes)
 
-    # Step 4: Stitch the images together
-    grayscale_strip.image.paste(right_strip_images, (0, FULL_HEIGHT * BITPLANES))
-
-    return grayscale_strip
-
-# Step 5: Upload the stitched image to the projector
+# Step 4: Initialize the projector
 projector = Projector(IP, DATA_PORT, IMAGE_DATA_PORT)
 
 projector.check_connection()
 
-# # Comment this out if image has already been uploaded since 
-# # the projector was last powered on to save time.
-# grayscale_strip = preprocess_grayscale_image()
-# projector.send_strip(grayscale_strip)
+# Constants for inum spacing
+STEP_INUM = 1699  # From seq file: bitplane spacing
+BITPLANES = 4
 
-# Step 6: Create the sequencer files for left and right strips
-sequencers = [
-        seq.Sequencer(r"test\test-seq\2880x3240_gs6_R.txt", 1440),
-        seq.Sequencer(r"test\test-seq\2880x3240_gs6_L.txt", 1440)
-]
+# Step 5: Create sequencer for 4-bit weighted bitplanes
+sequencer = seq.Sequencer(r"test\test-seq\seq_scroll_4bit_gray_visitech.txt", 1440)
 
-# TODO: Step 7: Start the projector and axes simultaneously for a single layer
+# Step 6: Start the projector and axes simultaneously for a single layer
 import axes
 from zaber_motion import Units, wait_all
 
@@ -170,14 +157,28 @@ for i in range(LAYERS):
 
     print(f"Layer {i+1} out of {LAYERS}")
 
-    grayscale_strip = preprocess_grayscale_image(r"test\test-dogbone\2880x3240_dogbone_VERT.bmp")
-    projector.send_strip(grayscale_strip)  # Re-send the image to ensure no data loss
+    left_planes, right_planes = preprocess_grayscale_image(r"test\test-dogbone\2880x3240_dogbone_VERT.bmp")
+    
+    # Upload left bitplanes to inums 0, 1699, 3398, 5097
+    print("Uploading left bitplanes...")
+    for bit in range(BITPLANES):
+        inum = bit * STEP_INUM
+        strip = Strip(left_planes[bit], 0)
+        projector.send_strip(strip, inum=inum)
+    
+    # Upload right bitplanes to inums 6876, 8575, 10274, 11973 (offset by 4 * STEP_INUM)
+    print("Uploading right bitplanes...")
+    for bit in range(BITPLANES):
+        inum = (BITPLANES + bit) * STEP_INUM
+        strip = Strip(right_planes[bit], 0)
+        projector.send_strip(strip, inum=inum)
 
     projector.send(records.SetLedDriverAmplitude(0, 1500).bytes())  # Ensure LED amplitude is set
 
     zaber_axes.XAxis.move_absolute(X_START, Units.LENGTH_MILLIMETRES)
 
-    projector.send_sequencer(sequencers[0])  # Alternate between left and right sequencers
+    # projector.send_sequencer(sequencers[0])  # Alternate between left and right sequencers
+    projector.send_sequencer(sequencer)
     projector.start_sequencer()
 
     zaber_axes.scroll(SCROLLING_DIST, SCROLLING_VELOCITY)
@@ -185,7 +186,7 @@ for i in range(LAYERS):
 
     projector.stop_sequencer()
     zaber_axes.increment_lateral(LATERAL_INCREMENT)
-    projector.send_sequencer(sequencers[1])
+    # projector.send_sequencer(sequencers[1])
     projector.start_sequencer()
 
     zaber_axes.scroll(SCROLLING_DIST, SCROLLING_VELOCITY)

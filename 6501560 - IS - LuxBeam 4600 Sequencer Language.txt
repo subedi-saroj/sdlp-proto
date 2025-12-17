@@ -1,0 +1,975 @@
+Document Template:
+026-T – General Document - Template
+Template Rev:
+
+Date:
+
+A Author:
+
+OB
+
+14.09.2016 Rev:
+
+J
+
+Page:
+
+1 of 15
+
+6501560 - IS – Luxbeam 4600 Sequencer Language
+
+Document Title:
+
+Interface Specification – Luxbeam 4600 Sequencer Language
+
+Rev:
+
+Description:
+
+Written:
+
+Checked:
+
+Date:
+
+Sign:
+
+A
+
+First version.
+
+08.11.2012
+
+OB
+
+B
+
+Updated to new version of language
+
+12.12.2012
+
+OB
+
+C
+
+Added AssignVarReg
+
+20.12.2012
+
+OB
+
+D
+
+Added DeclareLabel
+
+12.07.2013
+
+OB
+
+E
+
+Some minor changes.
+
+07.08.2013
+
+OB
+
+F
+
+Added «Delayed Trig» trig source. Added Tirggering Options. Updated Timing
+Constraints
+
+06.03.2014 OB/JD
+
+G
+
+Adjusted «Wait» command to 16-bit wait-time. Control-gpio bit 1 shows the
+LED-on signal.
+
+06.05.2014
+
+OB
+
+H
+
+Added SetMaskImage
+
+04.02.2015
+
+BV
+
+I
+
+Added ClearGlobal
+
+12.09.2016
+
+OB
+
+J
+
+Reduced minimum ticks for ClearGlobal from 16 to 6 ticks
+
+14.09.2016
+
+OB
+
+K
+
+AssignVar extended to take constants and variables.
+Added logic operations And, Or, Xor and Not
+
+09.10.19
+
+HS
+
+Date:
+
+Sign:
+
+This document is the property of VISITECH AS and may not be reproduced or disclosed to any party without written consent.
+
+Approved:
+Date:
+
+Sign:
+
+Document Template:
+026-T – General Document - Template
+Template Rev:
+
+Date:
+6501560 - IS – Luxbeam 4600 Sequencer Language
+
+A Author:
+
+OB
+
+14.09.2016 Rev:
+
+J
+
+Page:
+
+2 of 15
+
+Table of Contents
+1 Sequencer Language .........................................................................................................................................3
+1.1 Table of commands........................................................................................................................................4
+1.2 Timing constraints........................................................................................................................................13
+1.3 Triggering options .......................................................................................................................................14
+
+This document is the property of VISITECH AS and may not be reproduced or disclosed to any party without written consent.
+
+Document Template:
+026-T – General Document - Template
+Template Rev:
+
+Date:
+
+A Author:
+
+OB
+
+14.09.2016 Rev:
+
+J
+
+Page:
+
+3 of 15
+
+6501560 - IS – Luxbeam 4600 Sequencer Language
+
+1 Sequencer Language
+The sequencer language is case sensitive.
+The sequence contents should be saved to a text-file.
+Each command must be written on a single line in the text-file.
+Commands and arguments on a single line must be separated by one or more spaces or tabs.
+Empty lines are ignored.
+Comments can be put on separate lines or after a command with arguments. A comment starts with the
+character '#' and is ignored by the parser.
+Arguments that are numbers may be written in decimal or hex. Hex number must be prefixed with «0x», eg. the
+decimal number 100 is written as «0x64». Negative numbers (valid for the «Add»-command only) is written as
+decimal, eg. «-10».
+The sequence file is uploaded to the board using UDP commands described in 6501560 – IS – Luxbeam 4600
+Software Interface.
+Most sequencer commands have a last argument, WAITFOR. This is used to indicate how many ticks should
+elapse before the next command is executed. All commands take a minimum of 1 tick (ClearAll must have
+minimum 16 tics), hence 1 is the smallest allowable value for WAITFOR. One tick = 250 ns.
+Note that the last line in a sequence file must be a «Jump» or «JumpIf» command.
+
+This document is the property of VISITECH AS and may not be reproduced or disclosed to any party without written consent.
+
+1.1 Table of commands
+The following table lists all available commands and their parameters.
+Note that parameters that are expected to have a number (N) as input, may be replaced by an alias name. This requires that the alias has been defined using the
+command «Alias» before referring to it. Parameters that can have a variable (V) as input must have the variable assigned using «AssignVar» or «AssignVarReg»
+before using the variable.
+
+Load-commands
+Load contents to DMD memory (not effectuated to the DMD-mirrors)
+Parameters
+Command
+LoadGlobal
+
+Name
+INUM
+WAITFOR
+
+mem
+ticks
+
+Description
+
+Number (N) or
+variable (V)
+
+Descr
+V
+N
+
+Load the complete image from inum INUM to the DMD.
+For this command to work, the system setting INUM_SIZE must be set equal to DMD-SIZE.
+INUM may be a predefined variable (V).
+0 <= INUM <= 65535
+1 <= WAITFOR <= 65535
+
+LoadSingle
+
+GRP
+INUM
+WAITFOR
+
+DMD
+mem
+ticks
+
+N
+V
+N
+
+Load a single group, starting at GRP from inum INUM. The start location in the inum where the
+data is taken from is: inum_start + GRP*no_of_lines_per_group.
+For this command to work, the system setting INUM_SIZE must be set equal to DMD-SIZE.
+0 <= GRP <= 15 (1024x768 DMD) or
+0 <= GRP <= 14 (1920x1080 DMD and 1920x1200 DMD)
+INUM must be a predefined variable name (V).
+0 <= INUM <= 65535
+1 <= WAITFOR <= 65535
+
+LoadDual
+
+GRP
+INUM
+WAITFOR
+
+DMD
+mem
+ticks
+
+N
+V
+N
+
+Load two groups, starting at GRP from inum INUM. The start location in the inum where the data
+is taken from is: inum_start + GRP*2*no_of_lines_per_group.
+For this command to work, the system setting INUM_SIZE must be set equal to DMD-SIZE.
+INUM must be a predefined variable name (V).
+GRP can have values 0, 2, 4, 6, 8, 10, 12, 14
+0 <= INUM <= 65535
+1 <= WAITFOR <= 65535
+
+LoadRow
+
+ClearSingle
+
+DMD_START_ROW
+NO_OF_ROWS
+INUM
+MEM_START_ROW
+WAITFOR
+
+DMD
+size
+mem
+mem
+ticks
+
+V
+V
+V
+V
+N
+
+Load the given number of rows, NO_OF_ROWS from the row MEM_START_ROW of inum INUM to
+the DMDs row DMD_ROW_OFFSET.
+
+GRP
+WAITFOR
+
+DMD
+ticks
+
+N
+N
+
+Clear the DMD memory (fill with black) corresponding to the group GRP.
+
+All parameters, except for WAITFOR, are variables that must be predefined.
+0 <= DMD_START_ROW <= 1199 (1920x1200 DMD) or
+0 <= DMD_START_ROW <= 1079 (1920x1080 DMD) or
+0 <= DMD_START_ROW <= 767 (1024x768 DMD)
+1 <= NO_OF_ROWS <= 1199 (1920x1200 DMD) or
+1 <= NO_OF_ROWS <= 1079 (1920x1080 DMD) or
+1 <= NO_OF_ROWS <= 767 (1024x768 DMD)
+0 <= INUM <= 65535
+0 <= MEM_START_ROW <= (number of rows in system defined INUM_SIZE)
+1 <= WAITFOR <= 65535
+
+0 <= GRP <= 15 (1024x768 DMD) or
+0 <= GRP <= 14 (1920x1080 DMD and 1920x1200 DMD)
+1 < WAITFOR < 65365
+ClearGlobal
+
+WAITFOR
+
+ticks
+
+Clear the whole DMD memory (fill with black).
+6 <= WAITFOR <= 65365 (Note! The minimum TICKS is 6)
+
+Reset-commands
+(Not to be confused with traditional meaning of «reset»)
+Put the DMD mirrors into position given by contents of DMD memory.
+Parameters
+Command
+ResetGlobal
+
+Name
+WAITFOR
+
+Descr
+ticks
+
+Description
+
+Number (N) or
+variable (V)
+N
+
+Reset all groups, i.e. display the loaded contents on the DMD.
+1 <= WAITFOR <= 65365
+
+ResetSingle
+
+GRP
+WAITFOR
+
+DMD
+ticks
+
+N
+N
+
+Reset the group GRP, i.e. display the loaded contents of group GRP on the DMD.
+GRP must be a numerical value.
+0 <= GRP <= 15 (1024x768 DMD) or
+0 <= GRP <= 14 (1920x1080 DMD and 1920x1200 DMD)
+1 <= WAITFOR <= 65365
+
+ResetDual
+
+GRP
+WAITFOR
+
+DMD
+ticks
+
+N
+N
+
+Reset the dual group with start address GRP, i.e. display the loaded contents of the dual group starting at
+GRP on the DMD.
+GRP must be a numerical value.
+0 <= GRP <= 14, GRP can have values 0, 2, 4, 6, 8, 10, 12, 14
+1 <= WAITFOR <= 65365
+
+Assignment and flow control
+Parameters
+Command
+
+DeclareLabel
+
+Name
+LABEL
+
+Descr
+name
+
+Number (N)
+or variable
+(V)
+-
+
+Description
+
+This command is used to forward declare a label that is to be used later. This is necessary when
+using a «JumpIf» command that will jump forward to a label. This label needs to be declared using
+«DeclareLabel» before the «JumpIf» command.
+Max length of LABEL: 20 characters.
+Max number of labels: 32
+
+Label
+
+LABEL
+WAITFOR
+
+name
+ticks
+
+N
+
+Define a label which is used to jump to with the Jump command.
+LABEL must contain alphanumeric characters (a-z, A-Z) and may contain numbers (0-9). LABEL
+cannot start with a number.
+Max length of LABEL: 20 characters.
+Max number of labels: 32
+1 <= WAITFOR <= 65365
+
+AssignVar
+
+VAR
+VALUE/VAR_B
+WAITFOR
+
+name
+val/var
+ticks
+
+N/V
+N
+
+Define variable VAR and assign value VALUE or var VAR_B to it.
+If 2nd parameter is variable, VAR_B must be defined.
+VAR must contain alphanumeric characters (a-z, A-Z) and may contain numbers (0-9). VAR cannot
+start with a number. Max length of VAR: 20 characters.
+0 <= VALUE <= 65535
+(The actual range depends on where VAR is used).
+Max number of variables (including those assigned using AssignVarReg): 32
+1 <= WAITFOR <= 65365
+
+AssignVarReg
+
+VAR
+REGNO
+WAITFOR
+
+name
+val
+ticks
+
+N
+N
+
+Define variable VAR and assign it to a sequence register number (REGNO).
+VAR must contain alphanumeric characters (a-z, A-Z) and may contain numbers (0-9). VAR cannot
+start with a number. Max length of VAR: 20 characters.
+Max number of variables (including those assigned using AssignVar): 32
+0 <= REGNO <= 11
+The register (REGNO) can have its value modified later using UDP command «AssignSequenceReg».
+1 <= WAITFOR <= 65365
+
+Alias
+
+NAME
+VALUE
+
+name
+val
+
+N
+
+Create an alias: NAME = VALUE. Commands that take numerical values as parameters can replace
+the numerical value with NAME, making it possible to make a change in one place only and also
+making the sequence table more readable.
+NAME must contain alphanumeric chars (a-z, A-Z) and may contain numbers (0-9). NAME cannot
+start with a number.
+Max length of NAME: 20 characters.
+0 <= VALUE <= 65535
+(The actual range depends on where NAME is used).
+Max number of aliases: 64
+
+Add
+
+Mult
+
+And
+
+VAR_A
+VALUE/VAR_B
+WAITFOR
+
+var
+val/var
+ticks
+
+V
+N/V
+N
+
+Result: VAR_A = VAR_A + VALUE or VAR_A = VAR_A + VAR_B
+VAR_A must be defined. If 2nd parameter is variable, VAR_B must be defined.
+
+VAR_A
+VAR_B
+VAR_C
+WAITFOR
+
+var
+var
+var
+ticks
+
+V
+V
+V
+N
+
+Result is: VAR_A = VAR_B * VAR_C
+
+VAR_A
+VAR_B
+VAR_C
+WAITFOR
+
+var
+var
+var
+ticks
+
+V
+V
+V
+N
+
+Result is: VAR_A = VAR_B & VAR_C
+
+-32768 < VALUE < 32768
+1 <= WAITFOR <= 65365
+
+1 <= WAITFOR <= 65365
+
+1 <= WAITFOR <= 65365
+
+Or
+
+Xor
+
+Not
+
+ShiftLeft
+
+ShiftRight
+
+JumpIf
+
+VAR_A
+VAR_B
+VAR_C
+WAITFOR
+
+var
+var
+var
+ticks
+
+V
+V
+V
+N
+
+Result is: VAR_A = VAR_B | VAR_C
+
+VAR_A
+VAR_B
+VAR_C
+WAITFOR
+
+var
+var
+var
+ticks
+
+V
+V
+V
+N
+
+Result is: VAR_A = VAR_B ^ VAR_C
+
+VAR_A
+VAR_B
+WAITFOR
+
+var
+var
+ticks
+
+V
+V
+N
+
+Result is: VAR_A = ~VAR_B
+
+VAR
+NUMBITS
+WAITFOR
+
+var
+V
+no. of bits to shift N
+ticks
+N
+
+Shift the variable VAR NUMBITS bits to the left.
+
+VAR
+NUMBITS
+WAITFOR
+
+var
+V
+no. of bits to shift N
+ticks
+N
+
+Shift the variable VAR NUMBITS bits to the right.
+
+VAR_A
+OPERATOR
+VAR_B
+LABEL
+WAITFOR
+
+var
+op
+var
+label
+ticks
+
+Jump to a specific (labeled) location in the sequence if a condition is met. The condition is a
+comparison of two variables VAR_A and VAR_B based on the OPERATOR.
+
+V
+'<' or '>'
+V
+N
+
+1 <= WAITFOR <= 65365
+
+1 <= WAITFOR <= 65365
+
+1 <= WAITFOR <= 65365
+
+0 < NUMBITS < 3
+1 <= WAITFOR <= 65365
+
+0 < NUMBITS < 3
+1 <= WAITFOR <= 65365
+
+OPERATOR must be either a «less-than» sign (<) or a «greater-than» sign (>).
+If the condition is true, then jump to location LABEL, otherwise go to the next line in the sequence
+file.
+Note: The last line in a sequence file must be a «Jump» or «JumpIf» command.
+LABEL must be defined earlier with the Label command, while the variables VAR_A and VAR_B
+must be assigned earlier with the AssignVar command.
+1 <= WAITFOR <= 65365
+
+Jump
+
+LABEL
+WAITFOR
+
+label
+ticks
+
+N
+
+Jump to a specific (labeled) location in the sequence.
+Note: The last line in a sequence file must be a «Jump» or «JumpIf» command.
+LABEL must be defined earlier with the Label command.
+1 <= WAITFOR <= 65365
+
+Trig
+
+MODE
+SOURCE
+TIMEOUT
+
+mode
+source
+ticks
+
+N
+N
+N
+
+MODE can have the following values:
+0 = Positive edge triggering
+1 = Negative edge triggering
+2 = High level trigger
+3 = Low level trigger
+SOURCE is given as a 5-bit bitmask. Each source has its defined bit position and several sources can
+be combined:
+Bit 0 (binary 00001)= Electrical sync in
+Bit 1 (binary 00010)= Optical sync in
+Bit 2 (binary 00100)= Internal sync
+Bit 3 (binary 01000)= Software sync
+Bit 4 (binary 10000) = Delayed sync * (see chater 1.3 Triggering options )
+Examples:
+– Electrical sync in: SOURCE = 00001 (bin)= 1 (dec).
+– Electrical and internal sync in: SOURCE = 00101 (bin) = 5 (dec).
+0 <= TIMEOUT <= 65365
+0 is wait for sync (no timeout)
+o
+* The delayed sync source is set using UDP command «SetTrigSource».
+The actual delay is set using the UDP command «SetTrigDelay».
+Requires Positive edge triggering (MODE = 0)
+
+Wait
+
+VALUE
+
+VALUE =
++ base*222
++ waitfor/var
+
+N
+
+VALUE is composed of BASE and WAITFOR
+Base tells whether the wait is in terms of TICKS or Milliseconds
+0 => the wait is in terms of ticks
+1 => the wait is in terms of millisconds
+Waitfor
+1 <= WAITFOR <= 222-1 => Wait in TICKS or millisecons
+
+Output control
+Parameters
+Command
+LightSetWord
+
+Name
+VALUE
+WAITFOR
+
+Descr
+bit-pos
+ticks
+
+Description
+
+Number (N) or
+variable (V)
+N
+N
+
+Set the «Light-control» output pins according to VALUE.
+VALUE is 8 bits.
+Bit(0) => '1' : red strobe on; '0': red strobe off
+Bit(1) => '1' : blue strobe on; '0': blue strobe off
+Bit(2) => '1' : green strobe (frame_sync) on; '0': green strobe (frame_sync) off
+Bit(3:7) => Unused, reserved for future use. Should be set to '0'.
+1 <= WAITFOR <= 65535
+
+LightPulseWord
+
+VALUE
+WAITFOR
+
+bit-pos
+ticks
+
+N
+N
+
+Set the «Light-control» output pins according to VALUE. The value will be active for a DURATION.
+The DURATION must be set in the LB4600 using UDP command «SetLightPulseDuration».
+VALUE is 8 bits.
+Bit(0) => '1' : red strobe on; '0': no action for red strobe
+Bit(1) => '1' : blue strobe on; '0': no action for blue strobe
+Bit(2) => '1' : green strobe (frame_sync) on; '0': no action for green strobe
+Bit(3:7) => Unused, reserved for future use. Should be set to '0'.
+1 <= WAITFOR <= 65535
+
+OutputSetBit
+
+VALUE
+WAITFOR
+
+bit-pos
+ticks
+
+N
+N
+
+Set the «Output-control» pins where VALUE is 1. Leave the bit positions where VALUE is '0'
+unchanged.
+VALUE is 16 bits.
+Bit(3, 2 and 0) => Control gpio(3, 2 and 0). Note: Bit 1 shows LED-on signal.
+Bit(15:4) => Unused, reserved for future use. Should be set to '0'.
+1 <= WAITFOR <= 65535
+
+OutputClearBit
+
+VALUE
+WAITFOR
+
+bit-pos
+ticks
+
+N
+N
+
+Clear (set to 0) the «Output-control» pins where VALUE is 1. Leave the bit positions where VALUE is
+'0' unchanged.
+VALUE is 16 bits
+Bit(3, 2 and 0) => Control gpio(3, 2 and 0). Note: Bit 1 shows LED-on signal
+Bit(15:4) => Unused, reserved for future use. Should be set to '0'.
+1 <= WAITFOR <= 65535
+
+OutputSetWord
+
+VALUE
+WAITFOR
+
+bit-pos
+ticks
+
+N
+N
+
+Set the «Output-control» pins according to VALUE.
+VALUE is 16 bits
+Bit(3, 2 and 0) => Control gpio(3, 2 and 0). Note: Bit 1 shows LED-on signal
+Bit(15:4) => Unused, reserved for future use. Should be set to '0'.
+1 <= WAITFOR <= 65535
+
+SetMaskImage
+
+INUM
+WAITFOR
+
+mem
+
+N
+
+Choose an image to use as mask. Inum 0 will disable masking (but will often need a sequencer
+reset after).
+This command must use a WAIT_FOR value > 75 for all settings to propagate through the system.
+Sequencer reset will not disable masking.
+Due to RAM bandwidth limitation the load row is increased from 40 ns pr row to approximately
+46.3 ns pr row (average). I.e. a full image load (1080 rows) must have a WAIT_FOR>=200 (173
+without mask image)
+0 <= INUM <= 65535
+
+Examples:
+
+1.2 Timing constraints
+It takes 40 ns (8 clks a 200 Mhz) to load one row,
+TICK duration is 250 ns.
+Before a new load or reset can be started the row load must be completed. The row load is completed in 40 ns*(number of rows)
+
+Load
+
+Reset
+
+Load row
+
+LL1 >= (rows*40/250) ticks
+
+LR1 => (row*40/250) ticks
+
+Load group
+
+LL2 >= 12 ticks (72 rows*40/250) [For 1080 DMD]
+
+LR2 => 12 ticks (72 rows*40/250) [For 1080 DMD]
+
+Reset
+
+RL >= 50 ticks (12.5 us)*
+
+RR >= 50 ticks (12.5 us)*
+
+Clear single
+
+CL => 1 tick
+
+CR => 1 tick
+
+Clear global
+
+GL => 16 ticks
+
+GR => 16 ticks
+
+Load to load can be executed back to back as long as the number of rows that is loaded is less than 7 (250/40=6.25 rows can be loaded pr tics).
+If 1080 rows are loaded then the next load can not start before 173 ticks later (1080*40/250 = 172.8).
+If MASK image is enabled then the average load time is increased from 40 ns pr row to 46.3 ns pr row.
+The same apply for LOAD to RESET. The load must be completed before RESET is executed.
+*While RST_ACTIVE is high (4.5 us) , and for 8us after, the data for the block(s) being reset should not be changed to allow for the settling required for the mirrors
+to become stable. It is possible to load other blocks while the previously reset block is settling.
+
+1.3 Triggering options
+There are 4 trigger sources plus one which is a delayed version of either the electrical or the optical trigger. Each of these triggers can be use be the sequencer
+setting the appropriate source mask and mode (see «Trig» in Table of commands).
+
+Sequencer command:
+Source Mode
+Trig electrical
+
+0
+
+Trig optical
+Trig software
+Trig internal
+Trig
+select
+
+Edge
+select
+
+Edge
+delay
+
+Trig delayed
+
+The fifth trig source is a delayed version of either the
+electrical or the optical trig source. Either positive or negative
+edge is used and this edge can be delayed up to one
+pixelheight in steps of 1/256 pixelheight (assuming the
+selected trig signal is asserted once every pixelheight)
+The trig source selection, the edge selection and the delay is
+controlled by system registers.
+
+1
+2
+3
+
+0 Rising edge
+1 Falling edge
+2 Level high
+3 Level low
+
+4
+The sequencer trig command can select any
+of the 5 trig sources together with preferred
+mode.
+Only the rising edge mode gives any sense
+to the fifth source since the signal
+processing produce a single pulse of either
+the positive or the negative edge of the
+optical or electrical trig input.
+
+
