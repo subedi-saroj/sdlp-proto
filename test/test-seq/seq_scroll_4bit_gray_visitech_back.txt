@@ -70,7 +70,7 @@ Label Scroll 1
 
   ################### RST start here - count TU until first load #########################
   ResetGlobal               40      # Enable LED on 2TU = 500 ns after reset
-  LightPulseWord  15 1
+  LightPulseWord  15 1    #Adjust this time to change the scroll speed. 
   Add MemStartRow          -1007    1  
 
 JumpIf MemStartRow < NoOfDMDrows Scroll 1
