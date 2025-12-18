@@ -93,8 +93,10 @@ class Strip:
 
         return (b'\x05\xAE\x00\x68' + 
                 packet_idx.to_bytes(2, byteorder='big') + 
-                self.inum.to_bytes(2, byteorder='big') + 
-                offset.to_bytes(6, byteorder='big') + 
+                # self.inum.to_bytes(2, byteorder='big') + #Incorrect
+                # offset.to_bytes(6, byteorder='big') +     #Incorrect
+                self.inum.to_bytes(4, byteorder='big') +  # FIXED: 4 bytes for INUM (was 2)
+                offset.to_bytes(4, byteorder='big') +  # FIXED: 4 bytes for offset (was 6)
                 self.image.tobytes()[start:end] # Pull bytes from this strip
                 )
     

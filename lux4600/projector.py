@@ -73,7 +73,8 @@ class Projector:
         # Set into reset mode and prime for image receiving
         init_messages = [
             records.SetImageType(4), # 4 = 1-bit grayscale
-            records.SetInumSize(strip.height), # Set the inum size to the height of the image, i.e. the number of rows in the image
+            # records.SetInumSize(strip.height), # Set the inum size to the height of the image, i.e. the number of rows in the image
+            # records.SetInumSize(1080),
             records.ResetSeqNo(), # Reset the sequencer number
             records.SetSequencerState(1, False), # Halt the sequencer
             records.SetSequencerState(2, True) # Set the sequencer to reset mode

@@ -3,7 +3,7 @@ from lux4600.projector import Projector
 from lux4600.img import Strip
 from lux4600.seq import Sequencer
 from PIL import Image
-import time, sys
+import time, sys, os
 
 '''
 Author: David Alexander
@@ -93,6 +93,10 @@ def preprocess_grayscale_image(filepath):
     left_strip = scale_overlap(left_strip, 'L')
     right_strip = scale_overlap(right_strip, 'R')
 
+    # Save strips after overlap scaling for verification
+    left_strip.save("bitplanes/left_strip_after_overlap.bmp")
+    right_strip.save("bitplanes/right_strip_after_overlap.bmp")
+
     # Step 3: Generate weighted bitplanes (binary 1/2/4/8) instead of equal-duration thresholds
     def bitplane_images(img: Image.Image, bits: int) -> list[Image.Image]:
         gray = img.convert('L')
@@ -114,30 +118,39 @@ projector = Projector(IP, DATA_PORT, IMAGE_DATA_PORT)
 projector.check_connection()
 
 # Constants for inum spacing
-STEP_INUM = 1699  # From seq file: bitplane spacing
+STEP_INUM = 1699 #1699  # Changed from 1699 for simpler testing; revert to 1699 if needed
 BITPLANES = 4
 
 # Step 5: Create sequencer for 4-bit weighted bitplanes
-sequencer = seq.Sequencer(r"test\test-seq\seq_scroll_4bit_gray_visitech.txt", 1440)
+sequencer = seq.Sequencer(r"test\test-seq\seq_scroll_4bit_gray_visitech_for.txt", 1440)
 
 # Step 6: Start the projector and axes simultaneously for a single layer
-import axes
-from zaber_motion import Units, wait_all
+# import axes
+# from zaber_motion import Units, wait_all
 
 input("Press Enter to start the projector and axes...")
-zaber_axes = axes.ZaberAxes("COM3")
+
+# CRITICAL FIX: Set INUM_SIZE to 1080 (DMD height) ONCE before uploads
+print("\nSetting INUM_SIZE to 1080 (DMD height)...")
+projector.send(records.SetInumSize(1080).bytes())
+print("✅ INUM_SIZE set\n")
+
+# zaber_axes = axes.ZaberAxes("COM3")
 # zaber_axes.home()
 
-Z_START = 100 # mm, initial z position
-X_START = 60 # mm, initial x position
-Y_START = 50 # mm, initial y position
+# Z_START = 100 # mm, initial z position
+# X_START = 60 # mm, initial x position
+# Y_START = 50 # mm, initial y position
 
-zaber_axes.ZAxis.move_absolute(Z_START, Units.LENGTH_MILLIMETRES)
-zaber_axes.XAxis.move_absolute(X_START, Units.LENGTH_MILLIMETRES)
-zaber_axes.YAxis.move_absolute(Y_START, Units.LENGTH_MILLIMETRES)
+# zaber_axes.ZAxis.move_absolute(Z_START, Units.LENGTH_MILLIMETRES)
+# zaber_axes.XAxis.move_absolute(X_START, Units.LENGTH_MILLIMETRES)
+# zaber_axes.YAxis.move_absolute(Y_START, Units.LENGTH_MILLIMETRES)
 
 LAYER_HEIGHT = 0.4
 LAYERS = 6
+
+# Create output directory for bitplane verification
+os.makedirs("bitplanes", exist_ok=True)
 
 # Set LED driver amplitude to 1500 (0 TO 4095)
 # Ensure water cooling system is functional if amplitude > 100
@@ -157,43 +170,45 @@ for i in range(LAYERS):
 
     print(f"Layer {i+1} out of {LAYERS}")
 
-    left_planes, right_planes = preprocess_grayscale_image(r"test\test-dogbone\2880x3240_dogbone_VERT.bmp")
+    left_planes, right_planes = preprocess_grayscale_image(r"test\test-dogbone\2880x3240_dogbone_HORZ.bmp")
     
     # Upload left bitplanes to inums 0, 1699, 3398, 5097
     print("Uploading left bitplanes...")
     for bit in range(BITPLANES):
-        inum = bit * STEP_INUM
-        strip = Strip(left_planes[bit], 0)
-        projector.send_strip(strip, inum=inum)
+        inum = bit * (STEP_INUM)
+        strip = Strip(left_planes[bit], inum)
+        strip.save(f"bitplanes/left_bitplane_{bit}_inum_{inum}.bmp")
+        projector.send_strip(strip)
     
     # Upload right bitplanes to inums 6876, 8575, 10274, 11973 (offset by 4 * STEP_INUM)
     print("Uploading right bitplanes...")
     for bit in range(BITPLANES):
         inum = (BITPLANES + bit) * STEP_INUM
-        strip = Strip(right_planes[bit], 0)
-        projector.send_strip(strip, inum=inum)
+        strip = Strip(right_planes[bit], inum)
+        strip.save(f"bitplanes/right_bitplane_{bit}_inum_{inum}.bmp")
+        projector.send_strip(strip)
 
     projector.send(records.SetLedDriverAmplitude(0, 1500).bytes())  # Ensure LED amplitude is set
 
-    zaber_axes.XAxis.move_absolute(X_START, Units.LENGTH_MILLIMETRES)
+    # zaber_axes.XAxis.move_absolute(X_START, Units.LENGTH_MILLIMETRES)
 
     # projector.send_sequencer(sequencers[0])  # Alternate between left and right sequencers
     projector.send_sequencer(sequencer)
     projector.start_sequencer()
 
-    zaber_axes.scroll(SCROLLING_DIST, SCROLLING_VELOCITY)
-    zaber_axes.scroll(-SCROLLING_DIST, SCROLLING_VELOCITY)
+    # zaber_axes.scroll(SCROLLING_DIST, SCROLLING_VELOCITY)
+    # zaber_axes.scroll(-SCROLLING_DIST, SCROLLING_VELOCITY)
 
-    projector.stop_sequencer()
-    zaber_axes.increment_lateral(LATERAL_INCREMENT)
+    # projector.stop_sequencer()
+    # zaber_axes.increment_lateral(LATERAL_INCREMENT)
     # projector.send_sequencer(sequencers[1])
-    projector.start_sequencer()
+    # projector.start_sequencer()
 
-    zaber_axes.scroll(SCROLLING_DIST, SCROLLING_VELOCITY)
-    zaber_axes.scroll(-SCROLLING_DIST, SCROLLING_VELOCITY)
-    projector.stop_sequencer()
+    # zaber_axes.scroll(SCROLLING_DIST, SCROLLING_VELOCITY)
+    # zaber_axes.scroll(-SCROLLING_DIST, SCROLLING_VELOCITY)
+    # projector.stop_sequencer()
 
-    zaber_axes.increment_layer(LAYER_HEIGHT)
+    # zaber_axes.increment_layer(LAYER_HEIGHT)
 
-zaber_axes.ZAxis.move_absolute(30, Units.LENGTH_MILLIMETRES)
-projector.send(records.SetLedDriverAmplitude(0, 100).bytes()) # Set LED amplitude back to 100
+# zaber_axes.ZAxis.move_absolute(30, Units.LENGTH_MILLIMETRES)
+# projector.send(records.SetLedDriverAmplitude(0, 100).bytes()) # Set LED amplitude back to 100

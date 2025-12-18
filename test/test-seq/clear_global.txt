@@ -1,0 +1,7 @@
+# Clear all DMD memory (fill entire DMD with black)
+# ClearGlobal clears the whole DMD memory
+# Must end with Jump command to loop back
+
+Label clear 1
+ClearGlobal 20
+Jump clear 1
