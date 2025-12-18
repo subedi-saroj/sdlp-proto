@@ -1,0 +1,3128 @@
+
+
+
+
+Rev:Description:Written:
+Date:	Sign:Checked:
+Date:  Sign:Approved:
+Date:	Sign:CLAdd wxga support/dmd temp03.11.2020	BVCKAdded FPGA Temperature record.09.09.2020	OBCJDid change from ver CH to CI again, due to formatting error in ver CI09.10.2019	OBCIRLE compression scheme - image type 5 is for LB4k6 only18.09.2019	JDCHAdded new command for Firmware Info to support old and new format.27.02.2019	OBCGChanged Firmware Info record to include FPGA build no. amongst other things.18.2.2019	OBCFLser intensity range increased3.1.2019	OBCEAutofocus work-range "unused"-field renamed to "enable".12.12.2018	OBCDRenamed "Fan On/off" to "Fan speed" and made it possible to set the speed of the fans.21.11.2018	OBCCRemoved "LB4600 only" from 5.2.1 and 5.11.415.11.2018	OBCBLens Magnification: Added lens factor 1:6 and renamed all other factors from format 0.5x to 1:2, etc.11.10.2018	OBCARec id 219 and 220 marked as LB4700 and LB4700_C1 only11.10.2018	OBBZCorrected various typing errors.15.08.2018	OBBYModified 5.4.3: Added Invert of paneldata.28.06.2018	OBBXAdded Lens Magnification handling.13.06.2018	JABWAdded print_flow_ctrl in Prepare Print Strip. Moved af_mode from Prepare Print Strip to AF Copy Stripe Mode.28.05.2018	OBBVAdded bit 8 in status word 1 for High temperature warning.26.04.2018	JABUAdded SSD Device22.03.2018	OBBTChanged Firmware Version: Added sys_fw_subminor field. Renamed some other fields.06.03.2018	OBBSAdded Tick-period08.02.2018	OBBRAdded new chapter defining units and resolutions31.01.2018	JDBQ4.2.7 Hostfuffer Configuration: Specified settings valid for 4700 only (and not 4700_C1)25.01.2018	OBBPCorrected tot_size fields for LightSourceInfo10.01.2018	OBBOAdded LightSourceInfo12/12/2017	JABNOverlay Text: Size divided into two params: xsize and ysize.28.11.2017	OBBMAdded SW trig mode in 4.9.29. Updated descriptions for host bufe configuration.16/11/2017	OBBLAdded AF Line Sensor Selector09/11/2017	OBBKAdded SetSsdBypass07/11/2017	JABJAdded SpxLevel02/11/2017	OBBIRe-assigned record Ids for Stripe File Name (406/606 -> 413/613) and Get Data01/11/2017	OB
+
+
+Written (409/609 -> 416/616).BHAdded linesensor sw trigger31/10/2017	BVBGAdded GetDataWritten documentation23/10/2017	JABFCorrected error range numbers in Sata-reset (4.2.23). Changed y-range in Overlay Text.16/10/2017	OBBEAdded GetStripeFileName.09/21/2017	JABDAdded SATA error codes and updated ResetSata interface.09/13/2017	JABCModified SetOverlayText record. Added error code 10052.04.09.2017	OBBBUpdated size info for Overlay Text/QR/ECC200.08.08.2017	OBBACorrected wrong record size for 4.4.2 Camera Illumination LED from 8 to 5 bytes.03.08.2017	OBAZRenamed Overlay Text to Overlay Text/QR/ECC200. Added "type"-field in this record.22.06.2017	OBAYUpdated description of scaling matrix21.06.2017	JDAXModified Overlay Text record with new field: last.01.06.2017	OBAWCorrected number of samples from 500 to 2000 in Z-position table.23.05.2017	OBAVCorrected Autofocus Trim record to include correct number of bytes.03.05.2017	OBAUModified Trigger Info: seq_puls changed from 2 bytes to 4 bytes!21.02.2017	OBATChanged "Active Area Qualifier Keepout" from mm to trigger pulses. Changed "Autofocus Work-range" enable-field to unused.20.02.2017	OBASAdded Sequence label for forward loop to LB470020.02.2017	BVARAdded "SSD Wear-leveling", "Image Masking" and "SSD Read Data".25.01.2017	OBAQAdded Temperature range error limits and z-motion error limits12.01.2017	BVAPAdded "SSD sata reset"-command11.01.2017	OBAOAdded "af_mode" in Prepare Print Strip10.01.2017	OBANFix led duty cycle table values. Add divide factor on current feedback04.01.2017	BVAMAdded image type 5 ? 1-bit RLE encoded image20.12.2016	JDALAdded description for sequence label for LB460009.12.2016	JDAKAdded sequence label for LB460006.12.2016	BVAJUpdated Led driver regulation mode to include LB470018.11.2016	BVAIModified Trigger Info: New field max_trig_o.16.11.2016	OBAHAdded 4.10.10, 4.10.11 and 4.10.12. Led log sampling readout, led driver feedback and led driver duty cycle set up26.10.2016	BVAGAdded description for 10 Gbit Ethernet (chapter 3)24.10.2016	JDAFMade Hostbuffer Configuration available to LB4700 .18.10.2016	OBAEAdded load image data for LB470023.09.2016	BVADAdded binary seq upload to lb4700. Added 4.9.33 Number of steps during Z-axis init20.09.2016	BVACUpdated rec-id for Load Binary Sequence file from 197 to 198.26.08.2016	OBABAdded chapter for load sequence file binary command23.08.2016	BVAAAdded Camera illumination LED. Modified Hostbuffer Configuration.14.06.2016	OBZAdded more C1 specific commands. Added Mirror Shake.10.05.2016	OB
+
+
+YAdded C1 specific commands19.01.2016	OBXMade some commands available for 4600 only. Changed "LED On-time Counter" to easily support more LEDS. In general, support for up to 6 LEDs for all commands. Changed "Prepare Print Strip".02.12.2015	OBWIntroduced Luxbeam 4700 commands. Moved "Default Settings Record" to chapter "Permanent Storage Records". Added chapter "System Management Records" and sub-chapter "Safe Shutdown". Added "Min/Max AF Position".20.05.2015	OBVAdded max_ocp in "LED Driver OCP Value".27.03.2015	OBUAdded Fan On/Off.20.02.2015	OBTCorrected AAQ range from 3000 to 440.Max OCP value reduced from 36A to 33A. Added parameter ("above") to "Autofocus Work-range". Added AF outcast to
+"Custom Panel Mode Configuration".19.01.2015	OBSAdded "Trigger Count" that was mistakenly removed in an earlier version. Updated "Active Area Qualifier Keepout" parameters. Corrected number of bytes in "Focus Motor to Mid-position". Added "Load Internal Image",
+"Autoload Internal Image at Boot-up", "Save Internal Image", "Active Sequence File", "Autostart Sequencer At Power-on", "Overall Error Status Word" and
+"Clear Error Status". Modified "Autofocus Panel Mode". Added "abort"-bit in Focus status word. Corrected LED OCP record id's to x68 (was: x38)13.11.2014	OBRAdded "Z-position Table Trigger Mode" and "Arm Z position Table". Focus Motor absolute pos range now 63-85mm. Added "OCP Limit" record. Made notes to chapters "Active Area Keepout" and "Sequencer Register".14.05.2014	OBQAdded new bit in focus motor status register. SetFcsMtrToMidPos now has a payload. Added "Active Area Qualifier Keepout". Added "Trig Frequency Divide". Sequencer Register is now made readable.23.03.2014	OBPAdded "AF Work-range". Changed "Autofocus Trim" record. LED Board temp parameter divided by 2 instead of 10 to get °C. Added "Autofocus Panel Mode". Added "Trigger Info". More bits added to Focus Motor Status word. Changed order of bytes in "Board Temperature Sensors". Made changes to Autofocus Work Range record. New Laser-records. Moved some focus records from other document into this doc.31.01.2014	OBOAdded Autofocus position record. Added record for storage of autofocus center- position. Added autofocus trim record.08.10.2013	OBMAdded Internal Sync Frequency record. Changed "Board Temperature Regulation Configuration" and "Board Fan and Temperature Regulation Status" to handle two regulators.25.09.2013	OBLRemoved requirement of 36 lines/package. Added User Guide chapter.22.08.2013	OBKCorrected range for focus motor conversion constant. Added WUXGA DMD info. Renamed ambient and optical core temp sensors to ext2 and 1. Added 1-bit bmp image type. Moved confidential info to other document and reorganized chapters.06.08.2013	OBJAdded 3.2.2.24 Focus Motor Step Conversion Constant and 3.2.2.25 Focus Motor SPI Controller Selection. Added 3.2.2.25-3.2.2.43 and error codes.02.04.2013	OBIAdded 3.2.2.24 - 3.2.2.32. Added error codes.31.01.2013	OBHUpdated 3.2.2.20 Software Sync with read commands. Added 3.2.2.22 Sequencer Register and 3.2.2.23 Light Pulse Duration.18.12.2012	OBGChanged 3.2.2.4 Load Image Data. Added 3.2.2.20 Software Sync and 3.2.2.21 Trigger Count.12.12.2012	OBFAdded 3.2.2.18 Line Sensor Plot. Updated 3.2.2.7 Sequencer State. Added
+3.2.2.19 LED Driver Register. Added error code 10011. Renamed document title.07.11.2012	OB
+
+
+EAdded 8-bit BMP format in table. Removed duplicate "Load Mask" chapter. Removed support for TCP. Reduced max data size to 8956 (4-byte bounday) for
+"Load Image Data". Updated 3.2.2.17 FPGA Register. Added error code 10010. Set default ip-address to 192.168.0.10.25.09.2012	OBDRemoved "data_size" from 3.3.2.4 Load Image Data30.05.2012	OBCIncreased offset from 16 to 32 bit in 3.3.2.4 Load Image Data10.05.2012	OBBModified 3.3.2.4 Load Image Data, 3.3.2.9 Firmware Upgrade, added more examples, added "tot_size" column to tables.08.05.2012	OBAFirst official version of document.23.03.2012	OB
+
+
+
+
+
+
+1 Introduction	11
+2 Overview	11
+3 Units and resolutions	11
+3.1 Autofocus linesensor resolution	11
+3.2 Stepper motor resolution	12
+3.3 DMD / INUM size	12
+4 Communications Protocol	12
+4.1 UDP	12
+4.1.1 UDP Port	13
+4.2 Luxbeam Proprietary Protocol	14
+4.2.1 Frame Structure	14
+4.2.2 Records Definition	15
+5 Records	16
+5.1 General Reply Record	16
+5.1.1 ReplyAck	16
+5.2 Image Handling Records	18
+5.2.1 Inum Size	18
+5.2.2 Image Type	19
+5.2.3 Load Image Data	20
+5.2.4 Load Stripe Image Data (LB4700 and LB4700_C1 only)	21
+5.2.5 Prepare Print Strip (LB4700 only)	22
+5.2.6 Prepare Print Strip C1 (LB4700 _C1 only)	22
+5.2.7 Host-buffer Configuration (LB4700 and 4700_C1 only)	24
+5.2.8 Lines Ready to Print (LB4700 only)	26
+5.2.9 Blocks Ready to Print C1 (LB4700_C1 only)	26
+5.2.10 Sequence Number Error	28
+5.2.11 Reset Sequence Number Counter	28
+5.2.12 Load Flatness Correction Mask (PPC)	29
+5.2.13 Enable Flatness Correction Mask (PPC)	30
+5.2.14 Load Internal Image	30
+
+
+
+5.2.15 Autoload Internal Image at Boot-up	31
+5.2.16 Save Internal Image	31
+5.2.17 Scaling Matrix (LB 4700 only)	32
+5.2.18 Get Stripe Statistics (LB4700 only)	33
+5.2.19 Get CRC Info (LB4700 and LB4700_C1 only)	33
+5.2.20 Clear CRC Info (LB4700 and LB4700_C1 only)	34
+5.2.21 Blend Size (LB4700 an LB4700_C1 only)	34
+5.2.22 Set Strip Overlap Info (LB4700 and LB4700_C1 only)	35
+5.2.23 SSD Sata-reset (LB4700 and LB4700_C1 only)	35
+5.2.24 SSD Wear-leveling (LB4700 and LB4700_C1 only)	35
+5.2.25 Image Masking (LB4600 only)	36
+5.2.26 SSD Read Data Internally (LB4700 and LB4700_C1 only)	38
+5.2.27 Stripe File Name (LB4700 and LB4700_C1 only)	38
+5.2.28 Get Data Written (LB4700 and LB4700_C1 only)	40
+5.2.29 Set SSD bypass mode (LB4700 and LB4700_C1 only)	40
+5.2.30 Trigger CRC write check (LB4700 and LB4700_C1 only)	40
+5.3 Sequencer Records	42
+5.3.1 Load Sequence File	42
+5.3.2 Load Sequence File binary	43
+5.3.3 Sequencer State	44
+5.3.4 Sequencer File Error Log	46
+5.3.5 Software Sync	46
+5.3.6 Trigger Count (obsolete)	47
+5.3.7 Internal Sync Frequency	47
+5.3.8 Sequencer Register	48
+5.3.9 Light Pulse Duration	49
+5.3.10 Trigger Info	49
+5.3.11 Trigger Delay Time	50
+5.3.12 Trigger Frequency Divide	51
+5.3.13 Active Sequence File	51
+5.3.14 Autostart Sequencer At Power-On	52
+
+
+
+5.3.15 DMD Mirror Shake	53
+5.3.16 Sequence Label for Forward Loop	54
+5.3.17 SPX Level (LB4700 and LB4700_C1 only)	56
+5.3.18 Tick-period (LB4700 and LB4700_C1 only)	56
+5.4 Multifunction Records	58
+5.4.1 Trigger Source	58
+5.4.2 Camera Illumination LED	58
+5.4.3 Overlay Text/QR/ECC200 (LB4k7 only)	59
+5.5 Network Records	61
+5.5.1 Network Settings	61
+5.6 Permanent Storage Records	62
+5.6.1 Save Settings	62
+5.6.2 Factory Defaults	62
+5.7 System Management Records	63
+5.7.1 Safe Shutdown	63
+5.8 Info Records	64
+5.8.1 Firmware Version (Old format)	64
+5.8.2 Firmware Version - New format (LB4700 only)	66
+5.8.3 DMD Info	67
+5.8.4 Overall Error Status Word (LB4600 only)	68
+5.8.5 Overall Error Status Word (LB4700 only)	70
+5.8.6 Clear Error Status	72
+5.8.7 Temperature range error limits	72
+5.8.8 Z-motion error limits	73
+5.8.9 SSD Device	74
+5.9 Focus-system Records	75
+5.9.1 Focus Motor Step Conversion Constant	75
+5.9.2 Focus Motor Timeout	75
+5.9.3 Focus Motor SPI Controller Selection	76
+5.9.4 Focus Motor to Mid-position (Initialize)	76
+5.9.5 Focus Motor Calibration - Measured Distance	77
+5.9.6 Focus Motor Tracking Mode (Autofocus)	77
+
+
+
+
+5.9.7 Focus Motor Status	78
+5.9.8 Focus Motor Calibration - In-focus Point (LB4600 only)	79
+5.9.9 Focus Motor Stored In-focus Distance	80
+5.9.10 Focus Motor Move Absolute Position	81
+5.9.11 Autofocus Trim	81
+5.9.12 Autofocus Work-range	82
+5.9.13 Autofocus Edge Delay	82
+5.9.14 Current Autofocus Position	83
+5.9.15 Store Autofocus Set-Position	84
+5.9.16 Autofocus Panel Mode	84
+5.9.17 Custom Panel Mode Configuration	85
+5.9.18 Autofocus Active Area Qualifier	85
+5.9.19 Autofocus Pull-in Range Acceleration	86
+5.9.20 Autofocus Speed High Threshold	86
+5.9.21 Autofocus Speed Info	87
+5.9.22 Focus Motor Controller Register (SPI)	88
+5.9.23 Focus Motor Move Steps	88
+5.9.24 Line Sensor Plot	89
+5.9.25 Laser On/off	89
+5.9.26 Laser Intensity	90
+5.9.27 Z-position Table	90
+5.9.28 Active Area Qualifier Keepout	92
+5.9.29 Z-position Table Trigger Mode	92
+5.9.30 Arm Z-position Table Sampling	93
+5.9.31 Store and Replay Z-positions (LLS Function, LB4600 only)	94
+5.9.32 Min/max AF Focus Position	95
+5.9.33 Number of steps during Z-axis init	95
+5.9.34 Sw Trigger Line Sensor Read Buffer (LB4700 and LB4700C1 only)
+.	96
+5.9.35 AF Line-sensor Selector (LB4700 and LB4700C1 only)	96
+5.9.36 AF Copy Stripe Mode (LB4700 only)	96
+5.9.37 Lens Magnification	97
+5.10 LED Driver Records	99
+5.10.1 LED Driver Amplitude	99
+5.10.2 LED Driver Status	100
+5.10.3 LED Driver Temperature	101
+5.10.4 LED Driver Timestamp	102
+5.10.5 LED Driver Light On/Off	104
+5.10.6 LED Driver Regulation Mode	104
+5.10.7 LED On-time Counter (LB4600 only)	105
+5.10.8 LED On-time Counter (LB4700 and LB4600 with modern LED driver)		107
+5.10.9 LED Driver OCP Value	107
+5.10.10 LED driver log sample (LB4700 only)	108
+5.10.11 LED feedback (LB4700 only)	109
+5.10.12 LED Duty cycle set up (LB4700 and LB4600 with modern LED driver)	109
+5.10.13 Light Source Info	111
+5.11 Temperature and Fan Records	112
+5.11.1 Board Temperature Regulation Configuration	112
+5.11.2 Board Fan and Temperature Regulation Status	113
+5.11.3 Board Temperature Sensors	114
+5.11.4 Fan Speed	114
+5.11.5 FPGA Temperature (LB4600 only)	116
+5.11.6 DMD Temperature (LB4600 only)	117
+6 Displaying Images in LB 4600 - Short User Guide	118
+6.1 Non-scrolling Images	118
+6.1.1 Set Image Type (One-time Operation)	118
+6.1.2 Set Inum Size (One-time Operation)	118
+6.1.3 Load Image(s)	119
+6.1.4 Load Sequence File	121
+6.1.5 Start Sequencer	122
+6.2 Scrolling Images	122
+6.2.1 Set Image Type (One-time Operation)	122
+
+
+
+6.2.2 Set Inum Size (One-time Operation)	123
+6.2.3 Load image(s)	123
+6.2.4 Load Sequence File	124
+6.2.5 Start Sequencer	126
+7 RLE compression schemes	127
+7.1 RLE compression Scheme for lb4k6	127
+7.2 RLE compression Scheme for lb4k7 - image type 2	127
+7.3 RLE compression Scheme for lb4k6 - image type 5	128
+
+
+
+
+
+1 Introduction
+This document describes the protocol that is used to communicate with the Luxbeam 4600/4700 platform over Ethernet. Functions available to LB4600, LB4700 or LB4700 C1 only are noted specifically in the document. Unless otherwise noted, all functions will be available to both platforms.
+
+
+
+
+
+
+2 Overview
+The Luxbeam has a Gigabit Ethernet interface that will be used to communicate with a client PC. In order for this interface to be as fast as possible, the FPGA will handle some Ethernet traffic in order to offload the CPU.
+
+The CPU is a Microblaze processor embedded in the FPGA. The CPU will run PetaLinux operating system.
+
+
+3 Units and resolutions
+
+3.1 Autofocus linesensor resolution
+The focus tracking system is based on the lateral offset of a reflected beam of light from the measurement plane. This lateral offset is detected by a 10-bit linesensor. The positional resolution and range is dependent on the laser's incident angle and the lens magnification. The resolution can also be increased through signal processing gain.
+
+Resolution for LLS25 (1x lens):
+Linesensor native resolution : 11.1 um (10-bit)
+Resolution after signal processing gain : 2.775 um (12-bit) Resolution as 16-bit values : 0.1734375 um
+
+AF_lineSensorResolution
+Projection systemAF line-sensor resolution (16-bit)LLS50 (2x lens)0.346875 um
+
+
+LLS25 (1x lens)0.1734375 umLLS10 (0.5x lens)0.08671875 um
+
+
+3.2 Stepper motor resolution
+A stepper motor is used to move the photohead vertically to set correct focus. Standard z-axis focus system uses a stepper motor with 400 steps/revolution connected - via a gearing of 2:1 - to screw shaft with a pitch of 1 mm/revolution.
+
+The result is a vertical movement of 1mm (pitch)/2(gearing)/400 steps/rev= 1.25 um/step
+
+step_size_pm = 1250000 pm/step
+
+This can be changed to a different setting if a different z-axis is applied (see 5.9.1).
+
+3.3 DMD / INUM size
+
+DMD typeNo of rowsNo of columnsBits pr inumXGA7681024786432HD1080108019202073600WUXGA120019202304000WQXGA160025604096000WXGA80012801024000
+4 Communications Protocol
+The Luxbeam will communicate with a client over Gigabit and optional 10Gigabit Ethernet (10GBit is only for
+5.2.3 Load Image Data (LB4600 only) , 5.2.4 Load Stripe Image Data (LB4700 and LB4700_C1 only). The
+
+
+
+4.1 UDP
+UDP provides the fastest transfer of data, but is not as reliable as TCP. Therefore, all messages received by the Luxbeam will be acknowledged. The only exception to this is image data (ref. 5.2.3 and 5.2.4) that will
+
+
+
+be handelled by the FPGA directly and is transparent to the CPU. For image data packages sent from the client to Luxbeam, sequence numbering must be implemented.
+
+
+
+4.1.1 UDP Port
+
+Some UDP packages are sent port Data (LB4700 and LB4700_C1 only).
+5.2 
+.3 Load Image Data (LB4600 only) , 5.2.4 Load Stripe Image
+
+
+All other UDP packages communicate over port 52985.
+
+
+
+
+4.2 Luxbeam Proprietary Protocol
+The payload data sent over UDP will be organized according to a proprietary binary protocol. This protocol is described here.
+
+All data is transmittet using "Big-Endian" byte-ordering. Hence, a 2-byte or a 4-byte unsigned integer will
+
+
+The protocol uses the payload data of UDP, and the maximum payload size is determined by the transport
+
+
+UDP Maximum Payload Size
+If jumbo frames of 9000 bytes are used on the Ethernet frame, the maximum UDP payload size is 8972 bytes.
+This is calculated as follows:
+9000 - 20 [IP header] - 8 [UDP header] = 8972.
+
+
+
+
+
+4.2.1 Frame Structure
+The UDP payload bytes are organized into something called a "record" as follows:
+
+
+(Uint 2)
+2 bytes
+
+(Uint 2)
+2 bytes	0 - 8968 bytes (UDP)
+
+
+tot_sizerec_idpayload
+tot_size:	The total number of bytes in the record (including the 2 bytes tot_size). rec_id:	Unique id-number, identifying the record that is sent.
+payload:	Payload, with bytes organized depending on rec_id. In many cases, there are 0 bytes in this field.
+
+
+
+
+4.2.2 Records Definition
+The next chapter defines how the tot_size, rec_id and payload-parts of the protocol are organized.
+
+-
+
+-
+
+-
+
+
+For records that have a payload, all fields in the payload are described in a table for each record. For records that can set (and get) parameters, one column in this table is denoted "Permanent". This is used to indicate if the parameter is saved in permanent storage in the Luxbeam. The fields that have a "yes" in this table, will be saved in non volatile memory when a "Save Settings"-record is sent. The default value that will be set if a "Factory Defaults"-record is sent is also given here.
+
+
+
+
+5 Records
+
+5.1 General Reply Record
+
+5.1.1 ReplyAck
+This record is returned from the Luxbeam as an acknowledgement that a "Set"-record has been received and processed. A value of zero in the payload of this record means "no error".
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytesReplyAck6501error_code-
+Payload:
+FieldDescriptionerror_codeError codes according to table below.
+Valid error codes:
+error_codeMeaning0OK (i.e. no error)10000Invalid inum size10001Invalid image type10002Sequence file package out of order10003Error when parsing loaded sequence file. Log can be fetched with5.3.4 Sequencer File Error Log.10004Too many sequence file packages (must be <= 20)10005Unknown record id (rec_id) received10006Invalid sequence command10007Mask file package out of order10008Too many mask file packages (must be <= 30)10009Accessing invalid FPGA register. [Internal]10010Translated sequence file is too large10011No contact with LED driver or accessing invalid LED driver register. [Internal]10012Trying to set an invalid sequence register. Ref 5.3.8 Sequencer Register.10013Focus motor number of steps out of range.10014Focus motor is busy or in a mode where command cannot be performed.
+
+
+10015Focus motor measured distance out of range.10016Focus motor CCD thickness out of range.10017Focus motor absolute position out of range.10018Focus motor has not been set to mid position.10019Focus motor measured distance never entered10020Mask file with invalifd format (not bmp, not 8-bit, etc)10021LED driver amplitude value out of range.10022Temperature regulation setvalue out of range.10023Focus motor step size conversion unit out of range10024Internal sync pulse period outside valid range10025AF trim value is outside valid range10026AF work range is outside valid range.10027AF time delay value is outside valid range.10028AF calibration set-position is outside valid range.10029AF pull-in range acceleration limit is outside valid range.10030AF speed high threshold is outside valid range.10031Laser intensity level is outside valid range.10032Trig delay outside valid range.10033Active Area Qualifier Keepout parameters are outside valid range.10034Active Area Qualifier Keepout parameters adds up to a larger number than the active number of pulses.10035Trig divide factor outside valid range.10036<Currently unused>10037OCP limit is out of range.10038Strip number out of range.10039Internal image number out of range or perrmanent storage error.10040Not possible to load sequence file. No file has has been loaded previously.10041Invalid fan number10042Absolute Z position for AF is outside valid range10043Invalid morph record10044Led driver firmware package out of order10045Led driver firmware crc error10046Led driver firmware verification failed10047Led driver firmware upgrade ok10048Invalid address10049Invalid data10050Command not supported by old led driver fw10051Reserved
+
+
+10052Overlay text parameter out of range10053SSD Error: Ublaze can not start10054SSD Error: Physical state error10055SSD Error: Align count off10056SSD Error: Bad link10057SSD Error: Bad transport layer10058SSD Error: Loop counter stoppederror_codeMeaning
+Examples of different "ReplyAck"'s are given several places this document.
+
+5.2 Image Handling Records
+
+5.2.1 Inum Size
+Records that can set and request inum size (in rows).
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytesSetInumSize6102rowsReplyAckRequestInumSize4302-ReplyInumSizeReplyInumSize6502rows-
+Payload:
+ParameterDescriptionPermanentrowsThe inum size given in number of rows. Range: 1 - 65535Yes.
+Default: DMD row size *
+*
+For XGA (1024x768) system default is 768.
+For HD 1080 (1920x1080) system default is 1080. For WUXGA (1920x1200) system default is 1200. For WXGA (1280x800) system default is 800.
+
+ReplyAck with error_code = 0 is returned if a valid value for rows given, otherwise error_code = 10000.
+
+Examples
+- Set inum size to 1080 rows.
+
+
+
+Send: 0x00 0x06 0x00 0x66 0x04 0x38 (SetInumSize) Receive: 0x00 0x06 0x01 0xF5 0x00 0x00 (ReplyAck (= ok))
+- Request inum size.
+Send: 0x00 0x04 0x01 0x2E (RequestInumSize)
+Receive: 0x00 0x06 0x01 0xF6 0x04 0x38 (ReplyInumSize, rows = 1080)
+
+5.2.2 Image Type
+Records that can set and request the image type. The image type is the expected format of files to be uploaded to the Luxbeam 4600 using the "Load Image Data"- or "Load Stripe Image Data (LB4700 and LB4700_C1 only)"-record.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytesSetImageType6103image_typ eReplyAckRequestImageType4303-ReplyImageTypeReplyImageType6503image_typ e-
+Payload:
+ParameterDescriptionPermanentimage_typeThe type of image to be sent in a "Load Image Data" or
+"Load Stripe Image Data (LB4700 and LB4700_C1 only)" record. Must be one of the constants defined in the table below.Yes.
+Default: 4 (for
+LB4600), 2 (for LB4700)
+
+image_typeDescription1Binary, uncompressed. (1-bit bitmap (.bmp) without bmp-header (62 bytes))21-bit RLE-encoded image data (see
+lb4k6 => 7.1 RLE compression Scheme for lb4k6
+lb4k7 => 7.2 RLE compression Scheme for lb4k7 - image type 2.38-bit grayscale bitmap (.bmp). This is used by web-interface only. Will be converted to binary (type 1).41-bit bitmap (.bmp). This is used by the web-interface only. Will be converted to binary (type 1).51-bit RLE-encoded image data with swapped bits within bytes (see
+7.3 RLE compression Scheme for lb4k6 - image type 5.
+
+ReplyAck with error_code = 0 returned if valid image_type given, otherwise error_code = 10001.
+
+
+
+
+Examples
+- Set image type to RLE encoded binary.
+Send: 0x00 0x06 0x00 0x67 0x00 0x02 (SetImageType) Receive: 0x00 0x06 0x01 0xF5 0x00 0x00 (ReplyAck (= ok))
+- Request image type.
+Send: 0x00 0x04 0x01 0x2F (RequestImageType)
+Receive: 0x00 0x06 0x01 0xF7 0x00 0x02 (ReplyImageType, image_type = 2)
+
+
+5.2.3 Load Image Data
+Record that is used to send images to Luxbeam 4600/4700. Depending on the inum size set, it may be divided into several packages that are sent separately.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes4 bytes4 bytes4-8956 bytesLoadImageDa ta18 (+)104seq_noinumoffsetdata-
+Payload:
+ParameterDescriptionPermanentseq_noSequence number (starting at 1), must be incremented by one for each transmission from the client. Used by Luxbeam to check that no packages are lost. Can reset Luxbeam's expected sequence number to 1 using "Reset Sequence Number Counter"-record.NoinumInum number. Current range is 0-65535.NooffsetOffset (in lines) from start of inum. Current range is 0-65535.NodataThe actual data to be placed in memory. The data must be an integer number of lines, hence size must be 4-byte aligned, ie. divisible by 4.No
+Note that there are no acknowledgement reply given for LoadImageData. This is to save time. The Luxbeam will check the seq_no and assert an error which can be retrieved with the "Sequence Number Error" - record if the sequence is out of order. Hence, the client should frequently check if there has been errors and re-transmit if necessary. Also note that the size of the data is not explicitly sent in the payload of the record, but can be calculated from the tot_size as follows: data size = tot_size - 14.
+
+Each package sent, must contain an integer number of lines.
+
+Note: On LB4700/LB4700_C1 this package must be sent to the udp-command port 52985. This is a slow
+
+
+
+port, so some delays might have to be added when sending the packages. The seq_no bytes can be set to 0 as the seq_no and seq_no reset is not used on the load image data command on LB4700/LB4700_C1
+
+
+
+
+
+
+
+
+
+5.2.4 Load Stripe Image Data (LB4700 and LB4700_C1 only)
+Record that is used to send image data on stripe basis to the photo head SSD disk. Note that the total length of one stripe must be 512-byte aligned.
+
+Note: This UDP package is sent to port 52986.
+
+
+Rec nametot_sizerec_idpayload
+Reply
+2 bytes2
+bytes2 bytes1 byte1 byte4 - 8192 bytesLoadStripeImageD ata14-
+8200182seq_nojob_nostrip_n odata-Payload:
+ParameterDescriptionPermanentseq_noSequence number (starting at 1), must be incremented by one for each transmission from the client. Used by Luxbeam 4700 to check that no packages are lost. Can reset Luxbeam 4700's expected sequence number to 1 using "Reset Sequence Number Counter"-record.Nojob_noJob number, starting at 0.Nostrip_noStrip number. Range: 0 - 63
+The data is placed sequentially in the SSD disks as long as the strip number is the same as the previous UDP package.
+To write data to a new strip number, the data field should be empty.NodataThe data for the given strip. The data must be 512-byte aligned, ie. divisible by 512.No
+To start writing data to a new stripe number, one package with the data field left empty must be sent.
+
+
+
+
+
+
+
+
+5.2.5 Prepare Print Strip (LB4700 only)
+Record that is used to inform the Luxbeam 4700 that a strip should be loaded from SSD to RAM and be printed. Note: Requires that the strip image is loaded into SSD first.
+
+Rec nametot_si zerec_i dpayload
+Reply2
+bytes2
+bytes1 byte2 bytes4 bytes1 byte1 byte1 byteStartPrintStri p14181job_nostrip_n onof_row sflip_imag eunusedprint_flow_ct rlReplyA ck
+Payload:
+ParameterDescriptionPermanentjob_noThe job number to be printed (starting at 0).Nostrip_noThe strip number to be printed (starting at 0).Nonof_rowsThe number of (sub-) rows in the selected stripNoflip_image0 = Do not flip the DMD image in y-direction
+1 = Flip the DMD image in y-directionNounusedNot in use. (Previously AF-mode)Noprint_flow_ ctrl0 = Normal loading from ssd, not dependent on how many lines are printed
+1 = TX only the number of pos.edge triggers multiplied with 4.2.25 SetRowsPerTrig received from the sequencer (OutputSetBit 1 1 OutputClearBit 1 1)No
+
+
+
+
+5.2.6 Prepare Print Strip C1 (LB4700 _C1 only)
+Record that is used to inform the Luxbeam 4700 C1 that a strip should be loaded from SSD to RAM and be printed. Note: Requires that the strip image is loaded into SSD first.
+Rec nametot_sizerec_idpayloadReply
+
+
+2 bytes2 bytes1 byte2 bytes4 bytesStartPrintStrip C111188job_nostrip_nonof_blocksReplyAck
+Payload:
+ParameterDescriptionPermanentjob_noThe job number to be printed (starting at 0).Nostrip_noThe strip number to be printed (starting at 0). Max is 63.Nonof_blocksThe number of blocks to be fetched from the SSD disk.No
+
+
+
+5.2.7 Host-buffer Configuration (LB4700 and 4700_C1 only)
+Record that is used to set up Luxbeam 4700 and 4700_C1 host buffers.
+
+Rec nametot_siz erec_idpayload
+Reply
+2 bytes2
+bytes2
+bytes4
+bytes4
+bytes4
+bytes4
+bytes4
+bytes4
+bytesConfigHostbuf C130194strp_j bstrp_l ncli_se ploc_Aloc_Bloc_Cloc_DReplyAc k
+Payload:
+ParameterDescriptionPermanentstrp_jbNumber of strips per job. Range: 1 - 63.Nostrp_lnStrip length. Stripe allocation in SSD in bytes. The number must be divisible by 32 MByte.Nocli_sepClient separation. Stripe allocation in host buffer in terms of rows.Noloc_ALocation in host buffer for stripe 0, 4, 8,... (For LB4700 only: The location must be shifted one byte to the right, so eg. 0x9000 0000 must be sent as 0x9000 00)Noloc_BLocation in host buffer for stripe 1, 5, 9,... (For LB4700 only: The location must be shifted one byte to the right, so eg. 0x06A7 0000 must be sent as 0x06A7 00)Noloc_CLocation in host buffer for stripe 2, 6, 10,... (For LB4700 only: The location must be shifted one byte to the right, so eg. 0x9000 0000 must be sent as 0x9000 00)Noloc_DLocation in host buffer for stripe 3, 7, 11,... (For LB4700 only: The location must be shifted one byte to the right, so eg. 0x06A7 0000 must be sent as 0x06A7 00)No
+The host buffer is 3.75GByte and start at address 0x9000_0000. The host buffer can store up to 15e6 rows=> (3.75 GByte * 8 bits/byte) / (2048 bits/rows) .
+
+
+Example of settings for a 2-buffer system:
+Stripes per job = strp_jb = 40
+
+Stripe length = strp_ln = 512 * 1024 * 1024 = 0x2000 0000  ( = 512 MByte)
+
+
+
+Client separation = cli_sep = num_inums * dmd_width * dmd_height / 2048
+
+num_inums = 188
+dmd_width = 2048
+dmd_height = 1080
+hence, cli sep = 188 * 2048 * 1080 / 2048 = 203040 Location_base = 0x9000 0000
+Location_1 = location_base + (num_spx_blocks * dmd_width *dmd_height / 8) num_spx_blocks = 200 * 36 = 7200
+hence, location_1 = 0x9000 0000 + (7200 * 2048 * 1080 / 8) = 0x9000 0000 + 0x76A7 0000 = 0x06A7 0000
+
+Then the settings for the locations parameters will be:
+loc_a = loc_base = 0x9000 0000 (which must be shifted right by one byte) => 0x9000 00 loc_b = location_1 = 0x06A7 0000 (which must be shifted right by one byte) => 0x06A7 00 loc_c = loc_a = 0x9000 00
+loc_d = loc_b = 0x06A7 00
+
+
+
+
+5.2.8 Lines Ready to Print (LB4700 only)
+Record that reports how many lines that are loaded from SSD to RAM (that was started by Error: Reference source not found Error: Reference source not found)
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes4 bytesRequestReadyLines4385-ReplyReadyLinesReplyReadyLines8585nof_rows-
+Payload:
+ParameterDescriptionPermanentnof_rowsThe number of (sub-) rows that have been loaded from SSD to RAM.No
+
+
+
+
+
+5.2.9 Blocks Ready to Print C1 (LB4700_C1 only)
+Record that reports how many blocks that are loaded from SSD to RAM (that was started by 5.2.6 Prepare Print Strip C1 (LB4700 _C1 only))
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes4 bytesRequestReadyBlocksC 14389-ReplyReadyBlocksC1ReplyReadyBlocksC18589nof_blocks-
+Payload:
+ParameterDescriptionPermanentnof_blocksThe number ofblocks that have been loaded from SSD to RAM.No
+
+
+
+5.2.10 Sequence Number Error
+These records are used to check if there has been any "out-of-sequence" packages when transferring image data using "Load Image Data" or "Load Stripe Image Data (LB4700 and LB4700_C1 only)".
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byte2 bytesRequestSeqNoError4311--ReplySeqNoErrorReplySeqNoError7511is_errorlast_seq_no-
+Payload:
+ParameterDescriptionis_error1 = There has been a seq_no out of order since last request. 0 = No error since last request.last_seq_noThe last correctly received seq_no. Will be set to 0 if is_error field is 0. If is_error is 1, it may also be set to 0 if the package with sequence number 1 was not received.
+A client should check if there has been a sequence number error periodically when sending "Load Image Data" or "Load Stripe Image Data (LB4700 and LB4700_C1 only)" packages.
+
+Example
+- Request for sequence number error in the case where an error has occured (sequence number 20 was the last received ok):
+Send: 0x00 0x04 0x01 0x37 (RequestSeqNoError)
+Receive: 0x00 0x07 0x01 0xFF 0x01 0x00 0x14 (ReplySeqNoError)
+
+5.2.11 Reset Sequence Number Counter
+Record that is used to reset the sequence counter in the records described in chapters 5.2.3 and 5.2.4.
+
+Rec nametot_sizerec_id
+Reply2 bytes2 bytesResetSeqNo4112ReplyAck
+When this record is received by the Luxbeam, the expected seq_no is reset to 1. Hence, the client must send its next "Load Sequence File"-record using seq_no = 1.
+
+Example
+
+
+
+- Reset sequence number to 1:
+Send: 0x00 0x04 0x00 0x70 (ResetSeqNo)
+Receive: 0x00 0x06 0x01 0xF5 0x00 0x00 (ReplyAck (= ok))
+
+5.2.12 Load Flatness Correction Mask (PPC)
+This record is used to upload a flatness correction mask to the Luxbeam.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes2 bytes2 bytes1-8962 bytesLoadFlatnessMas k11 (+)116pkg_notot_pkgdata_siz edataReplyAck
+
+Payload:
+ParameterDescriptionPermanentpkg_noMask file package number (last package: pkg_no = tot_pkg).Notot_pkgTotal number of packages needed to send the complete file. Max. value for tot_pkg is 30. In this case the mask file size is 30*8962 bytes = 268860 bytes.Nodata_sizeThe number of bytes in data.NodataMask image data. (8-bit .bmp file)Yes
+The flatness correction mask file is in 8-bit grayscale bitmap format, with dimension 240x1080 pixels (160x800 for wxga). (This may be changed, but should not have any impact on the way this record transfers data). The loaded file is stored permanently in the Luxbeam, so that it is not necessary to load the file again after a power-cycle.
+
+Whenever a LoadFlatnessMask record is sent with pkg_no=1, the Luxbeam expects a new mask file to be transferred. The remaining packages (if any) must be sent with increasing pkg_no until pkg_no=tot_pkg. If pkg_no is not increasing by one for each record sent, an error-reply will be sent (error = 10007).
+
+If tot_pkg > 30, then an error reply 10008 is returned. If the transferred image has incorrect format, error reply 10020 is returned.
+
+
+
+Dmd:_
+
+
+
+
+
+5.2.13 Enable Flatness Correction Mask (PPC)
+This record is used to enable or disable the loaded flatness correction mask (PPC).
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byteSetFlatnessMaskOn5148enableReplyAckRequestFlatnessMaskO n4348-ReplyFlatnessMaskO nReplyFlatnessMaskOn5548enable-
+Payload:
+ParameterDescriptionPermanentenable1 = Enable the flatness correction mask. (> 1 is interpreted as 1) 0 = Disable the flatness correction mask.No
+
+
+5.2.14 Load Internal Image
+This record is used to load an internal image. To display a loaded internal image the internal sequencer should be enabled (ref. 5.3.13 Active Sequence File). When running this command inum 0, offset 0 is filled with image data from permanent storage. The size of the image is given by the mounted DMD (1024x768, 1920x1080, 1920x1200 or 1280x800).
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byteSetLoadInternalImage5169img_noReplyAckRequestLoadInternalImage4369-ReplyLoadInternalImageReplyLoadInternalImage5569img_no-
+
+
+Payload:
+ParameterDescriptionPermanentimg_noThe internal image number to be displayed.
+Range: 0 - 4
+(If no image has been loaded, 99 is returned)No
+SetLoadInternalImage returns 10039 if img_no is out of range or there is an error with the file saved in permanent storage.
+
+
+5.2.15 Autoload Internal Image at Boot-up
+This record is used to select which internal image is to be loaded at power-on and whether it should be loaded or not at power-up.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byte1 byteSetAutoloadInternalImage6177autoloadimg_noReplyAckRequestAutoloadInternalIma ge4377--ReplyLoadInternalImageReplyAutoloadInternalImage6577autoloadimg_no-
+
+Payload:
+ParameterDescriptionPermanentautoload0 = Off
+1 = On (i.e. load the image at power-on)Yes Default: Onimg_noThe internal image number to be displayed. Range: 0 - 4Yes Default: 0
+SetAutoloadInternalImage returns 10039 if img_no is out of range.
+
+
+5.2.16 Save Internal Image
+This record is used to over-write an internal image in permanent storage. When running this command the image data in permanent storage is updated with the current memory contents of inum 0, offset 0 . The size of the image is given by the mounted DMD (1024x768, 1920x1080, 1920x1200 or 1280x800).
+
+
+
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byteSetSaveInternalImage5170img_noReplyAck
+
+Payload:
+ParameterDescriptionPermanentimg_noThe internal image number to be updated. Range: 0 - 4Yes Default: N/ A
+SetSaveInternalImage returns 10039 if img_no is out of range or there is an error with the file saved in permanent storage.
+
+5.2.17 Scaling Matrix (LB 4700 only)
+This record is used to morph an image strip in order to do rotation and scaling. It is required to be sent before transferring the strip from SSD to host memory (Error: Reference source not found Error: Reference source not found).
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes2 bytes8 - 512 bytesSetMorphMatri x16-520184overscannum_point smorph_pointsReplyAck
+
+Payload:
+ParameterDescriptionPermanentoverscanOverlap between stripes, in native pixels. The number must be modulo 128 and will be rounded to closest if not modulo 128.Nonum_pointsNumber of morph points. Must be an even number in the range 4 to 512.Nomorph_pointsA morph point is a 4 byte value consisting of an x-value (bit 0-15) and an y-value (bit 16-31). All even points (0,2,4..) are control points on the left side and all odd points are on the right side of the stripe. The control points are separated by 8192 pixels in the y direction. If the last row of stripe is close (within a few hundred pixels) to a (n*8192) boundary then control points up to next boundary (n+1)*8192 should be added.No
+
+
+
+Returns error 10043 if number of morph points is not av even number.
+
+
+
+
+5.2.18 Get Stripe Statistics (LB4700 only)
+This record will report some statistical information about the last strip loaded.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes4 bytesRequestStripStats4387-ReplyStripStatsReplyStripStats8587upload_time-
+Payload:
+ParameterDescriptionPermanentupload_timeTime (in microseconds) taken to load the last requested number of rows from SSD to host memory.No
+5.2.19 Get CRC Info (LB4700 and LB4700_C1 only)
+This record will report some information about the CRC checks towards the SSD disks.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byte1 byte1 byte1 byteRequestCrcIn fo4390----ReplyCrcIn foReplyCrcInfo8590CRC_pass_ rdCRC_fail_r dCRC_pass_ wrCRC_fail_ wr-
+Payload:
+ParameterDescriptionPermanentCRC_pass_rdNumber of strips that has been read from SSD disk with a successful CRC check since reading strip 0.NoCRC_fail_rdNumber of strips that has been read from SSD disk with an unsuccessful CRC check since reading strip 0.No
+
+
+CRC_pass_wrNumber of strips that has been written to SSD disk with a successful CRC check since starting writing strip 0.NoCRC_fail_wrNumber of strips that has been written to SSD disk with a unsuccessful CRC check since starting writing strip 0.No
+
+
+5.2.20 Clear CRC Info (LB4700 and LB4700_C1 only)
+This record is used to clear all or some of the CRC information.
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byteClearCrcInfo5191to_be_clearedReplyAck
+Payload:
+ParameterDescriptionPermanentto_be_clearedWhich CRC info is to be cleared.
+0 = CRC-read only
+1 = CRC-write only
+2 = All CRC infoNo
+
+
+
+
+
+5.2.21 Blend Size (LB4700 an LB4700_C1 only)
+This record will be sent to 4k7 to set up inter-strip blending.
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byteSetPrepareNewJob5192blend_sizeReplyAck
+Payload:
+ParameterDescriptionPermanentblend_sizeBlend size, in pixels. 0-31 (Will be set to 31 if higher vales are set)No
+
+
+5.2.22 Set Strip Overlap Info (LB4700 and LB4700_C1 only)
+This record will be sent to 4k7 before printing each strip. Blend size is given in 5.2.21.
+
+Rec nametot_siz erec_idpayload
+Reply2 bytes2 bytes1 byte1 byte1 byte2 bytes2 bytesSetOverla p11193strip_n oblnd_lblnd_roffset_loffset_rReplyAck
+
+Payload:
+ParameterDescriptionPermanentstrip_noStrip number. 0-255Noblnd_lActivate blend left. 0 = no, other values = yesNoblnd_rActivate blend right. 0 = no, other values = yesNooffset_lLeft offset mask, in subpixels. 0 = no offset maskNooffset_rRight offset mask, in subpixels. 0 = no offset maskNo
+
+
+
+
+5.2.23 SSD Sata-reset (LB4700 and LB4700_C1 only)
+This record can be sent to the board when SSD hangs to reset the SATA controller. Can return error codes 10053-10057 described in error code section. Response code is 0 if reset is successful.
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes0 byteSetResetSsd4205N/AReplyAck
+5.2.24 SSD Wear-leveling (LB4700 and LB4700_C1 only)
+This record must be sent to the board when no jobs are loaded. The SSD wear leveling will expand the life- time of the SSD disk.
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byte
+
+
+SetSsdWearLevelin g5208pseudo_random_numReplyAck
+Payload:
+ParameterDescriptionPermanentpseudo_random_numNumber in the range 1-255. 0 = Turn off wear leveling.No
+
+
+
+
+
+5.2.25 Image Masking (LB4600 only)
+The image masking is controlled by this "SetImageMask" together with running an appropriate sequence file. Whenever this command is sent the sequencer is stopped and reset. After this command is sent the sequencer must be run with the appropriate sequence until til masking has finished. Finally this command must be called again with FUNTION=0 to finish the masking procedure.
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes4 bytes1 byteSetImageMask9209dst_framefunctionReplyAck
+Payload:
+ParameterDescriptionPermanentdst_frameInum number of the destination frame.NofunctionThe function to apply on the mask: 0: DISABLE function (i.e. source)
+1: AND function
+2: OR function
+3: XOR function
+4: MASK, output the mask data 5: SOURCE inverse
+6: All 0x00s
+7: All 0xFFsNoAssuming a source image is uploaded to INUM 0 and a mask image at INUM 256 the following sequence is perform the masking and put the result in INUM 1.
+
+# Start with a WAIT to give fetch state machine lead compared execution state machine Wait 10
+
+
+
+
+# Assign variables for looping
+AssignVar Dmd_row01AssignVar Mem_row01AssignVar Mem_row01AssignVar Inum_src01AssignVar Inum_mask2561AssignVar Nrows11AssignVar Nrows_total10801
+# Start sequencer loop here
+Label StartLoopA	1
+LoadRow Dmd_row Nrows Inum_src Mem_row	1
+LoadRow Dmd_row Nrows Inum_mask Mem_row	1
+Add	Mem_row 1	1
+JumpIf Mem_row < Nrows_total StartLoopA	1
+# Endless loop at the end Label StartLoopB 1
+Jump StartLoopB 1
+The sequence finishes the masking of 1080 rows in (1080*5+19)*250 ns = 1.355 ms
+
+
+
+
+5.2.26 SSD Read Data Internally (LB4700 and LB4700_C1 only)
+This function will force a read from the SSD, which again will make it possible to do a CRC-read check to ensure that the data in the SSD is correct.
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byte2 bytes4 bytesSetReadSsd11210job_nostrip_nosizeReplyAck
+
+Payload:
+ParameterDescriptionPermanentjob_noJob number, starting at 0Nostrip_noStrip number, starting at 0.NosizeThe number of bytes to read. Note, must be a modulo 512 number.No
+
+
+Procedure to verify SSD content:
+1. Clear the CRC (5.2.20 Clear CRC Info (LB4700 and LB4700_C1 only))
+2. Do a SSD Read Data of a given strip.
+3. Check that the CRC_pass_rd increases by one using 5.2.19 Get CRC Info (LB4700 and LB4700_C1 only).
+
+
+
+5.2.27 Stripe File Name (LB4700 and LB4700_C1 only)
+This function will read out the name of the RLE file currently loaded from SSD to internal RAM. If no file is loaded then filename_length will be 0.
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes0 - 512 bytesRequestStripeFilename4413--ReplyStripeFilena meReplyStripeFilename6 - 518613filename_lengthfilename-
+
+
+
+
+
+5.2.28 Get Data Written (LB4700 and LB4700_C1 only)
+This function will read out the number of bytes written to stripe currently being uploaded. Use this function if you are doing tight write-operation and read-operations. SSD does not support simultaneously reading and writing and there is some caching taking place when uploading data. When you have sent the last UDP packet for stripe call this function and compare the returned bytes written counter with the amount you have sent. You can also use returned job and stripe numbers to verify upload. When they are equal the system is ready to read stripe from SSD to internal memory.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes4 bytes4 bytes2 bytesGetDataWritten4416---ReplyDataWrittenReplyDataWritten14616bytes_writtenjob_n ostripe_n o-
+
+5.2.29 Set SSD bypass mode (LB4700 and LB4700_C1 only)
+This function will set the board to operate by bypassing the SSD drives completely and upload data on the UDP image socket directly to morph block. Note: It is vital for the speed of this mode of operation that the user utilizes a clever algorithm to feed the image socket with data as the read rate may vary greatly depending on compression of the RLE data and you may easily overflow the input buffer which will need frequent retransmits of data if not monitored closely.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytesSetSsdBypass6219bypassReplyAck
+Bypass parameter:
+0 = Bypass off
+1 = Bypass on
+
+5.2.30 Trigger CRC write check (LB4700 and LB4700_C1 only)
+To be used together with "Set SSD bypass mode". When image has been completely uploaded to morphing trigger this command to do a check of CRC info. Read back CRC counts using "Get CRC Info".
+
+Rec nametot_sizerec_idpayloadReply
+
+
+2 bytes2 bytes0 byteTriggerCRCWriteCheck4220N/AReplyAck
+
+
+
+5.3 Sequencer Records
+
+5.3.1 Load Sequence File
+This record is used to send a sequence text-file to the Luxbeam.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes2 bytes2 bytes1-8962 bytesLoadSequenceFi le11 (+)105pkg_notot_pkgdata_siz edataReplyAck
+Payload:
+ParameterDescriptionPermanentpkg_noSequence file package number (last package: pkg_no = tot_pkg).Notot_pkgTotal number of packages needed to send the complete file.
+Max. value for tot_pkg is 20. In this case the sequence file size is 20*8962 bytes = 179240 bytes.Nodata_sizeThe number of bytes in data.NodataSequence data.No
+Whenever a LoadSequenceFile record is sent with pkg_no=1, Luxbeam expects a new sequence file to be transferred. The remaining packages (if any) must be sent with increasing pkg_no until pkg_no=tot_pkg. If pkg_no is not increasing by one for each record sent, an error-reply will be sent (error = 10002).
+
+After the last sequence data package has been sent, the ReplyAck returned will indicate if the sequence file was parsed ok (error = 0) or if there was an error while parsing (error = 10003). In the latter case, the error text explaining the parsing error can be retrieved using "Sequencer File Error Log".
+
+If tot_pkg > 20, then an error reply = 10004 is returned.
+
+The sequence file in text-format will be translated internally in Luxbeam. If the translated file is too large, an error reply = 10010 will be returned.
+
+
+
+
+
+
+
+5.3.2 Load Sequence File binary
+This record is used to send a sequence binary file to the Luxbeam.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes2 bytes2 bytes1-8962 bytesLoadSequenceFi leBinary11 (+)198pkg_notot_pkgdata_siz edataReplyAck
+Payload:
+ParameterDescriptionPermanentpkg_noSequence file package number (last package: pkg_no = tot_pkg).Notot_pkgTotal number of packages needed to send the complete file.
+Max. value for tot_pkg is 20. In this case the sequence file size is 20*8962 bytes = 179240 bytes.Nodata_sizeThe number of bytes in data.NodataBinary sequence data.No
+Whenever a LoadSequenceFileBinary record is sent with pkg_no=1, Luxbeam expects a new binary sequence file to be transferred. The remaining packages (if any) must be sent with increasing pkg_no until pkg_no=tot_pkg. If pkg_no is not increasing by one for each record sent, an error-reply will be sent (error = 10002).
+
+After the last sequence data package has been sent, the ReplyAck returned will indicate if the binary sequence file is received correctly (error = 0) or if there was an error.
+
+If tot_pkg > 20, then an error reply = 10004 is returned.
+
+If the translated file is too large, an error reply = 10010 will be returned.
+
+
+
+
+5.3.3 Sequencer State
+This record is used to manipulate and request the status of the sequencer in Luxbeam.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byte1 byte1 byteSetSequencerState6106seq_cmdenable-ReplyAckRequestSequencerState5306seq_cmd--ReplySequencerSta teReplySequencerState7506seq_cmdenablevalid_cm d-
+Payload:
+ParameterDescriptionPermanentseq_cmdCommand to send/request. See table below for valid commands.Noenable1 = enable, 0 = disableNovalid_cmd1 = valid command requested, 0 = invalid command requestedNo
+
+seq_cmdCommand nameDescription1RunWhen enabled, the sequencer will start running from its current position.
+When disabled, the sequencer will stop at its current position.2ResetWhen enabled, the sequencer will enter its "reset"-state.
+When disabled, the sequencer will be taken out of its "reset"-state.3 ->UnusedThese values will be regarded as invalid if sent or requested.
+If an invalid seq_cmd is sent in "SetSequencerState", a "ReplyAck" with error number 10006 (Invalid sequence command) will be returned.
+If an invalid seq_cmd is sent in "RequestSequencerState", a reply with seq_cmd = 0 , enable = 0 and valid_cmd = 0 will be given in "ReplySequencerState".
+
+Example
+-	Set "Reset enable".
+Send: 0x00 0x06 0x00 0x6A 0x02 0x01
+Receive: 0x00 0x06 0x01 0xF5 0x00 0x00 (ReplyAck (= ok))
+
+
+
+
+
+
+5.3.4 Sequencer File Error Log
+After loading a sequence file (using "Load Sequence File") an error log can be fetched using these records.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes1-8966 bytesRequestSeqFileErrorL og4307--ReplySeqFileError LogReplySeqFileErrorLog7 (+)507data_sizedata-
+Payload:
+ParameterDescriptiondata_sizeThe number of bytes in data.dataThe error log in ascii text.
+
+If an error = 10003 was received after loading a sequence file (with "Load Sequence File"), the error log can be fetched by sending a RequestSeqFileErrorLog. The data received is ascii text describing the error.
+
+If sending RequestSeqFileErrorLog when there has been no parsing error or no sequence file has been loaded, a ReplySeqFileErrorLog with data_size = 0 will be returned.
+
+
+5.3.5 Software Sync
+This record is used to set (or read) the level of the "software sync" signal that is used by the sequencer in Luxbeam. If the sequence has a "Trig" command with source set to "Software sync", this record will set the level of this sync signal.
+
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byteSetSoftwareSync5120levelReplyAckRequestSoftwareSync4320-ReplySoftwareSyncReplySoftwareSync5520level-
+Payload:
+
+
+
+ParameterDescriptionPermanentlevel0 = Low. 1 = High. (All values > 0 are decoded as "High").No
+
+5.3.6 Trigger Count (obsolete)
+This record is used to count the number of triggers that the sequencer in Luxbeam has performed since last time the sequencer was enabled (ie. since Run -> Enable in 5.3.3 Sequencer State was set). Note that this info is also available through 5.3.10 Trigger Info which should preferably be used.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytesRequestTriggerCount4321-ReplyTriggerCountReplyTriggerCount6521trig_count-
+
+Payload:
+ParameterDescriptiontrig_countThe number of triggers performed. (When this number exceeds 65535 it will wrap round to 0 again.)
+
+5.3.7 Internal Sync Frequency
+This record is used to set the frequency of the internally generated sync pulse. If the sequence file has a
+"Trig" command with source set to "Internal sync", this record will set the frequency of this sync signal. The frequency is given as the time between two pulses.
+
+Rec nametot_siz erec_idpayload
+Reply2 bytes2 bytes2 bytes2 bytes2 bytesSetInternalSyncFreq10144secmsusReplyAckRequestInternalSyncFr eq4344---ReplyInternalSyncFr eqReplyInternalSyncFreq10544secmsus-
+Payload:
+ParameterDescriptionPermanent
+
+
+secSeconds. Range: 0 - 255No. Default: 0msMilliseconds. Range: 0 - 999No. Default: 1usMicroseconds. Range: 0 - 999No. Default: 0
+If trying to set a period outside valid range, error code 10024 will be returned.
+
+Example
+Set the period to be 2.5 ms (= 400Hz). This is equivalent to 0 sec, 2 ms and 500 us.
+
+5.3.8 Sequencer Register
+This record is used to modify the sequencer registers. There are 12 sequence registers that can be manipulated using this record. For this to have any affect, the Sequencer Register must be used in the sequence file, with the command "AssignVarReg".
+
+NOTE: ReplySequenceReg returns the value that has been set using SetSequenceReg. If the sequence file in Luxbeam has made changes to the value (eg. by adding to it) , this will not be reflected in the reply.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes2 bytes1 byteSetSequenceReg8122reg_noreg_val-ReplyAckRequestSequenceRe g6322reg_no--ReplySequenceRegReplySequenceReg9522reg_noreg_valvalid_re g-
+Payload:
+ParameterDescriptionPermanentreg_noThe sequence register number. Valid range: 0 - 11Noreg_valThe value assigned to the given register number. Range: 0 - 65535.Novalid_reg1 = The requested reg_no is valid.
+0 = The requested reg_no is not valid. (reg_val = 0 in this case)No
+SetSequenceReg returns 10012 if invalid register number (reg_no) is given.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5.3.9 Light Pulse Duration
+This record manipulates the duration of the light pulse that is applied when a "LightPulseWord" command is used in the sequence file.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytesSetLightPulseDuration6123durationReplyAckRequestLightPulseDurati on4323-ReplyLightPulseDurati onReplyLightPulseDuration6523duration-
+Payload:
+ParameterDescriptionPermanentdurationThe duration the light pulse should be on.
+Unit: 250 ns. (Hence duration 1 = 250 ns, duration 65535 = 16.37375 ms)No
+
+5.3.10 Trigger Info
+This record can be used to get information about the trigger pulses used for synchronization in the sequencer.
+
+Rec nametot_siz erec_idpayload
+Reply2 bytes2
+bytes4 bytes4 bytes2 bytes2 bytes4 bytes4 bytes
+
+
+RequestTrigIn fo4352------ReplyTrigIn foReplyTrigInfo24552puls_epuls_oper_eper_oseq_pul smax_trig_o-
+Payload:
+ParameterDescriptionPermanentpuls_eNumber of electrical trigger pulses detected on input pin.Nopuls_oNumber of optical trigger pulses detected on input pin..Noper_eMinimum period between two trigger pulses on electrical trigger input pin. (Since last read).
+Unit: 10-8 secNoper_oMinimum period between two trigger pulses on optical trigger input pin. (Since last read).
+Unit: 10-8 secNoseq_pulsNumber of trigger pulses received by sequencer.Nomax_trig_oThe trigger number that gave the minimum period (per_o) on the opt. trig.No
+5.3.11 Trigger Delay Time
+This record manipulates the delay of the "Delayed Trigger Input" source, that can be selected from the sequencer.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytesSetTrigDelay6161delayReplyAckRequestTrigDelay4361-ReplyTrigDelayReplyTrigDelay6561delay-
+Payload:
+ParameterDescriptionPermanentdelayDelay the active trigger pulse by a number of 1/256 parts of a trigger period.
+Range: 0 - 255. 0 is no delay. 255 is on period delay.No
+SetTrigDelay returns 10032 if outside valid range.
+
+
+
+
+
+
+
+
+
+5.3.12 Trigger Frequency Divide
+This record manipulates the frequency of the "Delayed Trigger Input" source, that can be selected from the sequencer. The factor given in this record goes into the following formula:
+
+Divide_factor = 215 / factor.
+
+Example: If factor given is 16384, the divide_factor is (32768 / 16384), which equals 2. Hence the "Delayed Trigger Input" frequency is halved.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytesSetTrigDivide6164factorReplyAckRequestTrigDivide4364-ReplyTrigDivideReplyTrigDivide6564factor-
+Payload:
+ParameterDescriptionPermanentfactorThe value goes into the following formula: Divide_factor = 32768 / factor
+Range: 1 - 32768.No
+SetTrigDivide returns 10035 if outside valid range.
+
+
+
+
+
+5.3.13 Active Sequence File
+This record makes it possible to select which sequence file to be used. If internal sequence is selected, the image that is currently loaded in inum 0, offset 0 will be displayed. The built-in sequence file will automatically be fitted to the current DMD-size that is mounted in the system (1024x768, 1920x1080, 1920x1200 or 1280x800).
+
+
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byteSetActiveSequence5171typeReplyAckRequestActiveSequence4371-ReplyActiveSequenceReplyActiveSequence5571type-
+Payload:
+ParameterDescriptionPermanenttype0 = Use last loaded (external) sequence file
+1 = Use internal sequence file.No
+SetActiveSequence will return 10040 if trying to set 0 (last loaded file) and no external sequence file has been loaded previously.
+
+
+
+
+
+
+
+
+5.3.14 Autostart Sequencer At Power-On
+This record will set the behaviour of the sequencer at power-on. If enabled, the internal sequencer will be started when the board is powered on and display the contents at inum 0, offset 0.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byteSetAutostartSequencer5172modeReplyAckRequestAutostartSequenc er4372-ReplyAutostartSequenc erReplyAutostartSequencer5572mode-
+Payload:
+ParameterDescriptionPermanentmode0 = Do not start sequencer at power-on
+1 = Start sequencer at power-on.Yes Default: 1
+
+
+
+
+
+
+5.3.15 DMD Mirror Shake
+This record will turn on/off the shaking function of the DMD mirrors. Note: This function requires that the internal sequencer is running.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byteSetDmdMirrorShake5195enableReplyAckRequestDmdMirrorShake4395-ReplyDmdMirrorShakeReplyDmdMirrorShake5595enable-
+Payload:
+ParameterDescriptionPermanentenable0 = DMD mirror shake OFF
+1 = DMD mirror shake ONNo
+
+
+
+5.3.16 Sequence Label for Forward Loop
+The sequence file is stored as "program" in a RAM in the FPGA. When the sequencer is started then a program counter steps through this RAM and execute task according to the sequencer commands.
+Whenever a "LABEL" is seen in the sequencer then the corresponding address in the sequencer RAM is stored in a separate label ram. When "JUMP" is seen in the sequencer then the corresponding address for "jump-to label" is found in the label ram and the program counter is assigned to this value.
+
+The label ram is generated as the sequencer program is executed and consequently the label command must be defined before jump command, i.e. no forward jump is possible.
+
+The SetSeqLabel command can be used to manually define the label ram. If this command is used then all labels in the sequencer must be identified and manually uploaded and the automatic update that is normally done when the sequencer program finds a label command is disabled.
+With this approach forward jump is possible. Example:
+First column is line count, the second column is the actual address for the command in the sequencer RAM (The sequencer program is stored from address 42 and on-wards)
+
+1 ################################################################################
+2	### Assign variables and aliases 3
+################################################################################
+442AssignVar MemStartRow 01544AssignVar DmdStartRow 01646AssignVar InumA	01748AssignVar InumB	11850AssignVar InumC	21952AssignVar NumRows	1080110Alias	one_sec	400000011################################################################################
+12	#
+13	54	Label selectLoop 1
+14	56	Jump selectLoop 1
+15	#
+16 ################################################################################
+17### Seq 01858Label seq0 1
+
+
+19	60	LoadRow	DmdStartRow NumRows InumA MemStartRow 173 # (1080*40ns)*(4tics/us)=172.8
+2062ResetGlobal1002164Jump selectLoop 122#23################################################################################
+24 ### Seq 1
+25 66	Label seq1 1
+26 68	LoadRow	DmdStartRow NumRows InumB MemStartRow 173 # (1080*40ns)*(4tics/us)=172.8
+2770ResetGlobal1002872Jump selectLoop 129#30################################################################################
+31 ### Seq 2
+32 74	Label seq2 1
+33 76	LoadRow	DmdStartRow NumRows InumC MemStartRow 173 # (1080*40ns)*(4tics/us)=172.8
+3478ResetGlobal1003580Jump selectLoop 1
+For this sequence file the following labels are stored in the label RAM => "selectLoop"=>54 # Store value 54 to address 0
+"seq0" =>58 # Store value 58 to address 1
+"seq1" =>66 # Store value 66 to address 2
+"seq2" =>74 # Store value 74 to address 3
+
+Now, by changing the value in address 0 ("selectloop"), each of the three sequences can be selected: If set to 58 then seq0 is executed,
+If set to 66 then seq1 is executed, If set to 74 then seq2 is executed, cxxzz
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes2 bytesSetSeqLabel8204addressdataReplyAckRequestSeqLabel6404addressReplySeqLabelReplySeqLabel8604addressdata-
+
+
+5.3.17 SPX Level (LB4700 and LB4700_C1 only)
+This record will change the SPX level in Luxbeam.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byteSetSpxLevel5218spx_levelReplyAckRequestSpxLevel4418-ReplySpxLevelReplySpxLevel5618spx_level-
+Payload:
+ParameterDescriptionPermanentspx_level0 = SPX25
+1 = SPX36No
+
+
+
+5.3.18 Tick-period (LB4700 and LB4700_C1 only)
+This record will change the tick period used in the sequence files.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byteSetTickPeriod5224tick_periodReplyAckRequestTickPeriod4424-ReplyTickPeriodReplyTickPeriod5624tick_period-
+Payload:
+ParameterDescriptionPermanenttick_periodValid values: 50 - 127.
+The resolution is 5ns, so tick_period 50 = 50 * 5ns = 250 ns. tick_period 127 = 127 * 5ns = 635 ns.
+Values <50 will be set to 50, and values >127 will be set to 127.No
+
+
+
+
+
+5.4 Multifunction Records
+
+5.4.1 Trigger Source
+The trigger source to be used as input trigger to the sequencer and as source to the autofocus system can be handeled by this record.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes2 bytesSetTrigSource8160sourceedgeReplyAckRequestTrigSource4360-ReplyTrigSourceReplyTrigSource8560sourceedge-
+Payload:
+ParameterDescriptionPermanentsourceThe source to be used as trigger input.
+0 = Electrical
+1 = Optical. (Any value > 1 will be treated as 1)Noedge0 = Positive edge
+1 = Negative edge. (Any value > 1 will be treated as 1)No
+
+5.4.2 Camera Illumination LED
+This record controls the light output from the registration camera illumination LED
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byteSetIllumLed5196illum_valReplyAckRequestIllumLed4396-ReplyIllumLedReplyIllumLed5596illum_val-
+Payload:
+ParameterDescriptionPermanent
+
+
+illum_valLight ouput value. Range 0 - 255.No
+
+
+
+5.4.3 Overlay Text/QR/ECC200 (LB4k7 only)
+This record enables the possibility to put overlay text, QR code or ECC 200 code in the data to be sent to the DMD.
+
+
+Rec nametot_s izerec_i d
+payload
+
+Reply2
+bytes2
+byte s
+1
+byte
+1
+byte
+4
+bytes
+4
+bytes
+1
+byte
+1
+byte
+1
+byte
+2
+bytes
+1
+byte
+1
+byte0 -
+31
+bytesSetOverlayTe21-197clrlastxyxsizysizinvrotfliptypetextReplyAxt52eeck
+Payload:
+ParameterDescriptionPermanentclrClear old text data from the board. 1 = Clear. 0 = Do not clear.NolastIndicates last panel data package for a strip. 1 = Last. 0 = Not last.NoxX-coordinate of the lower-left corner, in sub-pixels. Range -4194272 to 4194272.NoyY-coordinate of the lower left corner, in sub-pixels. Range 0 to 1048576.NoxsizeRange: 0-50.
+For text: Character size = 6 * 32 * 1.15size subpixels. For QR: Width = height = 6 * 31 * 1.15size subpixels.
+For ECC200: Width = height = 6 * 26 * 1.15size subpixels.NoysizeRange: 0-50.
+For text: Character size = 6 * 32 * 1.15size subpixels. For QR: Width = height = 6 * 31 * 1.15size subpixels.
+For ECC200: Width = height = 6 * 26 * 1.15size subpixels.NoinvInvert image. 0 = Not inverted, 1 = InvertedNorotRotation, in degrees (0 - 360)NoflipFlip. 0 = No flip, 1 = flip horizontally, 2 = flip vertically, 3 = flip bothNotypeType of overlay. 0 = Text, 1 = QR, 2 = ECC200No
+
+
+textText string to be shown. Max 31 characters. Valid characters: space, hyphen, 0-9, a-z and A-ZNo
+Note. If several items are to be shown, then one Overlay Text/QR/ECC200 record must be sent for each item, where the y-coordinate is in increasing order.
+
+SetOverlayText will return error code 10052 if any parameters are outside valid range.
+
+
+
+
+5.5 Network Records
+
+5.5.1 Network Settings
+Network configuration settings can be set and requested using these records.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes4 bytes4 bytes4 bytes1 byteSetNetworkSettings17108ip_addrsubnetgatewa ydhcpReplyAckRequestNetworkSettin gs4308----ReplyNetworkSettin gsReplyNetworkSettings17508ip_addrsubnetgatewa ydhcp-
+Payload:
+ParameterDescriptionPermanentip_addrThe static ip address. ("Don't care" when dhcp = 1)Yes. Default: 192.168.0.10subnetThe subnet address. ("Don't care" when dhcp = 1)Yes. Default: 255.255.255.0gatewayAddress of the gateway. ("Don't care" when dhcp = 1)Yes. Default: 192.168.0.1dhcp1 = Use dhcp, 0 = Use static ip, according to information passed in ip_addr, subnet and gateway.Yes. Default: 0
+If dhcp = 1, all other parameters are ignored for "SetNetworkSettings". Similarly for
+"ReplyNetworkSettings", all other parameters are set to zero if dhcp = 1.
+
+
+Example
+-	Set the following network settings: IP address: 10.60.1.51
+Subnet: 255.255.255.0
+Gateway: 10.60.1.1 DHCP: Off
+Send: 0x00 0x11 0x00 0x6C 0x33 0x01 0x3C 0x0A 0x00 0xFF 0xFF 0xFF 0x01 0x01 0x3C 0x0A 0x00
+(SetNetworksSettings)
+
+
+
+Receive: 0x00 0x06 0x01 0xF5 0x00 0x00 (ReplyAck (= ok))
+
+-	Request network settings:
+Send: 0x00 0x04 0x01 0x34 (RequestNetworkSettings)
+Receive: 0x00 0x11 0x01 0xFC 0x33 0x01 0x3C 0x0A 0x00 0xFF 0xFF 0xFF 0x01 0x01 0x3C 0x0A 0x00
+(ReplyNetworkSettings)
+
+
+5.6 Permanent Storage Records
+
+5.6.1 Save Settings
+This record is used to store parameters that are marked "Permanent" in nonvolatile memory.
+
+
+Rec nametot_sizerec_id
+Reply2 bytes2 bytesSaveSettings4110ReplyAck
+This command has no parameters. Sending this command to the Luxbeam will cause all parameters that are marked as "permanent" to be saved in nonvolatile memory.
+
+Example
+- Save current settings to NVRAM:
+Send: 0x00 0x04 0x00 0x6E (SaveSettings)
+Receive: 0x00 0x06 0x01 0xF5 0x00 0x00 (ReplyAck (= ok))
+
+
+
+5.6.2 Factory Defaults
+This record will reset parameters back to factory defaults and store these values in nonvolatile memory.
+
+
+Rec nametot_sizerec_id
+Reply2 bytes2 bytesSetFactoryDefaults4113ReplyAck
+This will reset the parameters that are marked as "permanent" back to its default settings.
+
+
+
+Example
+- Set factory default settings:
+Send: 0x00 0x04 0x00 0x71 (SetFactoryDefaults)
+Receive: 0x00 0x06 0x01 0xF5 0x00 0x00 (ReplyAck (= ok))
+
+
+
+
+
+
+5.7 System Management Records
+
+5.7.1 Safe Shutdown
+This record will make the Luxbeam go into a mode where it is safe to remove the power-supply. This mode should always be entered before powering-off the product. Note that after entering this mode, the product will no longer respond to any communication and must be power off and on to function normally again. The LEDs will alternately flash red and yellow when in shutdown-mode.
+
+
+Rec nametot_sizerec_id
+Reply2 bytes2 bytesSetSafeShutdown4180ReplyAck
+
+
+
+5.8 Info Records
+
+5.8.1 Firmware Version (Old format)
+Record to request the firmware version running in the Luxbeam. The build timestamp for the firmware and the FPGA is also given. Note that this is the format given for all version of LB4600. For LB4700 a new command that includes FPGA build number was introduced in version 4700.4.x.
+
+Rec nametot_sizerec_id
+
+payload2 bytes2 bytes2 bytes2 bytes2 bytes2 bytes2 bytes1 byte1 byte1 byte1 byte1 byte2 bytes1 byte1 byte1 byte1 byte1 byteRequestFwVersion4314----------------ReplyFwVersion26514board_sw_majboard_sw_minboard_sw_subboard_sw_buildboard_sw_yearboard_sw_monboard_sw_dayboard_sw_hourboard_sw_minboard_sw_secFPGA_yearFPGA_monthFPGA_dayFPGA_hourFPGA_minFPGA_sec
+
+Payload:
+ParameterDescriptionboard_sw_majBoard software major versionboard_sw_minBoard software minor versionboard_sw_subBoard software subminor versionboard_sw_buildBoard software build number
+
+
+board_sw_yearBoard software build yearboard_sw_monthBoard software build monthboard_sw_dayBoard software build day of monthboard_sw_hourBoard software build hourboard_sw_minBoard software build minuteboard_sw_secBoard software build secondFPGA_yearFPGA build yearFPGA_monthFPGA build monthFPGA_dayFPGA build day of monthFPGA_hourFPGA build hourFPGA_minFPGA build minuteFPGA_secFPGA build second
+
+
+Example
+- Read firmware version:
+Send: 0x00 0x04 0x01 0x3A (RequestFwVersion) Receive:
+
+
+
+
+5.8.2 Firmware Version - New format (LB4700 only)
+Record to request the firmware version running in the Luxbeam. The build timestamp for the firmware and the FPGA is also given, together with FPGA build number. Note that this command is valid for LB4700 from version 4700.4.x onwards.
+
+Rec nametot_sizerec_id
+
+payloadReply2 bytes2 bytes2 bytes2 bytes2 bytes2 bytes2 bytes1 byte1 byte1 byte1 byte1 byte2 bytes2 bytes1 byte1 byte1 byte1 byte1 byteRequestFwVerNew4432-----------------ReplyFwVerNewReplyFwVerNe28632board_sw_majboard_sw_minboard_sw_subboard_sw_buildboard_sw_yearboard_sw_monboard_sw_dayboard_sw_hourboard_sw_minboard_sw_secFPGA_buildFPGA_yearFPGA_monthFPGA_dayFPGA_hourFPGA_minFPGA_sec-
+
+Payload:
+ParameterDescriptionboard_sw_majBoard software major versionboard_sw_minBoard software minor versionboard_sw_subBoard software subminor versionboard_sw_buildBoard software build numberboard_sw_yearBoard software build yearboard_sw_monthBoard software build monthboard_sw_dayBoard software build day of month
+
+
+board_sw_hourBoard software build hourboard_sw_minBoard software build minuteboard_sw_secBoard software build secondFPGA_buildFPGA build numberFPGA_yearFPGA build yearFPGA_monthFPGA build monthFPGA_dayFPGA build day of monthFPGA_hourFPGA build hourFPGA_minFPGA build minuteFPGA_secFPGA build second
+
+
+5.8.3 DMD Info
+Records that shows various information about the DMD mounted in the Luxbeam.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes2 bytes2 bytes2 bytes2 bytesRequestDmdIn fo4315--ReplyDmdInf oReplyDmdInfo14515dmd_typ eblockscolsrowsrows_pr_bloc k-
+Payload:
+ParameterDescriptiondmd_typeThe DMD type mounted on the board. See table below for valid values.blocksThe number of blocks that the DMD is divided into.colsThe horizontal pixel resolution of the DMD.rowsThe vertical pixel resolution for the DMD.rows_pr_blockThe number of rows in a block.
+
+
+
+
+0.95 1080p Type A1.7 XGA Type A3.55 XGA Type X5.96 WUXGA Type A99Unknown DMD connected. (blocks, cols, etc not valid in this case)15No DMD connected. (blocks, cols, etc not valid in this case)
+Example
+- Request DMD info:
+Send: 0x00 0x04 0x01 0x3B (RequestDmdInfo)
+Receive: 0x00 0x0E 0x02 0x03 0x00 0x03 0x00 0x10 0x04 0x00 0x03 0x00 0x00 0x30
+(ReplyDmdInfo)
+dmd_type: 3, blocks: 16, cols: 1024, rows: 768, rows_pr_block: 48
+
+
+5.8.4 Overall Error Status Word (LB4600 only)
+The error status word is updated once every two second and gives a summary of errors that have occurred in the Luxbeam board and LED driver(s). If a modern LED driver style is used disregard the errors of the LEDs in this response. The user must read the errors of modern LED drivers by 5.10.2 LED Driver Status. Some of the information found here can be requested in real time through other records. The error status can be reset using 5.8.6 Clear Error Status.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes4 bytesRequestErrorStatus4376-ReplyErrorStatu sReplyErrorStatus8576error_status_word-
+
+Payload:
+ParameterDescriptionPermanenterror_status_wordBit definition is given in the table below.No
+error_status_word bit definition:
+Bit noParameterDescription0Temp regulator 1 out of rangeIf the temperature is +/- 0.1 degrees outside target
+
+
+temperature and the regulator is enabled1Temp regulator 2 out of rangeIf the temperature is +/- 0.1 degrees outside target temperature and the regulator is enabled2AF No Z-motor motionThere has been no z-motion for a number of samples. AF must be enabled.3AF Maximum Z-motor motionZ-motion speed has been at maximum for a given number of samples. AF must be enabled.4Z-motor initalization failedIf initialization process timed out or was aborted.5Z-motor position at endstopIf the position has been inside endstop area.6Data compression too highThe data link has reached max transfer speed, possibly due to too high data compression of the artwork.7Low Ethernet link qualityMany re-transmissions of UDP data possibly due to low quality link.8LED-0 No contact with driverNo contact established with LED driver 09LED-0 OCPOver-current-protection limit exceeded LED-010LED-0 OPPOver-power-protection limit exceeded LED-011LED-0 Door openDoor open LED-012LED-0 LED temp too highTemperature of LED-0 LED has been too high13LED-0 Duty cycle limitationDuty-cycle limitation exceeded LED-014LED-0 Board temp too highTemperature of LED-0 board has been too high15LED-0 Fan stoppedLED-0 fan has been blocked/stopped16LED-1 No contact with driverNo contact established with LED driver 117LED-1 OCPOver-current-protection limit exceeded LED-118LED-1 OPPOver-power-protection limit exceeded LED-119LED-1 Door openDoor open LED-120LED-1 LED temp too highTemperature of LED-1 LED has been too high21LED-1 Duty cycle limitationDuty-cycle limitation exceeded LED-122LED-1 Board temp too highTemperature of LED-1 board has been too high23LED-1 Fan stoppedLED-1 fan has been blocked/stopped24-31Reserved (all 0's)
+
+
+
+
+5.8.5 Overall Error Status Word (LB4700 only)
+The error status word is updated once every two second and gives a summary of errors that have occurred in the Luxbeam board and LED driver(s). Some of the information found here can be requested in real time through other records. The error status can be reset using 5.8.6 Clear Error Status.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes4 bytes4 bytesRequestErrorStatu s4376--ReplyErrorStatusReplyErrorStatus12576error_status_word 1error_status_word2-
+
+Payload:
+ParameterDescriptionPermanenterror_status_word1Bit definition is given in the table below.Noerror_status_word2Bit definition is given in the table below.No
+error_status_word1 bit definition:
+Bit noParameterDescription0Temp regulator 1 out of rangeIf the temperature is +/- 0.1 degrees outside target temperature and the regulator is enabled1Temp regulator 2 out of rangeIf the temperature is +/- 0.1 degrees outside target temperature and the regulator is enabled2AF No Z-motor motionThere has been no z-motion for a number of samples. AF must be enabled.3AF Maximum Z-motor motionZ-motion speed has been at maximum for a given number of samples. AF must be enabled.4Z-motor initalization failedIf initialization process timed out or was aborted.5Z-motor position at endstopIf the position has been inside endstop area.6Reserved (0)Reserved for future use.7Low Ethernet link qualityMany re-transmissions of UDP data possibly due to low quality link.
+
+
+8Board Temperature HighFormatter board temperature above acceptable limit. Turn off system.8-31Reserved (all 0's)
+error_status_word2 bit definition:
+Bit noParameterDescription0LED-0 No contact with driverNo contact established with LED driver 01LED-0 OCPOver-current-protection limit exceeded LED-02LED-0 OPPOver-power-protection limit exceeded LED-03LED-0 Door openDoor open LED-04LED-0 LED temp too highTemperature of LED-0 has been too high5LED-0 Duty cycle limitationDuty-cycle limitation exceeded LED-06LED-0 Board temp too highTemperature of LED-0 board has been too high7LED-0 Fan stoppedLED-0 fan has been blocked/stopped8LED-1 No contact with driverNo contact established with LED driver 19LED-1 OCPOver-current-protection limit exceeded LED-110LED-1 OPPOver-power-protection limit exceeded LED-111LED-1 Door openDoor open LED-112LED-1 LED temp too highTemperature of LED-1 has been too high13LED-1 Duty cycle limitationDuty-cycle limitation exceeded LED-114LED-1 Board temp too highTemperature of LED-1 board has been too high15LED-1 Fan stoppedLED-1 fan has been blocked/stopped16LED-2 No contact with driverNo contact established with LED driver 217LED-2 OCPOver-current-protection limit exceeded LED-218LED-2 OPPOver-power-protection limit exceeded LED-219LED-2 Door openDoor open LED-220LED-2 LED temp too highTemperature of LED-2 has been too high21LED-2 Duty cycle limitationDuty-cycle limitation exceeded LED-222LED-2 Board temp too highTemperature of LED-2 board has been too high23LED-2 Fan stoppedLED-2 fan has been blocked/stopped24LED-3 No contact with driverNo contact established with LED driver 325LED-3 OCPOver-current-protection limit exceeded LED-3
+
+
+26LED-3 OPPOver-power-protection limit exceeded LED-327LED-3 Door openDoor open LED-328LED-3 LED temp too highTemperature of LED-3 has been too high29LED-3 Duty cycle limitationDuty-cycle limitation exceeded LED-330LED-3 Board temp too highTemperature of LED-3 board has been too high31LED-3 Fan stoppedLED-3 fan has been blocked/stopped
+
+5.8.6 Clear Error Status
+This will clear the status of the error register (5.8.4 Overall Error Status Word (LB4600 only) or 5.8.5 Overall Error Status Word (LB4700 only)) and the LED driver status (5.10.2 LED Driver Status).
+
+
+Rec nametot_sizerec_id
+Reply2 bytes2 bytesSetClearErrorStatus4174ReplyAck
+
+5.8.7 Temperature range error limits
+
+
+Rec nametot_si zerec_id
+payload
+Reply2
+bytes2
+bytes2 bytes2 bytes2 bytes2 bytesSetMaxTempD iffLimits12206temp1_lowe rtemp1_uppe rtemp2_lowe rtemp2_uppe rReplyAckRequestMaxTe mpDiffLimits4406----ReplyMaxT empDiffLi mitsReplyMaxTem pDiffLimits12606temp1_lowe rtemp1_uppe rtemp2_lowe rtemp2_uppe r-
+Payload:
+ParameterDescriptionPermanenttemp1_loweLower temperature limit to trigger Temp regulator 1 out of rangeNo
+
+
+rmultiplied with 100. Default value 100 (0.1 deg).temp1_uppe rUpper temperature limit to trigger Temp regulator 1 out of range
+multiplied with 100. Default value 100 (0.1 deg).Notemp2_lowe rLower temperature limit to trigger Temp regulator 2 out of range
+multiplied with 100. Default value 100 (0.1 deg).Notemp2_uppe rUpper temperature limit to trigger Temp regulator 2 out of range
+multiplied with 100. Default value 100 (0.1 deg).No
+
+
+
+
+
+5.8.8 Z-motion error limits
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byte1 byteSetZMotionErrorLimits6207MaxZeroMotionMaxSpeedMotionReplyAckRequestZMotionErrorLi mits4407--ReplyZMot ionErrorLi mitsReplyZMotionErrorLimit s6607MaxZeroMotionMaxSpeedMotion-Payload:
+ParameterDescriptionPermanentMaxZeroMotionNumber of samples before AF No Z-motor motion error is triggered. Default value 0.NoMaxSpeedMotio nNumber of samples before AF Maximum Z-motor motion error is triggered. Default value 0.No
+
+
+
+
+
+5.8.9 SSD Device
+
+
+Read out information about the SSD(s) that are mounted on the Luxbeam board.
+
+Rec nametot_siz erec_idpayload
+Reply2 bytes2 bytes1 byte4 bytes1 byte1 - 62 bytesRequestSsdDevi ce5425device_no-ReplySsdDevi ceReplySsdDevice11 - 72625device_nosectorsname_siz edevice_name-
+
+
+
+Payload:
+ParameterDescriptionPermanentdevice_noThe SSD device to read. 1 = SSD1, 2 = SSD2 (Currently support for 1 only)NosectorsNumber of sectors in SSD. Each sector is 512 bytes.Noname_sizeNumber of bytes in device_name (including NULL-termination)Nodevice_nameThe device_name (as NULL-terminated string)No
+
+
+
+5.9 Focus-system Records
+
+5.9.1 Focus Motor Step Conversion Constant
+This record is used to set the conversion constant that corresponds to one step in the motor controller.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes4 bytesSetFcsMtrStepConst6142step_size_pmReplyAckRequestFcsMtrStepConst4342-ReplyFcsMtrStepConstReplyFcsMtrStepConst6542step_size_pm-
+Payload:
+ParameterDescriptionPermanentstep_size_pmStep size in pico-meter. Range 100 000 - 10 000 000 pm.Yes.
+Default: 1250000
+SetFcsMtrStepConst returns 10023 if value is outside range. If motor is busy moving, error = 10014 will be returned. If setting was successfully done, ok (0 ) is returned.
+
+
+
+5.9.2 Focus Motor Timeout
+This record is used to set the timeout period used during initializing (move to mid position). If initialization is not completed before the timeout given here, the status bit in 5.9.7 Focus Motor Status will be set.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes4 bytesSetFcsMtrTimeout6175timeoutReplyAckRequestFcsMtrTimeout4375-ReplyFcsMtrSPIContrReplyFcsMtrTimeout6575timeout-
+Payload:
+
+
+
+ParameterDescriptionPermanenttimeoutThe timeout in seconds.No. Default: 60 sec
+
+
+5.9.3 Focus Motor SPI Controller Selection
+This record is used to select the active SPI controller connected to the motor controller.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytesSetFcsMtrSPIContr6143spi_controllerReplyAckRequestFcsMtrSPIContr4343-ReplyFcsMtrSPIContrReplyFcsMtrSPIContr6543spi_controller-
+Payload:
+ParameterDescriptionPermanentspi_controller1 = SPI controller internal 0 = SPI controller externalYes
+
+
+5.9.4 Focus Motor to Mid-position (Initialize)
+Initiate a move of the focus motor to its mid position, where measurement of the distance from the lens to the board can be done. This must always be done once after power-up before other focus motor records can be used.
+
+When running this command, the motor will first go to its top and bottom position before going to its mid- position.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byteSetFcsMtrToMidPos5125actionReplyAck
+SetFcsMtrToMidPos with action = 1 will return error = 10014 if motor is busy moving or if tracking-mode is enabled. If a movement to mid position could successfully be started, ok (0) is returned. Note that if initialization is not completed within 60 seconds, a timeout will be raised and the focus motor will
+
+
+
+automatically stop.
+SetFcsMtrToMidPos with action = 0 will always return ok (0). Payload:
+
+
+
+
+5.9.5 Focus Motor Calibration - Measured Distance
+Record holding the distance from the board to the lens when the focus motor is in its mid-position.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes4 bytesSetFcsMtrMeasuredDist8126measured_distReplyAckRequestFcsMtrMeasuredDis t4326-ReplyFcsMtrMeasuredDistReplyFcsMtrMeasuredDist8526measured_dist-
+
+Payload:
+ParameterDescriptionPermanentmeasured_distDistance (in um) from lens to board. Range 75000 - 80000Yes. Default: 0
+The distance used for calibration is stored in non-volatile memory in the Luxbeam.
+
+SetFcsMtrMeasuredDist will return error = 10018 if the focus motor has not been set to mid position. An error reply = 10015 will be returned if the entered distance is outside the valid range.
+
+
+5.9.6 Focus Motor Tracking Mode (Autofocus)
+Record that is used to change set the focus motor in tracking mode (AF). When on, the focus motor will try to follow the line-sensor. Manual positioning will not be possible in tracking mode.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byte
+
+
+SetFcsMtrTrackingMode5127tracking_onReplyAckRequestFcsMtrTrackingMode4327-ReplyFcsMtrTrackingMo deReplyFcsMtrTrackingMode5527tracking_on-
+Payload:
+ParameterDescriptionPermanenttracking_on1 = Tracking mode on, 0 = tracking mode offNo
+SetFcsMtrTrackingMode returns error = 10014 if motor is busy. It returns ok (0) if mode could be changed successfully.
+
+
+5.9.7 Focus Motor Status
+Record that can be used to read out the current status of the focus motor.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytesRequestFcsMtrStatus4328-ReplyFcsMtrStatusReplyFcsMtrStatus6528status_word-
+Payload:
+ParameterDescriptionstatus_wordStatus word with bit definitions described in the table below
+status_word bit definitions:
+Bit noNameDescription0busy_moving1 = Focus motor is moving (eg. tracking mode (AF) is enabled) 0 = Focus motor is idle1must_move_to_mid_pos1 = Move to mid-pos must be done
+0 = Mid-positioning has been performed successfully
+(Set to 1 when starting a new initialization (move to midpos))2endpt_reached1 = Focus is placed at the endpoint (outside adjustable area) 0 = Within adjustable area3mid_pos_proc_running1 = The process of moving to mid-position is running
+
+
+0 = Not running4mid_pos_proc_ep_low_reach ed1 = The process of moving to mid-pos has reached the lower endpoint
+0 = Not reached lower endpoint
+(Set to 0 when starting a new initialization (move to midpos))5mid_pos_proc_ep_upp_reach ed1 = The process of moving to mid-pos has reached the upper endpoint
+0 = Not reached upper endpoint
+(Set to 0 when starting a new initialization (move to midpos))6timeout_mid_pos_process1 = The process of moving to mid-pos has timed out 0 = Not timed out
+(Set to 0 when starting a new initialization (move to midpos))7af_outcast_detectedValid when tracking mode (AF) is enabled. 1 = Outcast detected
+0 = Outcast not detected8af_sensor_signal_missingValid when tracking mode (AF) is enabled. 1 = Sensor signal missing or too weak
+0 = Sensor signal is detected9af_position_outside_work_ra ngeValid when tracking mode (AF) is enabled.
+1 = Current AF position is outside its work range * 0 = Current AF position is inside its work range *
+(* The work range is set using 5.9.12 Autofocus Work-range.)10controller_connectedIs there a z-motion motor controller connected or not. 1 = Connected
+0 = Not connected11mid_pos_proc_aborted1 = Moving to mid pos (initialization) was aborted 0 = Moving to mid pos (initialization) is not aborted
+(Set to 0 when starting a new initialization (move to midpos))12-
+15ReservedAll set to 0
+
+
+
+5.9.8 Focus Motor Calibration - In-focus Point (LB4600 only)
+Record used to indicate that the current focus motor position is the in-focus point on the CCD. The thickness of the CCD is supplied in the record.
+
+
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes4 bytesSetFcsMtrInFocusPoint8129ccd_thicknessReplyAck
+Payload:
+ParameterDescriptionPermanentccd_thicknessHeight (in um) of the CCD. Range: 0 - 10000Yes *. Default: 0
+* Luxbeam will store the current position in non-volatile memory (subtracting the given CCD thickness) as the focus point. This focus point can be requested later, using 5.9.9 Focus Motor Stored In-focus Distance.
+
+SetFcsMtrInFocusPoint will return error = 10014 if the focus motor is busy or in tracking mode. An error reply = 10016 will be returned if a ccd_thickness outside valid range is entered.
+An error reply = 10018 will be returned if move to mid-pos has not been performed.
+An error reply = 10019 will be returned if measured distance has never been entered (i.e. at its default: 0). If success, ok (0) will be returned.
+
+5.9.9 Focus Motor Stored In-focus Distance
+Record that can be used to read out the current in-focus distance. The value reported is the position that the focus motor held while 5.9.8 Focus Motor Calibration - In-focus Point (LB4600 only) was run. The CCD thickness supplied is subtracted when finding the focus point.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes4 bytesRequestFcsMtrInFocusDist4330-ReplyFcsMtrStatusReplyFcsMtrInFocusDist8530in_focus_dist-
+Payload:
+ParameterDescriptionPermanentin_focus_distThe current focus point in um.Yes ** See comment in 5.9.8.
+
+
+
+5.9.10 Focus Motor Move Absolute Position
+This record manipulates the absolute position of the focus motor in um.
+
+
+
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes4 bytesSetFcsMtrAbsPos8132abs_posReplyAckRequestFcsMtrAbsPos4332-ReplyFcsMtrAbsPosReplyFcsMtrAbsPos8532abs_pos-
+Payload:
+ParameterDescriptionPermanentabs_posThe current position in um. Range: 63000 - 85000.
+(If requesting a position before it has been set, abs_pos = 0 will be returned).No
+SetFcsMtrAbsPos will return error = 10014 if focus motor is busy or if tracking mode is enabled. Error = 10017 is returned if the position is outside the valid range.
+Error = 10018 is returned if motor has not been moved to mid position. Error = 10019 is returned if measured distance has never been given.
+If position could successfully be set, ok (0) is returned.
+
+
+5.9.11 Autofocus Trim
+This record adjusts the current autofocus set-point without storing it in permanent storage. The trim value is a signed number.
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes4 bytes4 bytesSetFcsMtrAfTrim8147trim-ReplyAckRequestFcsMtrAfTri m4347--ReplyFcsMtrAfTrimReplyFcsMtrAfTrim12547trimmin_limit-Payload:
+ParameterDescriptionPermanenttrimThe trim value (signed value). The autofocus set-point will be offset by this value. Resolution: 1 unit is AF_lineSensorResolution (see 3.1).
+Range: -5742 to 5742 (corresponding to -1 to 1 mm for LLS25)Nomin_limi tThe minimum value that can be set. Currently this will be -5742.No
+
+
+SetFcsMtrAfTrim returns 10025 if the supplied trim value is outside valid range.
+
+
+5.9.12 Autofocus Work-range
+This record controls the range that the autofocus will work inside. The work range is given as a negative value below the focal plane and a positive value above the current focal plane. Note that this record has different usage for stepper and linear z-motor.
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes2 bytes1 byteSetFcsMtrAfWorkRange9149belowaboveenableReplyAckRequestFcsMtrAfWorkRa nge4349---ReplyFcsMtrAfWorkRa ngeReplyFcsMtrAfWorkRang e9549belowaboveenable-
+Payload:
+ParameterDescriptionPermanentbelowThe range below current AF set-point, that the autofocus will operate within. Given as a negative number (signed).
+For stepper motor: Range: -22989 to 0. Resolution: 1 unit is
+AF_lineSensorResolution (see 3.1) um.
+For linear motor: Range: -32768 to 0. Resolution: 1 unit is 1 micrometerNoaboveThe range above current AF set-point, that the autofocus will operate within. Given as a positive number (unsigned).
+For stepper motor: Range: 0 to 22989. Resolution: 1 unit is
+AF_lineSensorResolution(see 3.1) um.
+For linear motor: Ignored. Will be set to same value as "below" (positive value)Noenable1 = enable, 0 = disable. Enable or disable the AF work-range function.NoSetFcsMtrAfWorkRange returns 10026 if the supplied work_range value is outside valid range.
+
+5.9.13 Autofocus Edge Delay
+This record controls the time that the autofocus will wait before enabling itself, after an edge is detected. The delay is given as a number of time units and the resolution of one time unit is given in the reply-part of the record.
+
+Rec nametot_sizerec_idpayloadReply
+
+
+2 bytes2 bytes2 bytes2 bytesSetFcsMtrAfEdgeDelay6150delay-ReplyAckRequestFcsMtrAfEdgeDel ay4350--ReplyFcsMtrAfWorkRa ngeReplyFcsMtrAfEdgeDelay8550delaytime_unit_us-
+
+Payload:
+ParameterDescriptionPermanentdelayThe delay (in time units) that the AF will wait before starting, after an edge detection.
+Range: 0 - 7 time units, where one time unit is time_unit_us
+microseconds.Notime_unit_u sThe time unit in microseconds.No
+SetFcsMtrAfEdgeDelay returns 10027 if the supplied work_range value is outside valid range.
+
+
+
+5.9.14 Current Autofocus Position
+This record returns the current autofocus position that is dynamically read out based on info from the line sensor.
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytesRequestFcsMtrAutoPos4345-ReplyFcsMtrAutoPosReplyFcsMtrAutoPos6545autofocus_pos-
+Payload:
+ParameterDescriptionPermanentautofocus_posThe current autofocus point.No
+
+5.9.15 Store Autofocus Set-Position
+This record stores and retrieves the desired set-position for autofocus.
+
+
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytesSetFcsMtrAutoSetPos6146set_posReplyAckRequestFcsMtrAutoSetPos4346-ReplyFcsMtrAutoSetPosReplyFcsMtrAutoSetPos6546set_pos-
+Payload:
+ParameterDescriptionPermanentset_posThe permanently stored set-position for autofocus.
+Range: 21284 - 44252, where 32768 is theoretical middle. 1 unit = AF_lineSensorResolution (see 3.1), hence the range is +/- 1 mm around theoretical middle for LLS25.YesSetFcsMtrAutoSetPos returns 10028 if the supplied value is outside valid range.
+The stored set-pos is used as autofocus point when the board powers-up. It is possible to change the autofocus point using "Autofocus Trim".
+
+
+5.9.16 Autofocus Panel Mode
+This record is used to select the panel mode for the autofocus function.
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytesSetFcsMtrAfPanelMode6151modeReplyAckRequestFcsMtrAfPanelMo de4351-ReplyFcsMtrAfPanelMod eReplyFcsMtrAfPanelMode8551mode-
+Payload:
+ParameterDescriptionPermanentmodePanel mode.No
+mode:
+ValueDescription0Resist1Ink2 (and higher)Custom (Can be customized using record "Custom Panel Mode Configuration"). Use
+
+
+this mode with care, as it may cause the autofocus to malfunction.
+5.9.17 Custom Panel Mode Configuration
+This record is used to configure the custom panel mode for the autofocus function. Note: These parameters may cause the autofocus system to stop working correctly. Use with care.
+
+
+
+Rec nametot_siz erec_i d
+payload
+
+Reply2 bytes2
+bytes1
+byte1
+byte1
+byteSetFcsMtrAfCustomModeConfig7173kpkiocReplyAckRequestFcsMtrAfCustomModeCo nfig4373---ReplyFcsMtrAfCustomModeC onfigReplyFcsMtrAfCustomModeConf ig7573kpkioc-
+Payload:
+ParameterDescriptionPermanentkpProportional gain (Kp). Range: 0 - 255NokiIntegral gain (Ki). Range: 0 - 255NoocOutcast. Range: 0-255No
+Note: The parameters set using this record are activated when setting "custom"-mode in 5.9.16 Autofocus Panel Mode.
+
+
+5.9.18 Autofocus Active Area Qualifier
+This record is used to enable or disable the autofocus active area qualifier function.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byteSetFcsMtrAfActArea5153enableReplyAck
+
+
+RequestFcsMtrAfActArea4353-ReplyFcsMtrAfActAreaReplyFcsMtrAfActArea5553enable-
+Payload:
+ParameterDescriptionPermanentenableEnable (1) or disable (0) the function.No
+5.9.19 Autofocus Pull-in Range Acceleration
+This record is used to set the autofocus pull-in range acceleration value.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytesSetFcsMtrAfPullinAcc6154acc_limitReplyAckRequestFcsMtrAfPullinAc c4354-ReplyFcsMtrAfPullinAccReplyFcsMtrAfPullinAcc6554acc_limit-
+Payload:
+ParameterDescriptionPermanentacc_limitThe pull in-range acceleration limit. Limit = acc_limit / 64. Range: 64 - 255, which equals 1.0 - 4.0. (4.0 is no limitation)No
+SetFcsMtrAfPullinAcc returns 10029 if acc_limit is outside valid range.
+
+
+
+
+
+5.9.20 Autofocus Speed High Threshold
+This record is used to set the autofocus high speed threshold.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytesSetFcsMtrAfSpdHiThr6155thresholdReplyAck
+
+
+RequestFcsMtrAfSpdHiTh r4355-ReplyFcsMtrAfSpdHiThrReplyFcsMtrAfSpdHiThr6555threshold-
+Payload:
+ParameterDescriptionPermanentthresholdThe AF speed high threshold. Range: 0 - 1023.No
+SetFcsMtrAfSpdHiThr returns 10030 if threshold is outside limit.
+
+
+
+
+5.9.21 Autofocus Speed Info
+This record is used to get information on the AF speed behavior.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes2 bytesRequestFcsMtrAfSpdI nfo4356--ReplyFcsMtrAfSpdInf oReplyFcsMtrAfSpdInf o8556stoppedabove_thres-
+Payload:
+ParameterDescriptionPermanentstoppedNumber of consecutive trigger pulses with no move of AF motorNoabove_thresNumber of consecutive trigger pulses above threshold (set in 5.9.20)No
+
+
+
+
+
+5.9.22 Focus Motor Controller Register (SPI)
+This record can be used to read and write registers on the SPI focus motor controller bus . The record differs
+
+
+
+from other records in that the reply is a a "read" resulting from the previous "write".
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytesWrRdSpiFcsMtrReg6124wr_valReplySpiFcsMtrRegReplySpiFcsMtrReg6524rd_val-Payload:
+ParameterDescriptionPermanentwr_val16-bit value to be written. The two most significant bits are the address. The remaining 14 bits are the register contents to be written.Yesrd_valThe returned status resulting from the write-operation.No
+The wr_val is stored in permanent storage.
+
+
+
+5.9.23 Focus Motor Move Steps
+This record handles manual movement of the focus motor.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes1 byteSetFcsMtrMove7131nof_stepsdirectionReplyAckRequestFcsMtrMove4331--ReplyFcsMtrMoveReplyFcsMtrMove7531nof_stepsdirection-
+Payload:
+ParameterDescriptionPermanentnof_stepsHow many steps the motor should move. Range: 0 - 32767
+(The length of one step is set using record described in [5.9.1], default: step_size_pm pm - see 3.2)NodirectionThe direction of the move. 0 = down, 1 = up (any value > 1 is considered up)No
+SetFcsMtrMove will move the motor the given dumber of steps in the given direction.
+If nof_steps is outside valid range, an error reply = 10013 will be returned. If focus motor is busy or in tracking mode, error reply = 10014 is returned.
+
+
+
+
+
+5.9.24 Line Sensor Plot
+Records used to enable or disable plotting of line sensor data. The plot, when enabled, is written to a separate .bmp file about once every second.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byteSetLinesensorPlotInfo5118plot_enabl eReplyAckRequestLinesensorPlotInf o4318-ReplyLinesensorPlotInfoReplyLinesensorPlotInfo5518plot_enabl e-
+
+Payload:
+ParameterDescriptionplot_enable1 = Enable plotting. 0 = Disable plotting
+
+5.9.25 Laser On/off
+This record is used to force the autofocus laser on or off
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byteSetLaserMode5157laser_modeReplyAckRequestLaserMode4357-ReplyLaserModeReplyLaserMode5557laser_mode-
+Payload:
+ParameterDescriptionPermanentlaser_mode0 = Turn laser off. 1 = Turn laser on.No
+Note that if laser was turned on by another function (Line Sensor Plot or Focus Motor Tracking Mode
+
+
+
+(Autofocus)) it will not be turned off even if setting laser_mode = 0. All functions must be off to switch off laser.
+
+
+
+
+5.9.26 Laser Intensity
+This record is used to set the autofocus laser intensity. It can be set to AGC (Automatic Gain Control) or manual intensity-level.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytesSetLaserIntensity6158intensityReplyAckRequestLaserIntensity4358-ReplyLaserIntensityReplyLaserIntensity6558intensity-
+Payload:
+ParameterDescriptionPermanentintensity1 = AGC. 2 - 511 = Manual intensity level. Default at power-up: 1 (AGC)No
+The intensity-level set will be used for all functions that use the laser.
+SetLaserIntensity returns 10031 if intensity is outside valid range.
+
+
+5.9.27 Z-position Table
+This record is used to fetch 2000 samples of the z-position done by the autofocus system. The time at which the samples are done is dependent upon the trigger mode currently set, see 5.9.29 Z-position Table Trigger Mode. The status of the sampling is given in the status byte. Note: If the trigger mode is set to 0 (Continuous trigger mode), the status will always be "Samples complete" (0).
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byte8000 bytesRequestFcsMtrZTable4359--ReplyFcsMtrZTableReplyFcsMtrZTable8005559statustable_data-
+
+
+Payload:
+ParameterDescriptionPermanentstatus0 = Samples complete (number_of_samples = 2000) *
+1 = Samples incomplete (1 < number_of_samples < 2000)
+2 = No samples (number_of_samples = 0). Still in armed mode.
+* Samples complete is always returned in Continuous trigger mode.Notable_data2000 * 4-byte words. The 4-byte word is described below. The oldest data is sent first, while the newest data is in the end.No
+Each 4-byte word is formed as follows:
+BitDescription311 = Outside active area, 0 = Inside active area301 = Sensor signal missing, 0 = Sensor signal ok291 = Below edge, 0 = Not below edge281 = Outcast, 0 = Not outcast27-16Measured focus from linesensor value (0 - 4095).
+Unit: 16*AF_lineSensorResolution um (see 3.1). (Middle position = 2048)15-0Z axis position. Unit: step_size_pm (see 5.9.1). (Initial position [middle position]= 32768)
+
+
+
+5.9.28 Active Area Qualifier Keepout
+This record is used to set the autofocus active area keepout area start and end delays.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes2 bytesSetAAQKeepout8163startendReplyAckRequestAAQKeepo ut4363--ReplyAAQKeepou tReplyAAQKeepout8563startend-
+Payload:
+ParameterDescriptionPermanentstartDistance for which the autofocus should be disabled in the starting end of board (y-direction). Given in number of trigger pulses.
+Range: 0 - 65535NoendDistance for which the autofocus should be disabled in the far end of board (y-direction). Given in number of trigger pulses.
+Range: 0 - 65535NoTo calculate the actual distance for the keepout areas, the currently used trigger-pulse distance must be known. For example, if the the trigger pulse distance is 10.8um, and start and end is set to 40000, then the distance will be 10.8um * 40000 = 432 mm.
+
+SetAAQKeepout returns 10033 if the distance is outside valid range. It returns 10034 if the start and end distances added together is greater than the length of one strip.
+
+
+
+
+
+5.9.29 Z-position Table Trigger Mode
+This will dictate how to start the sampling of the z-position table that can be read in 5.9.27 Z-position Table.
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byteSetZtableTrig5165modeReplyAck
+
+
+RequestZtableTrig4365-ReplyZtableTrigReplyZtableTrig5565mode-
+
+Payload:
+ParameterDescriptionPermanentmodeHow to start a collection of 2000 z-positions.
+0: Use the last 2000 points at the time of request (continuous sampling)
+1: Use the active trigger input (active area) to start sampling of z-positions. (Must be armed to start sampling when trigger signal is detected).
+2: Use a software trigger signal to start sampling of z-positions. (See 5.9.34 Sw Trigger Line Sensor Read Buffer (LB4700 and LB4700C1 only))No
+5.9.30 Arm Z-position Table Sampling
+When the Z-position Table Trigger Mode is set to 1 (active trigger input or software trigger signal (chapter 5.9.34) starts a sampling), it needs to be armed in order to start sampling at the next trigger input. The record described here will enable this arming. The strip number where trigger inputs should cause sampling to start must also be given. When armed and a trigger input is detected at the given strip, sampling of 2000 z-positions will start. A new arming is required to start a new sampling again.
+Note that strip number is ignored for software trigger signal, because when armed and reception of software trigger signal occurs, then sampling will start immediately.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 byte1 byteSetZtableTrigArm6166strip_no-ReplyAckRequestZtableTrigA rm4366--ReplyZtableTrigAr mReplyZtableTrigAr m7566strip_noarmed-
+
+Payload:
+ParameterDescriptionPermanentstrip_n oThe strip number where sampling should start. Range: 1 - 256NoarmedInforms whether the system waits for a trigger input to start sampling of z- position table.No
+
+
+0: Not armed.
+Note: The system will unarm itself if a trigger input signal is detected or if mode is set to continous sampling mode in 5.9.29 Z-position Table Trigger Mode
+1: Armed
+SetZTableTrigArm will put the system in armed mode. There is no way to "unarm" using this record. If an invalid strip_no is given, 10038 is returned.
+
+
+5.9.31 Store and Replay Z-positions (LLS Function, LB4600 only)
+This will set the z-position store/replay z-positions function to start at the desired strip. Up to 1k samples are stored when receiving trigger pulses and these samples will be replayed for the strip following.
+When the photohead starts moving at the strip given by strip_no, the z-positions for that strip will be copied. Then, at strip strip_no+1 the z-positions from the previous strip will be used.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byte2 bytesSetZposStoreReplayMode7167enablestrip_noReplyAckRequestZposStoreReplayMo de4367-ReplyZposStoreReplayMo deReplyZposStoreReplayMod e7567enablestrip_no-
+Payload:
+ParameterDescriptionPermanentenable0 = Disable the copy/replay function
+1 = Enable the copy/replay functionNostrip_n oThe strip number where copying should start. Replaying will start at strip
+strip_no + 1.
+Range: 1 - 256No
+SetZposStoreReplayMode will return 10038 if a strip number outside limits is being set.
+
+
+
+
+
+5.9.32 Min/max AF Focus Position
+This record will set the Z-position limits for the AF function. The autofocus will not move to a z-position outside these limits. If the z-position has been (or is) outside the limits, this will be reported in the "below" and "above" status.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes4 bytes4 bytes1 byte1 byteSetZposAfPositions12183minmax-ReplyAckRequestZposAfPositi ons4383---ReplyZposAfPosition sReplyZposAfPosition s14583minmaxbelowabove-
+Payload:
+ParameterDescriptionPermanentminMinimum Z-position where AF should be enabled. In um. Minimum value: 63000NomaxMaximum Z-position where AF should be enabled. In um. Maximum value: 85000Nobelow1 = Z-position has been below minimum since last setting.
+0 = Z position has NOT been below minimum since last setting.Noabove1 = Z-position has been above maximum since last setting.
+0 = Z position has NOT been above maximum since last setting.No
+SetZposAfPositions will return 10042 if min or max are outside valid range, 10018 if initialization is not done and 10019 if mid-position distance is not entered.
+
+
+5.9.33 Number of steps during Z-axis init
+This record will report the number of steps in the last Z-motor init process.
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes4 bytesRequestZposInitSteps4399-ReplyZposAfPosition s
+
+
+ReplyZposInitSteps8599value-
+Payload:
+ParameterDescriptionPermanentvalueNumber of steps in the initNo
+5.9.34 Sw Trigger Line Sensor Read Buffer (LB4700 and LB4700C1 only)
+This record will start filling the line sensor buffer from the start if mode is set to software trigger (see 5.9.29 Z-position Table Trigger Mode).
+
+Rec nametot_sizerec_id
+Reply2 bytes2 bytesSetSwTrigLineSensor4215ReplyAck
+
+
+5.9.35 AF Line-sensor Selector (LB4700 and LB4700C1 only)
+This record will select which AF line sensor to be used.
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byteSetAfLineSensor5217af_sensorReplyAckRequestAfLineSensor4417-ReplyAfLineSensorReplyAfLineSensor5617af_sensor-
+Payload:
+ParameterDescriptionPermanentaf_sensor0 = Internal AF sensor (also called "diffuse")
+1 = External AF sensor (also called "specular")No
+
+5.9.36 AF Copy Stripe Mode (LB4700 only)
+Select the AF mode to be used.
+Rec nametot_sizerec_idpayloadReply
+
+
+2 bytes2 bytes1 byteSetAfCopyMode5237af_modeReplyAckRequestAfCopyMo de4427-ReplyAfCopyModeReplyAfCopyMode5627af_mode-
+Payload:
+ParameterDescriptionPermanentaf_mode0 = Normal mode
+1 = Copy-mode. The AF samples will be stored in a table.
+2 = Replay-mode. The AF curve recorded in copy-mode will be replayed.No
+
+
+
+
+5.9.37 Lens Magnification
+Set the lens magnification in use needed for minimum Z prediction.
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes4 bytesSetLensMagnification8228magnificationReplyAckRequestLensMagnificati on4428-ReplyLensMagnificationReplyLensMagnificatio n8628magnification-
+Payload:
+ParameterDescriptionPermanentmagnificatio0 = 1:1Non1 = 2:12 = 1:23 = 1:44 = 1:6
+
+
+
+
+
+5.10 LED Driver Records
+
+5.10.1 LED Driver Amplitude
+Records used to manipulate the amplitude in the LED drivers.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes2 bytes1 byteSetLedAmplitude8133led_noamplitude-ReplyAckRequestLedAmplitud e6333led_no--ReplyLedAmplitudeReplyLedAmplitude9533led_noamplituderead_o k-
+
+Payload:
+ParameterDescriptionPermanentled_noLED driver number. Range: 0-5NoamplitudeThe amplitude to set for the selected LED. Range: 0 - 4095.Noread_ok1 = Reply received from LED driver ok. 0 = No reply from LED driver.No
+SetLedAmplitude will return error = 10021 if amplitude is outside valid range. Error = 10011 is returned if no reply from LED driver was received.
+
+If ReplyLedAmplitude is received with read_ok = 0, this means that no reply was received from the LED driver and the amplitude can not be read.
+
+
+
+
+5.10.2 LED Driver Status
+Records that requests status of the LED drivers. Note that all errors/warnings will be retained in the status word until it is actively cleared, using 5.8.6 Clear Error Status.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes2 bytes1 byteRequestLedStatus6334led_no--ReplyLedStatusReplyLedStatus9534led_noled_status_wordread_ok-
+
+Payload:
+ParameterDescriptionPermanentled_noLED driver number. Range: 0-5Noled_status_wordThe current LED driver status. Bit definitions are given below.Noread_ok1 = Reply received from LED driver ok. 0 = No reply from LED driver.No
+led_status_word bit definitions:
+Bit no.ParameterDescription0ocp1 = Over-current protection threshold reached. 0 = Not reached.1opp1 = Over-power protection threshold reached. 0 = Not reached.2door_open1 = Door open. 0 = Door closed.3led_temp_out_range1 = Temperature of LED is outside valid range. 0 = Temperature of LED is inside valid range.4duty-cycle limitation1 = Duty-cycle limitation active. 0 = No duty-cycle limitation.5board_temp_out_range1 = Temperature of board is outside valid range. 0 = Temperature of board is inside valid range.6fan_stopped1 = The fan has stopped 0 = The fan is running.7-15(reserved)
+
+
+5.10.3 LED Driver Temperature
+Records that requests temperatures of the LED drivers.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes2 bytes2 bytes1 byteRequestLedTem p6335led_no---ReplyLedTempReplyLedTemp11535led_noled_tempboard_tem pread_ok-
+Payload:
+ParameterDescriptionPermanentled_noLED driver number. Range: 0-5Noled_tempThe temperature of the LED. Must be divided by 10 to get degrees Celsius.Noboard_tempThe temparature of the LED driver PCB. Must be divided by 2 to get degrees Celsius.Noread_ok1 = Reply received from LED driver ok. 0 = No reply from LED driver.No
+
+
+
+5.10.4 LED Driver Timestamp
+Records that requests the timestamp of the LED drivers.
+
+
+
+Rec name   e tot_siz
+rec_id
+payload
+
+Reply
+2 bytes
+2 bytes
+2 bytes
+2 bytes
+1 byte
+1 byte
+1 byte
+1 byte
+1 byte
+1 byte
+        p RequestLedTimestam
+6
+336led_no-------
+
+ReplyLedTimestamp
+      mp ReplyLedTimesta
+14
+536led_noyearmonthdayhourminsecread_ok
+-
+Payload:
+ParameterDescriptionPermanentled_noLED driver number. Range: 0-5NoyearLED driver firmware timestamp - yearNomonthLED driver firmware timestamp - monthNodayLED driver firmware timestamp - dayNohourLED driver firmware timestamp - hourNominLED driver firmware timestamp - minuteNosecLED driver firmware timestamp - secondNoread_ok1 = Reply received from LED driver ok. 0 = No reply from LED driver.No
+
+
+
+
+
+5.10.5 LED Driver Light On/Off
+Records used to control LED light on and off in the LED driver.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes1 byte1 byteSetLedLightOn7137led_noon-ReplyAckRequestLedLightOn6337led_no--ReplyLedLightOnReplyLedLightOn8537led_noonread_o k-
+
+Payload:
+ParameterDescriptionPermanentled_noLED driver number. Range: 0-5Noon1 = LED light on 0 = LED light offNoread_ok1 = Reply received from LED driver ok. 0 = No reply from LED driver.No
+SetLedLightOn will return 10011 if no contact with the LED driver could be obtained. If set correctly, 0 will be returned.
+
+
+
+
+
+
+5.10.6 LED Driver Regulation Mode
+Records used to control the regulation mode of the LED driver.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes1 byte1 byteSetLedRegMode7138led_noreg_mode-ReplyAck
+
+
+RequestLedRegMo de6338led_no--ReplyLedRegMod eReplyLedRegMode8538led_noreg_moderead_ok-
+
+
+Payload:
+ParameterDescriptionPermanentled_noLED driver number. Range: 0-5Noreg_mode0 = Current regulation
+1 = Optical regulation
+2 = Combined regulation (LB4600), Dual sample with current regulation(LB4700)
+3= Dual sample with optical regulation (LB4700)Noread_ok1 = Reply received from LED driver ok. 0 = No reply from LED driver.No
+SetLedRegMode will return 10011 if no contact with the LED driver could be obtained. 0 will be returned if mode set correctly.
+
+
+
+
+5.10.7 LED On-time Counter (LB4600 only)
+This record gives accumulated on-time for the LED-drivers.
+
+Rec nametot_siz erec_idpayload
+Reply2 bytes2 bytes4 bytes4 bytes4 bytesRequestLedHou rs6362---ReplyLedHour sReplyLedHours16562sec_led0sec_led1sec_led2-
+Payload:
+ParameterDescriptionPermanentsec_led0The accumulated on-time for strobe 0. Unit: secondsYessec_led1The accumulated on-time for strobe 1. Unit: secondsYes
+
+
+sec_led2The accumulated on-time for strobe 2. Unit: secondsYes
+
+
+
+5.10.8 LED On-time Counter (LB4700 and LB4600 with modern LED driver)
+This record gives accumulated on-time for the LED-drivers.
+
+Rec nametot_siz erec_idpayload
+Reply2 bytes2 bytes2 bytes4 bytes1 byteRequestLedHou rs6362led_no--ReplyLedHour sReplyLedHours11562led_nosec_led1read_ok-
+Payload:
+ParameterDescriptionPermanentled_noLED driver number. Range: 0-5YessecondsThe accumulated on-time (in seconds) for given LED numberYesread_ok1 = Reply received from LED driver ok. 0 = No reply from LED driver.Yes
+
+5.10.9 LED Driver OCP Value
+Records used to control the OCP (over-current protection) limit in the LED-drivers.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes2 bytes2 bytes1 byteSetLedOcpLimit8168led_noocp_limi t--ReplyAckRequestLedOcpLim it6368led_no---ReplyLedOcpLimi tReplyLedOcpLimit11568led_noocp_limi tmax_ocpread_ok-
+Payload:
+ParameterDescriptionPermanent
+
+
+led_no0 - 3. (Any number > 3 will be interpreted as = 3)N/Aocp_limitThe OCP limit setting in amperes.
+Range: 0 - 36 A. Default at power-on is 20 A.Nomax_ocpThe maximum allowable OCP limit setting.N/Aread_ok1 = Reply received from LED driver ok. 0 = No reply from LED driver.N/A
+SetLedOcpLimit returns 10037 if an OCP limit outside valid range is being set. Error = 10011 is returned if no reply from LED driver was received.
+
+5.10.10 LED driver log sample (LB4700 only)
+Records used to request LED driver log samples
+
+
+
+Rec name   e tot_siz
+rec_id
+payload
+
+Reply
+2 bytes
+2 bytes
+2 bytes
+2 bytes
+2 bytes
+2 bytes
+2 bytes
+2 bytes
+1 byte
+        le RequestLedLogSamp
+8
+401
+led_nosample_no
+--
+--
+-
+
+ReplyLedLogSample
+ReplyLedLogSample
+17
+601
+led_nosample_no
+SetValuetimestamplightFb
+currentFbtempFb
+valid
+-
+
+Payload:
+
+
+
+ParameterDescriptionPermanentled_no0 - 3N/Asample_noThe sample number requested. A sample is taken every 2. strobe hourN/AsetValueThe setValue set for the LED when the sample was takenN/AlightFbThe feedback from the led light sensor sample was takenN/AcurrentFbThe feedback from the led light sensor sample was takenN/AtempFbThe feedback from the temperature sensor sample was takenN/AvalidIf feedback data is valid this is set to 1, else it is set to 0N/A
+
+
+5.10.11 LED feedback (LB4700 only)
+Records used to request the current led light sensor feedback and current sensor feedback
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes2 bytes2 bytes1 byteRequestLedFeedbac k6402led_no---ReplyLedFeedbac kReplyLedFeedback11602led_nolight_fbcurrent_fbvalid-
+Payload:
+ParameterDescriptionPermanentled_noLed number requestedN/Alight_fbLight sensor feedbackN/Acurrent_fbCurrent sensor feedback (Divide by 60.6 to get current in ampere)N/AvalidIf feedback data is valid this is set to 1, else it is set to 0N/A
+
+5.10.12 LED Duty cycle set up (LB4700 and LB4600 with modern LED driver)
+Records used to control the OCP (over-current protection) limit in the LED-drivers.
+
+
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytes2 byte2 bytesSetLedDutyCycleLi mit10203led_noaddrvalueReplyAck
+Payload:
+ParameterDescriptionPermanentled_noLed number requestedN/AaddrAddress to rewrite duty cycleNovalueCurrent limit to rewrite to addressNo
+Default led duty cycle settings:
+AddressMax duty cycle (constant)Current limit (divide by 60.6 to get Ampere)01002089195,832192291,672295387,52397483,332500579,1726036752706770,832808866,672911962,530141058,3331161154,173219125033221345,8334251441,6735281537,53630
+
+
+5.10.13 Light Source Info
+Record used to get information about the currently connected light source module. Data returned is used to identify what type of light source is used; LED or laser diode and how many drivers are connected.
+
+
+Rec nametot_siz erec_id
+payload
+Reply2 bytes2 bytes1 byte1 byteRequestLightSourceInf o4421--ReplyLightSourceInfoReplyLightSourceInfo6621typenof_drivers-
+Payload:
+ParameterDescriptiontype0 = LED Combiner v1, 1 = Laser, 2 = LED Combiner v2, 3 = LRS-HY drivernof_driversNumber of drivers connected.
+
+
+
+5.11 Temperature and Fan Records
+
+5.11.1 Board Temperature Regulation Configuration
+Records that handles the configuration of the temperature regulation. This should only be enabled in systems that have a heater element mounted.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byte1 byte2 bytesSetTempRegConfig8139regulator_n oreg_enasetvalueReplyAckRequestTempRegConf ig5339regulator_n o--ReplyTempRegCon figReplyTempRegConfig8539regulator_n oreg_enasetvalue-
+Payload:
+ParameterDescriptionPermanentreg_noRegulator number (1or 2). Any value less than 1 will be interpreted as
+1. Any value greater than 2 will be interpreted as 2.Yesreg_ena1 = Temperature regulation algorithm is enabled. 0 = Temperature regulation algorithm is disabled.YessetvalueThe target temperature that the temperature regulation algorithm should try to abtain.
+Range: 22 - 40 ° CYes
+SetTempRegConfig will return 10022 if "setvalue" is out of range. 0 is returned if setting was performed ok.
+
+
+
+
+5.11.2 Board Fan and Temperature Regulation Status
+Records that requests the fan and temperature regulation status.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytesRequestFanStatus4340-ReplyFanStatusReplyFanStatus6540board_fan_temp_status-
+Payload:
+ParameterDescriptionPermanentboard_fan_temp_stat
+usThe status word with informatin on board fan status. Bit definition is given in the table below.No
+board_fan_temp_status bit definition:
+Bit noParameterDescription0fan1_running1 = Fan1 running.
+0 = Fan1 not running.1fan2_running1 = Fan2 running.
+0 = Fan2 not running.2fan3_running1 = Fan3 running.
+0 = Fan3 not running.3temp_regulation1_
+ok1 = The temperature regulation is working inside the threshold value (+/- 0.1°C) set in 5.11.1.
+0 = The temperature regulation is not working inside the value (+/- 0.1°C) set in 5.11.1. (If regulation is disabled, 0 will always be returned)4temp_regulation2_
+ok1 = The temperature regulation is working inside the threshold value (+/- 0.1°C) set in 5.11.1.
+0 = The temperature regulation is not working inside the value (+/- 0.1°C) set in 5.11.1. (If regulation is disabled, 0 will always be returned)5-15Reserved
+
+
+5.11.3 Board Temperature Sensors
+Records that requests the board temperature status. For "ext1" and "ext2" values to be valid, temperature sensors must be connect to the corresponding connectors on the board.
+
+
+Rec nametot_siz erec_id
+payload
+Reply2 bytes2 bytes2 bytes2 bytes2 bytes2 bytesRequestTempSens or4341----ReplyTempSens orReplyTempSensor12541ext1ext2board1board2-
+Payload:
+ParameterDescriptionPermanentext1The temperature (*256) read from external temperature sensor 1.Noext2The temperature (*256) read from external temperature sensor 2.Noboard1The temperature (*256) read from sensor 1 on the board.Noboard2The temperature (*256) read from sensor 2 on the board.No
+Temperatures are given in degrees Celcius * 256. In order to get the correct temperature, the values read must be divided by 256.
+
+
+5.11.4 Fan Speed
+Record that enables the user to set the speed of the fans and to turn off completely.
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes1 byte1 byte1 byteSetFanOn6178fan_nofan_speed-ReplyAckRequestFanOn5378fan_no--ReplyFanOnReplyFanOn7578fan_nofan_speedvalid_fan-
+Payload:
+ParameterDescriptionPermanent
+
+
+fan_noThe fan number to be controlled (1 or 2)Yesfan_speed0 = turn fan off, 1 - 255 = Speed of fan (1 = slow, 255 = fast)Yesvalid_fan1 = valid fan number, 0 = invalid fan number-
+SetFanOn returns 10041 if fan number is invalid.
+
+
+
+
+5.11.5 FPGA Temperature (LB4600 only)
+Record that will read the current temperature of the on-board FPGA on the mainboard. (This temperature can be used to mintor the mainboard temperature).
+
+
+Rec nametot_sizerec_idpayload
+Reply2 bytes2 bytes2 bytesRequestFpgaTemp4446-ReplyFpgaTempReplyFpgaTemp6646temperature-
+Payload:
+ParameterDescriptionPermanenttemperatureThe FPGA temperature in degrees Celcius * 10.No
+Example: The temperature read is 674. Divide this by 10 to get the actual temperature of 67.4° C
+
+
+
+
+5.11.6 DMD Temperature (LB4600 wx only)
+Record that will read the current temperature of the dmd. (This temperature can be used to mintor the dmd temperature).
+
+
+
+Rec nametot_ sizerec_ idpayload
+
+Reply2
+byte s2
+byte s1 byte2 bytes2 bytes2 bytesRequestD mdTemp4451----ReplyDm dTempReplyDmd Temp11651okN/aBack tempN/a-
+Payload:
+ParameterDescriptionPermanenttemperatureThe FPGA temperature in degrees Celcius * 10.No
+Example: The temperature read is 674. Divide this by 10 to get the actual temperature of 67.4° C
+
+
+
+
+6 in LB 4600 - Short User Guide
+This section describes how to display images on the DMD on the Luxbeam 4600. There are two modes of displaying images, scrolling or non-scrolling images. It is assumed that the DMD-size is 1920x1080 in the following sections.
+
+
+6.1 Non-scrolling Images
+To display a single image of the size of the DMD the procedure described next can be followed.
+
+
+6.1.1 Set Image Type (One-time Operation)
+Set the image format to be sent using the record described in 5.2.2. This parameter is stored permanently in
+
+Luxbeam 4600 and is normally set once only. Currently only must be set to 1 (binary).
+
+are supported, so image type
+
+
+Set image type to 1 (binary) and receive ok:
+
+Send000600670001Receive000601F50000
+
+
+6.1.2 Set Inum Size (One-time Operation)
+Before loading an image into memory, the desired inum size must be set. This record is described in 5.2.1. The inum size is the number of lines that one complete image occupies in memory. This parameter is stored permanently in the Luxbeam 4600 and is normally set once only. So, for a 1920x1080 image the inum size should be set to 1080.
+
+Set inum size to 1080 and receive ok:
+
+Send000600660438Receive000601F50000
+
+
+6.1.3 Load Image(s)
+To load an image of 1920x1080 size into the start of the memory (Inum 0, offset 0) there is a sequence of records that must be sent.
+
+Start by resetting the expected sequence number in the Luxbeam 4600, described in 5.2.11.
+
+Reset sequence number counter to 1 and receive ok:
+
+Send00040070Receive000601F50000
+
+The sequencer inside the Luxbeam 4600 must be reset and disabled before loading an image to memory.
+
+Disable the sequencer and receive ok:
+
+Send0006006A0100Receive000601F50000
+
+Set sequencer in reset-state and receive ok:
+
+Send0006006A0201Receive000601F50000
+
+
+
+
+
+Send 1st packet (sequence no. 1, inum 0, line offset 0):
+
+Send05A E0068000100000000000000001440 bytes of data
+
+
+
+Send 2nd packet (sequence no. 2, inum 0, line offset 6):
+
+Send05A E0068000200000000000000061440 bytes of data
+
+(Send 3rd - 179th packets in similar way...)
+
+
+Send 180th packet (sequence no. 180, inum 0, line offset 1074):
+
+Send05A E006800B400000000000004321440 bytes of data
+
+There are no acknowledgements to the above image data packets. Hence, there must be a way to check if packets are not received correctly by the Luxbeam 4600 for some reason. To do this use the Sequence Number Error-record described in 5.2.10. This check can be done at any time, but in this example it is done after the complete 1920x1080 image has been transmitted.
+
+
+Ask for sequence number error state and receive the answer:
+
+Send00040137Receive000701FF010096
+
+In this example there was an out-of-sequence error, meaning that sequence number 150 (0x96) was the last packet received ok. Hence, re-send the packets from 151 to 180 again.
+
+Send 151st packet (sequence no. 151, inum 0, line offset 900):
+
+Send05A E0068009700000000000003841440 bytes of data
+
+(Send 152nd - 179th packets in similar way...)
+
+
+Send 180th packet (sequence no. 180, inum 0, line offset 1074):
+
+
+
+Send05A E006800B400000000000004321440 bytes of data
+
+Do a new request for out-of-sequence packets:
+
+Ask for sequence number error state and receive the answer:
+
+Send00040137Receive000701FF000000
+This time all packets were received ok by Luxbeam 4600 and the image is now stored in memory at inum 0.
+
+If desired, different images can be loaded into other parts of the momory (inum 1, inum 2, etc) using the above command-sequence. In this way it is possible to have many images loaded in memory simultaneously and the selection of which image to be displayed is done in the sequence file that is currently running.
+Loading of sequence file is described next.
+
+
+6.1.4 Load Sequence File
+A sequence file is a text file that must be transferred to Luxbeam 4600. The format of the file and the valid sequence-language commands are described in "6501560 - IS - Luxbeam 4600 Sequencer Language".
+
+Below is a very simple sequence file, that will display the image that is loaded into inum 0.
+
+#-------------------------------------------------------------------------------------
+#CommandParametersWaitforComment#-------------------------------------------------------------------------------------
+AssignVar	Inum 0	1	# Inum = 0LabelStartHere1# Start of loopLoadGlobalInum400# Load data from Inum (0) to DMDTrig1 40# Neg. edge internal triggerResetGlobal40# Display contents on DMDJumpStartHere1# Jump to start of loop
+The above contents is loaded into Luxbeam 4600 using the record described in 5.3.1. The length of the data above is 517 bytes and will fit within one packet.
+
+Send sequence file and receive ok:
+
+Send020F0069000100010205517 bytes of data (23 2D 2D 2D 2D 2D...)
+
+
+Receive000601F50000
+Receiving "ok" back means that the syntax of the file sent was ok.
+
+
+
+6.1.5 Start Sequencer
+The final step to get the image displayed on the DMD is to take the sequencer out of reset and start it as described in 5.3.3.
+
+
+Take sequencer out of reset-state and receive ok:
+
+Send0006006A0200Receive000601F50000
+
+Start the sequencer and receive ok:
+
+Send0006006A0101Receive000601F50000
+Now the image shold be displayed on the DMD.
+
+
+6.2 Scrolling Images
+It is the sequence files that controls if the image is to be scrolling or not. The image loading is done in the same way for both scrolling and non-scrolling images.
+
+
+6.2.1 Set Image Type (One-time Operation)
+See 6.1.1.
+
+
+
+6.2.2 Set Inum Size (One-time Operation)
+See 6.1.2.
+
+
+
+6.2.3 Load image(s)
+In this example an image of size 1920x3240 pixels will be scrolling up and down. This can be loaded as a single file of 1920x3240 at inum 0 or as three 1920x1080 images at inum 0, inum 1 and inum 2 respectively. In the following example the first option will be used.
+
+Reset sequence number counter to 1 and receive ok:
+
+Send00040070Receive000601F50000
+
+The sequencer inside the Luxbeam 4600 must be reset and disabled before loading an image to memory.
+
+Disable the sequencer and receive ok:
+
+Send0006006A0100Receive000601F50000
+Set sequencer in reset-state and receive ok:
+
+Send0006006A0201Receive000601F50000
+
+Then, the image data can be sent, as described in 5.2.3. The binary image data (which is a 1-bit .bmp file with the bitmap header (62 bytes) removed) must be split into packets of an integer number of lines. For a 1920x1080 DMD each packet can be from 1 to 36 lines, because 36 lines takes almost one full Jumbo frame packet (36*1920/8 bytes = 8640 bytes). As an example, we try to keep the packet size within standard 1500- bytes IP packet. Then the number of lines that can be sent in one packet is 6 (6 * 1920/8 bytes = 1440 bytes). The complete image will require 540 packets (540 * 6 lines = 3240 lines). Remember to send these packets to port 52986.
+
+Send 1st packet (sequence no. 1, inum 0, line offset 0):
+
+
+
+
+
+Send05A E0068000100000000000000001440 bytes of data
+
+Send 2nd packet (sequence no. 2, inum 0, line offset 6):
+
+Send05A E0068000200000000000000061440 bytes of data
+
+(Send 3rd - 539th packets in similar way...)
+
+
+Send 540th packet (sequence no. 540, inum 0, line offset 3234):
+
+Send05A E0068021C0000000000000CA21440 bytes of data
+
+Do a request for out-of-sequence packets:
+
+Ask for sequence number error state and receive the answer:
+
+Send00040137Receive000701FF000000
+
+This time all packets were received ok by Luxbeam 4600 and the image is now stored in memory at inum 0 - 2.
+
+6.2.4 Load Sequence File
+See 6.1.4 for explanation of a sequence file. Below is a sequence file that will make the images loaded into inum 0-2 scroll down and up indefinitely.
+
+#--------------------------------------------------------------
+#Command	Parameters	Waitfor
+#--------------------------------------------------------------
+AssignVarTotalRows	21601AssignVarLoopCount	01AssignVarMemStartRow 01
+
+
+AssignVarInum01AssignVarDmdStartRow01AssignVarNoOfRows10801##--------------------------------------------------------------
+# Scroll forward
+Label	scrollforward	1
+Trig	0 4	0
+ResetGlobal	40
+LightPulseWord 15	1
+LoadRow	DmdStartRow NoOfRows Inum MemStartRow	200
+Add	MemStartRow 1	1
+Add	LoopCount 1	1
+JumpIf	LoopCount < TotalRows scrollforward	1
+#
+#--------------------------------------------------------------
+# Initiate variables for Scroll back
+AssignVar	MemStartRow 2160	1
+AssignVar	LoopCount 0	1
+#
+#--------------------------------------------------------------
+# Scroll back
+Labelscrollback1Trig0 40ResetGlobal40LightPulseWord151LoadRowDmdStartRowNoOfRows Inum MemStartRow200AddMemStartRow-11AddLoopCount 11JumpIfLoopCount <TotalRows scrollback1##--------------------------------------------------------------
+# Reset LoopCount and re-initiate MemStartRow
+AssignVarLoopCount 01AssignVarMemStartRow 01JumpIfLoopCount < TotalRows scrollforward1
+
+
+
+The above contents is loaded into Luxbeam 4600 using the record described in 5.3.1. The length of the data above is 2041 bytes and will fit within two packets, if we want to keep packet size at max 1500 bytes. Using Jumbo frames the file would fit inside one packet.
+
+Send sequence file (part 1 of 2) and receive ok:
+
+Send020F00690001000205D21490 bytes of data (23 2D 2D 2D 2D...)Receive000601F50000
+Send sequence file (part 2 of 2) and receive ok:
+
+Send020F0069000200020227551 bytes of data (20 20 20 20 20...)Receive000601F50000
+Receiving "ok" back means that the syntax of the file sent was ok.
+
+
+
+6.2.5 Start Sequencer
+The final step to get the image displayed on the DMD is to take the sequencer out of reset and start it as described in 5.3.3.
+
+
+Take sequencer out of reset-state and receive ok:
+
+Send0006006A0200Receive000601F50000
+
+Start the sequencer and receive ok:
+
+Send0006006A0101Receive000601F50000
+
+Now the image shold be scrolling up and down on the DMD.
+
+
+
+
+
+7 RLE compression schemes
+
+7.1 RLE compression Scheme for lb4k6
+The run length encoding must terminate on each row, i.e. no run-length encoding can span from one row to the next.
+
+Bit 15RLE1 =>RLE
+0 =>RAWBit 14rle dataActual data for the full run lengthBit 13:11transitionTransition position in the byte that separate two run-lengthBit 10:0run lengthRun length in term of bytesBit 7:0raw dataData when raw mode is used
+Example: 00|00|00|00|00|00|00|1F|FF|FF|FF|FF|FF|00|1f|FF|FF|FF
+|	A	|	B	| C |D|
+A: RLE=1, rle data=0, run-length=8, transition=3 B: RLE=1, rle data=1, run-lenght=5, transition=0 C: RLE=0, raw data = 00
+D: RLE=0, raw data= 1F
+
+7.2 RLE compression Scheme for lb4k7 - image type 2
+RLE mode (bit15 = 0)
+
+Bit 150RLE descriptorBit 14dataActual data for the full run lengthBit 13:0run lengthRun length in term of dwords(32 bits)
+RAW - mode 0 (Bit15=1, Bit14=0)
+Each descriptor define two dword. The coded dwords are selected from a lookup table where the address to this lookup table is the code found in the descriptors
+
+
+
+
+Bit 151RAW descriptorBit 140RAW descriptor mode 0 ? two RAW dwords are decodedBit 13:7code for data1Lookup address for RAW dataBit 6:0code for data0Lookup address for RAW data
+RAW decoding - mode 1 (Bit15=1, Bit14=1, Bit13=0)
+Each descriptor define one dword. The coded dwords are selected from a lookup table where the address to this lookup table is the code found in the descriptors
+
+Bit 151RAW descriptorBit 14:1310RAW descriptor mode 1 ? one RAW dword is decodedBit 10:0code for data1Lookup address for RAW data
+RAW decoding - bytes (Bit15=1, Bit14=1, Bit13=1)
+Each descriptor define one byte. This descriptor must be used in chunks for 4 descriptors (resulting in 4*8 bits) in order to stay aligned with the other descriptors that define dwords (32-bit)
+
+Bit 151RAW descriptorBit 14:1311RAW byte descriptor ? one RAW byte is decodedBit 7:0dataOne byte of data
+
+7.3 RLE compression Scheme for lb4k6 - image type 5
+
+Bit 0data Adata ABit 10-1run length Arun length in terms of bits for data ABit 11data Bdata BBit 15-12run length Arun length in terms of bits for data A
+Example
+First RLE packet of one row contains the following data:
+??? First symbol 0, Run length 2
+??? Second symbol 1, Run length 3
+??? Third symbol 0, Run length 1
+??? Fourth symbol 1, Run length 5
+This should be unpacked to the 11 bits "00111011111". If the next RLE packet arrives with the following data:
+
+
+
+??? First symbol 0, Run length 1
+??? Second symbol 1, Run length 1
+??? Third symbol 0, Run length 1
+??? Fourth symbol 1, Run length 1
+
+...it should be decompressed directly behind the previous bits. The result would be the 15 bits "001110111110101". After several more RLE packets a complete row (1920 bits) will be filled. The last RLE packet will always end exactly at the end of the row and not continue to the next row.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
