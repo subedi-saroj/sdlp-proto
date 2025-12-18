@@ -41,11 +41,16 @@ The overall process is as follows:
 
     --> Repeat for some number of layers.
         - LAYERS = 6
+
+NOTES:
+- The scroling stage (distance and velocity) is calibrated for 4320 rows images; inum set to 3 in 4bit gray sequencer.
+The waitfor time for LedPulseWord is set at 1000 should be the middle ground. For more precise energy, calculate LED power.
+stepinum is 1699; starting from 0 for left bitplanes and from 4*1699=6796 for right bitplanes.
 '''
 def preprocess_grayscale_image(filepath):
     # Constants
     FULL_WIDTH = 2880 # width of pre-processed grayscale image
-    FULL_HEIGHT = 3240 # height of pre-processed grayscale image
+    FULL_HEIGHT = 4320 # height of pre-processed grayscale image
 
     GS_STRIP_WIDTH = 1920 # width of each strip
     OVERLAP = GS_STRIP_WIDTH * 2 - FULL_WIDTH
@@ -90,8 +95,8 @@ def preprocess_grayscale_image(filepath):
                     strip.putpixel((pixel_x, pixel_y), func(x, val))
         return strip
 
-    left_strip = scale_overlap(left_strip, 'L')
-    right_strip = scale_overlap(right_strip, 'R')
+    # left_strip = scale_overlap(left_strip, 'L')
+    # right_strip = scale_overlap(right_strip, 'R')
 
     # Save strips after overlap scaling for verification
     left_strip.save("bitplanes/left_strip_after_overlap.bmp")
@@ -122,7 +127,7 @@ STEP_INUM = 1699 #1699  # Changed from 1699 for simpler testing; revert to 1699 
 BITPLANES = 4
 
 # Step 5: Create sequencer for 4-bit weighted bitplanes
-sequencer = seq.Sequencer(r"test\test-seq\seq_scroll_4bit_gray_visitech_for.txt", 1440)
+sequencer = seq.Sequencer(r"test\test-seq\seq_scroll_4bit_gray_visitech_back.txt", 1440)
 
 # Step 6: Start the projector and axes simultaneously for a single layer
 # import axes
@@ -170,7 +175,7 @@ for i in range(LAYERS):
 
     print(f"Layer {i+1} out of {LAYERS}")
 
-    left_planes, right_planes = preprocess_grayscale_image(r"test\test-dogbone\2880x3240_dogbone_HORZ.bmp")
+    left_planes, right_planes = preprocess_grayscale_image(r"test\test_images\grayscale_stripes_horizontal_2880x4320.bmp")
     
     # Upload left bitplanes to inums 0, 1699, 3398, 5097
     print("Uploading left bitplanes...")
@@ -195,6 +200,7 @@ for i in range(LAYERS):
     # projector.send_sequencer(sequencers[0])  # Alternate between left and right sequencers
     projector.send_sequencer(sequencer)
     projector.start_sequencer()
+    time.sleep(20)  # Let the layer print for 5 seconds for testing and complete the sequencer
 
     # zaber_axes.scroll(SCROLLING_DIST, SCROLLING_VELOCITY)
     # zaber_axes.scroll(-SCROLLING_DIST, SCROLLING_VELOCITY)
