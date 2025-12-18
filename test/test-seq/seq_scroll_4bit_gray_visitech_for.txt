@@ -1,7 +1,7 @@
 # Assign constants and variable
 AssignVar  RowsPrGrp       72 1  # 1+2+4+8=15 groups over 1080 rows => 1080/15=72
 AssignVar  NoOfDMDrows   1080 1  # DMD size in rows
-AssignVar  NoOfInums        3 1  # Test images are 8192 rows, i.e. 1080 row/inum * 7 inums
+AssignVar  NoOfInums        7 1  # Test images are 8192 rows, i.e. 1080 row/inum * 7 inums
 AssignVar  MemStartRow      0 1  # Start at row zero
 AssignVar  StartImageNo     0 1  # Start with inum zero
 AssignVar  StepInum      1699 1  # Inum separation between bit-planes.
@@ -70,7 +70,7 @@ Label Scroll 1
 
   ################### RST start here - count TU until first load #########################
   ResetGlobal               40      # Enable LED on 2TU = 500 ns after reset
-  LightPulseWord  15 10000    #Adjust this time to change the scroll speed.
+  LightPulseWord  15 1    #Adjust this time to change the scroll speed.
   Add MemStartRow          -1007    1  
 
 JumpIf MemStartRow < NoOfDMDrows Scroll 1
