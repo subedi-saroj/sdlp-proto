@@ -1,10 +1,10 @@
 # Assign constants and variable
-AssignVar  RowsPrGrp       72 1
-AssignVar  NoOfDMDrows   1080 1
-AssignVar  NoOfInums        3 1
-AssignVar  MemStartRow   1079 1     # CHANGED: start from bottom row
-AssignVar  StartImageNo     0 1
-AssignVar  StepInum      1699 1
+AssignVar  RowsPrGrp       72 1  # 1+2+4+8=15 groups over 1080 rows => 1080/15=72
+AssignVar  NoOfDMDrows   1080 1  # DMD size in rows
+AssignVar  NoOfInums        3 1  # CHANGE Test images are 4320 rows, i.e. 1080 row/inum * 4 inums but set #3 to display just enough
+AssignVar  MemStartRow      3240 1  # CHANGE Start at row for 4319 - 1080 to scroll backwards
+AssignVar  StartImageNo     0 1  # Start with inum zero
+AssignVar  StepInum      1699 1  # Inum separation between bit-planes.
 #-------------------------------------------------------------------------------
 
 Label Scroll 1
@@ -12,71 +12,71 @@ Label Scroll 1
     ######################## 0 ###################################
     AssignVar DmdStartRow             0               1
     AssignVar inum                    0               1
-    Add       inum         StartImageNo               1
-    LoadRow   DmdStartRow  RowsPrGrp inum MemStartRow 11
+    Add       NoOfInums               1               1
+    Mult      inum         NoOfInums      StepInum    1   
+    LoadRow   DmdStartRow  RowsPrGrp inum MemStartRow 11   # Loading 72 rows takes 72*50ns/250ns => 14 tics
 
     ######################## 1 ###################################
-    Add       inum        StepInum                    1
-    Add       MemStartRow RowsPrGrp                   1
-    Add       DmdStartRow RowsPrGrp                   1
-    LoadRow   DmdStartRow RowsPrGrp inum MemStartRow  12
-    Add       MemStartRow RowsPrGrp                   1
-    Add       DmdStartRow RowsPrGrp                   1
-    LoadRow   DmdStartRow RowsPrGrp inum MemStartRow  11
+    Add       inum        StepInum                    1  # Bitplane 1 is at location of bitplane0 pluss StepInum
+    Add       MemStartRow RowsPrGrp                   1 
+    Add       DmdStartRow RowsPrGrp                   1   # Bitplane 1 from DMD row 0+72
+    LoadRow   DmdStartRow RowsPrGrp inum MemStartRow  12  # Load 72 rows 
+    Add       MemStartRow RowsPrGrp                   1 
+    Add       DmdStartRow RowsPrGrp                   1   # Bitplane 1 from DMD row 0+72+72
+    LoadRow   DmdStartRow RowsPrGrp inum MemStartRow  11  # Load 72 rows 
 
     ######################## 2 ###################################
-    Add       inum        StepInum                    1
+    Add       inum        StepInum                    1  
     Add       DmdStartRow RowsPrGrp                   1
-    Add       MemStartRow RowsPrGrp                   1
+    Add       MemStartRow RowsPrGrp                   1 
     LoadRow   DmdStartRow RowsPrGrp inum MemStartRow  12
     Add       DmdStartRow RowsPrGrp                   1
-    Add       MemStartRow RowsPrGrp                   1
+    Add       MemStartRow RowsPrGrp                   1         
     LoadRow   DmdStartRow RowsPrGrp inum MemStartRow  12
     Add       DmdStartRow RowsPrGrp                   1
-    Add       MemStartRow RowsPrGrp                   1
+    Add       MemStartRow RowsPrGrp                   1 
     LoadRow   DmdStartRow RowsPrGrp inum MemStartRow  12
     Add       DmdStartRow RowsPrGrp                   1
-    Add       MemStartRow RowsPrGrp                   1
+    Add       MemStartRow RowsPrGrp                   1 
     LoadRow   DmdStartRow RowsPrGrp inum MemStartRow  11
 
     ######################## 3 ###################################
-    Add       inum        StepInum                    1
+    Add       inum        StepInum                    1  
     Add       DmdStartRow RowsPrGrp                   1
-    Add       MemStartRow RowsPrGrp                   1
+    Add       MemStartRow RowsPrGrp                   1 
     LoadRow   DmdStartRow RowsPrGrp inum MemStartRow  12
     Add       DmdStartRow RowsPrGrp                   1
-    Add       MemStartRow RowsPrGrp                   1
+    Add       MemStartRow RowsPrGrp                   1 
     LoadRow   DmdStartRow RowsPrGrp inum MemStartRow  12
     Add       DmdStartRow RowsPrGrp                   1
-    Add       MemStartRow RowsPrGrp                   1
+    Add       MemStartRow RowsPrGrp                   1     
     LoadRow   DmdStartRow RowsPrGrp inum MemStartRow  12
     Add       DmdStartRow RowsPrGrp                   1
-    Add       MemStartRow RowsPrGrp                   1
+    Add       MemStartRow RowsPrGrp                   1 
     LoadRow   DmdStartRow RowsPrGrp inum MemStartRow  12
     Add       DmdStartRow RowsPrGrp                   1
-    Add       MemStartRow RowsPrGrp                   1
+    Add       MemStartRow RowsPrGrp                   1 
     LoadRow   DmdStartRow RowsPrGrp inum MemStartRow  12
     Add       DmdStartRow RowsPrGrp                   1
-    Add       MemStartRow RowsPrGrp                   1
+    Add       MemStartRow RowsPrGrp                   1     
     LoadRow   DmdStartRow RowsPrGrp inum MemStartRow  12
     Add       DmdStartRow RowsPrGrp                   1
-    Add       MemStartRow RowsPrGrp                   1
+    Add       MemStartRow RowsPrGrp                   1     
     LoadRow   DmdStartRow RowsPrGrp inum MemStartRow  12
     Add       DmdStartRow RowsPrGrp                   1
-    Add       MemStartRow RowsPrGrp                   1
+    Add       MemStartRow RowsPrGrp                   1     
     LoadRow   DmdStartRow RowsPrGrp inum MemStartRow  12
+       
+  Trig 0 4 0 # Change '4' to '2' for extern optical sync or to '1' for external elextrical sync
 
-  Trig 0 4 0
-
-  ResetGlobal               40
-  LightPulseWord  15 1000
-
-  Add MemStartRow          -1009    1   # CHANGED: backward net step (-1 row)
+  ################### RST start here - count TU until first load #########################
+  ResetGlobal               40      # Enable LED on 2TU = 500 ns after reset
+  LightPulseWord  15 1000    #Adjust this time to change the scroll speed.
+  Add MemStartRow          -1009    1  
 
 JumpIf MemStartRow < NoOfDMDrows Scroll 1
-
-  Add       StartImageNo 1           1
-  AssignVar MemStartRow  1079        1   # CHANGED: restart from bottom each image
+  Add       StartImageNo 1           1  # Increment INUM and
+  AssignVar MemStartRow  0           1  # reset MemsStartRow
 
 JumpIf StartImageNo < NoOfInums Scroll 1
 
