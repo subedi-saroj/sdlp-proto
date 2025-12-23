@@ -137,7 +137,7 @@ input("Press Enter to start the projector and axes...")
 
 # CRITICAL FIX: Set INUM_SIZE to 1080 (DMD height) ONCE before uploads
 print("\nSetting INUM_SIZE to 1080 (DMD height)...")
-projector.send(records.SetInumSize(1080).bytes())
+projector.send(records.SetInumSize(4320).bytes())
 print("✅ INUM_SIZE set\n")
 
 # zaber_axes = axes.ZaberAxes("COM3")
