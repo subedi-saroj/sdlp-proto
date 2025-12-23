@@ -3,7 +3,7 @@ AssignVar  RowsPrGrp       72 1  # 1+2+4+8=15 groups over 1080 rows => 1080/15=7
 AssignVar  NoOfDMDrows   1080 1  # DMD size in rows
 AssignVar  NoOfInums        3 1  # CHANGE Test images are 4320 rows, i.e. 1080 row/inum * 4 inums but set #3 to display just enough
 AssignVar  MemStartRow      3240 1  # CHANGE Start at row for 4319 - 1080 to scroll backwards
-AssignVar  StartImageNo     0 1  # Start with inum zero
+AssignVar  StartImageNo     3 1  # Start with inum zero
 AssignVar  StepInum      1699 1  # Inum separation between bit-planes.
 #-------------------------------------------------------------------------------
 
@@ -11,9 +11,8 @@ Label Scroll 1
 
     ######################## 0 ###################################
     AssignVar DmdStartRow             0               1
-    AssignVar inum                    0               1
-    Add       NoOfInums               1               1
-    Mult      inum         NoOfInums      StepInum    1   
+    AssignVar inum                    6796               1
+    Add       inum         StartImageNo               1  
     LoadRow   DmdStartRow  RowsPrGrp inum MemStartRow 11   # Loading 72 rows takes 72*50ns/250ns => 14 tics
 
     ######################## 1 ###################################
@@ -75,10 +74,10 @@ Label Scroll 1
   Add MemStartRow          -1009    1  
 
 JumpIf MemStartRow < NoOfDMDrows Scroll 1
-  Add       StartImageNo 1           1  # Increment INUM and
+  Add       StartImageNo -1           1  # Increment INUM and
   AssignVar MemStartRow  0           1  # reset MemsStartRow
 
-JumpIf StartImageNo < NoOfInums Scroll 1
+JumpIf StartImageNo > 0 Scroll 1
 
 Label Stop 1
 Jump Stop 1
