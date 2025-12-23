@@ -5,14 +5,14 @@ AssignVar  NoOfInums        3 1  # Test images are 4320 rows, i.e. 1080 row/inum
 AssignVar  MemStartRow      0 1  # Start at row zero
 AssignVar  StartImageNo     0 1  # Start with inum zero
 AssignVar  StepInum      1699 1  # Inum separation between bit-planes.
+AssignVar  Lastrow       3240 1 #CHANGE according to the (image row size - 1080)
 #-------------------------------------------------------------------------------
 
 Label Scroll 1
 
     ######################## 0 ###################################
     AssignVar DmdStartRow             0               1
-    AssignVar inum                    0               1
-    Add       inum         StartImageNo               1    
+    AssignVar inum                    0               1   
     LoadRow   DmdStartRow  RowsPrGrp inum MemStartRow 11   # Loading 72 rows takes 72*50ns/250ns => 14 tics
 
     ######################## 1 ###################################
@@ -73,11 +73,6 @@ Label Scroll 1
   LightPulseWord  15 1000    #Adjust this time to change the scroll speed.
   Add MemStartRow          -1007    1  
 
-JumpIf MemStartRow < NoOfDMDrows Scroll 1
-  Add       StartImageNo 1           1  # Increment INUM and
-  AssignVar MemStartRow  0           1  # reset MemsStartRow
-
-JumpIf StartImageNo < NoOfInums Scroll 1
-
+JumpIf MemStartRow < Lastrow Scroll 1
 Label Stop 1
 Jump Stop 1

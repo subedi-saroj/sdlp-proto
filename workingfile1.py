@@ -135,10 +135,11 @@ sequencer = seq.Sequencer(r"test\test-seq\seq_scroll_4bit_gray_visitech_back.txt
 
 input("Press Enter to start the projector and axes...")
 
-# CRITICAL FIX: Set INUM_SIZE to 1080 (DMD height) ONCE before uploads
-print("\nSetting INUM_SIZE to 1080 (DMD height)...")
-projector.send(records.SetInumSize(4320).bytes())
-print("✅ INUM_SIZE set\n")
+# CRITICAL FIX: Set INUM_SIZE to 4320 for 4-bit grayscale printing with scrolling
+inumsize = 4320  # DMD height - set to max row size or higher #setting this to 1080 will make it difficult to scroll backward
+print(f"\nSetting INUM_SIZE to {inumsize} (DMD height)...")
+projector.send(records.SetInumSize(inumsize).bytes())
+print(f"✅ INUM_SIZE set : {inumsize}\n") 
 
 # zaber_axes = axes.ZaberAxes("COM3")
 # zaber_axes.home()
@@ -175,7 +176,7 @@ for i in range(LAYERS):
 
     print(f"Layer {i+1} out of {LAYERS}")
 
-    left_planes, right_planes = preprocess_grayscale_image(r"test\test_images\grayscale_stripes_horizontal_2880x4320.bmp")
+    left_planes, right_planes = preprocess_grayscale_image(r"test\test_images\dogbone_grayscale.bmp")
     
     # Upload left bitplanes to inums 0, 1699, 3398, 5097
     print("Uploading left bitplanes...")
