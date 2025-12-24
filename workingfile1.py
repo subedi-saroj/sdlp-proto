@@ -4,6 +4,8 @@ from lux4600.img import Strip
 from lux4600.seq import Sequencer
 from PIL import Image
 import time, sys, os
+import tkinter as tk
+from tkinter import filedialog
 
 '''
 Author: David Alexander
@@ -44,9 +46,40 @@ The overall process is as follows:
 
 NOTES:
 - The scroling stage (distance and velocity) is calibrated for 4320 rows images; inum set to 3 in 4bit gray sequencer.
-The waitfor time for LedPulseWord is set at 1000 should be the middle ground. For more precise energy, calculate LED power.
+The waitfor time for LedPulseWord is set at 10000 should be the middle ground. For more precise energy, calculate LED power.
 stepinum is 1699; starting from 0 for left bitplanes and from 4*1699=6796 for right bitplanes.
 '''
+
+Z_START = 100 # mm, initial z position
+X_START = 60 # mm, initial x position
+Y_START = 50 # mm, initial y position
+
+# Constants for inum spacing
+STEP_INUM = 1699 #1699  # Changed from 1699 for simpler testing; revert to 1699 if needed
+BITPLANES = 4
+
+LAYER_HEIGHT = 0.4 #mm
+
+LED = 100  # LED driver amplitude (0 to 4095)
+
+# THESE ARE CAREFULLY CALIBRATED VALUES
+# TODO: verify with celestron handheld microscope from the natural resources library
+SCROLLING_VELOCITY = 14.35 # mm/s 10.368 mm in 3.25 s average
+SCROLLING_DIST = 46.656 # mm when row size is 4320 pixels * 10.8 um
+LATERAL_INCREMENT = 10.368 # mm when overlap is 960 pixels *10.8 um
+
+# Prompt user to select folder containing images
+root = tk.Tk()
+root.withdraw()
+image_folder = filedialog.askdirectory(title="Select folder with layer images (e.g., 1.bmp, 2.bmp, ...)")
+if not image_folder:
+    raise RuntimeError("No folder selected!")
+
+# Get sorted list of image files (expects names like 1.bmp, 2.bmp, ...)
+image_files = sorted([f for f in os.listdir(image_folder) if f.lower().endswith('.bmp')], key=lambda x: int(os.path.splitext(x)[0]))
+LAYERS = len(image_files)
+print(f"Found {LAYERS} layers in {image_folder}")
+
 def preprocess_grayscale_image(filepath):
     # Constants
     FULL_WIDTH = 2880 # width of pre-processed grayscale image
@@ -122,61 +155,44 @@ projector = Projector(IP, DATA_PORT, IMAGE_DATA_PORT)
 
 projector.check_connection()
 
-# Constants for inum spacing
-STEP_INUM = 1699 #1699  # Changed from 1699 for simpler testing; revert to 1699 if needed
-BITPLANES = 4
-
 # Step 5: Create sequencer for 4-bit weighted bitplanes
-sequencer = seq.Sequencer(r"test\test-seq\seq_scroll_4bit_gray_visitech_back.txt", 1440)
+# sequencer = seq.Sequencer(r"test\test-seq\seq_scroll_4bit_gray_visitech_back.txt", 1440)
+sequencers = [
+        seq.Sequencer(r"test\test-seq\seq_scroll_4bit_gray_visitech_for.txt", 1440),
+        seq.Sequencer(r"test\test-seq\seq_scroll_4bit_gray_visitech_back.txt", 1440)
+]
 
 # Step 6: Start the projector and axes simultaneously for a single layer
-# import axes
-# from zaber_motion import Units, wait_all
+import axes
+from zaber_motion import Units, wait_all
 
 input("Press Enter to start the projector and axes...")
 
-# CRITICAL FIX: Set INUM_SIZE to 4320 for 4-bit grayscale printing with scrolling
+# Set INUM_SIZE to 4320 for 4-bit grayscale printing with scrolling
 inumsize = 4320  # DMD height - set to max row size or higher #setting this to 1080 will make it difficult to scroll backward
 print(f"\nSetting INUM_SIZE to {inumsize} (DMD height)...")
 projector.send(records.SetInumSize(inumsize).bytes())
 print(f"✅ INUM_SIZE set : {inumsize}\n") 
 
-# zaber_axes = axes.ZaberAxes("COM3")
-# zaber_axes.home()
+zaber_axes = axes.ZaberAxes("COM3")
+zaber_axes.home()
 
-# Z_START = 100 # mm, initial z position
-# X_START = 60 # mm, initial x position
-# Y_START = 50 # mm, initial y position
-
-# zaber_axes.ZAxis.move_absolute(Z_START, Units.LENGTH_MILLIMETRES)
-# zaber_axes.XAxis.move_absolute(X_START, Units.LENGTH_MILLIMETRES)
-# zaber_axes.YAxis.move_absolute(Y_START, Units.LENGTH_MILLIMETRES)
-
-LAYER_HEIGHT = 0.4
-LAYERS = 6
+zaber_axes.ZAxis.move_absolute(Z_START, Units.LENGTH_MILLIMETRES)
+zaber_axes.XAxis.move_absolute(X_START, Units.LENGTH_MILLIMETRES)
+zaber_axes.YAxis.move_absolute(Y_START, Units.LENGTH_MILLIMETRES)
 
 # Create output directory for bitplane verification
 os.makedirs("bitplanes", exist_ok=True)
 
 # Set LED driver amplitude to 1500 (0 TO 4095)
 # Ensure water cooling system is functional if amplitude > 100
-projector.send(records.SetLedDriverAmplitude(0, 1500).bytes())
+projector.send(records.SetLedDriverAmplitude(0, LED).bytes())
 
-#
-# THESE ARE CAREFULLY CALIBRATED VALUES
-# TODO: verify with celestron handheld microscope from the natural resources library
-#
-SCROLLING_VELOCITY = 1.8 # mm/s
-SCROLLING_DIST = 23.2 # mm
-LATERAL_INCREMENT = 10 # mm
-#
-
-
-for i in range(LAYERS):
-
-    print(f"Layer {i+1} out of {LAYERS}")
-
-    left_planes, right_planes = preprocess_grayscale_image(r"test\test_images\dogbone_grayscale.bmp")
+for i, img_name in enumerate(image_files):
+    print(f"Layer ✅ {i+1} ✅ of {LAYERS}: {img_name}")
+    img_path = os.path.join(image_folder, img_name)
+    left_planes, right_planes = preprocess_grayscale_image(img_path)
+    # left_planes, right_planes = preprocess_grayscale_image(r"test\test_images\dogbone_grayscale.bmp")
     
     # Upload left bitplanes to inums 0, 1699, 3398, 5097
     print("Uploading left bitplanes...")
@@ -194,28 +210,25 @@ for i in range(LAYERS):
         strip.save(f"bitplanes/right_bitplane_{bit}_inum_{inum}.bmp")
         projector.send_strip(strip)
 
-    projector.send(records.SetLedDriverAmplitude(0, 1500).bytes())  # Ensure LED amplitude is set
-
-    # zaber_axes.XAxis.move_absolute(X_START, Units.LENGTH_MILLIMETRES)
-
-    # projector.send_sequencer(sequencers[0])  # Alternate between left and right sequencers
-    projector.send_sequencer(sequencer)
+    projector.send_sequencer(sequencers[0]) #forward scroll
     projector.start_sequencer()
-    time.sleep(20)  # Let the layer print for 5 seconds for testing and complete the sequencer
+    zaber_axes.scroll(SCROLLING_DIST, SCROLLING_VELOCITY)
 
-    # zaber_axes.scroll(SCROLLING_DIST, SCROLLING_VELOCITY)
-    # zaber_axes.scroll(-SCROLLING_DIST, SCROLLING_VELOCITY)
+    time.sleep(0.5)  # wait for a second at the end of the scroll
+    zaber_axes.increment_lateral(LATERAL_INCREMENT)
+    time.sleep(0.5)  # wait for a second after lateral increment
 
-    # projector.stop_sequencer()
-    # zaber_axes.increment_lateral(LATERAL_INCREMENT)
-    # projector.send_sequencer(sequencers[1])
-    # projector.start_sequencer()
+    projector.send_sequencer(sequencers[1]) #Backward scroll
+    projector.start_sequencer()
+    zaber_axes.scroll(-SCROLLING_DIST, SCROLLING_VELOCITY)
 
-    # zaber_axes.scroll(SCROLLING_DIST, SCROLLING_VELOCITY)
-    # zaber_axes.scroll(-SCROLLING_DIST, SCROLLING_VELOCITY)
-    # projector.stop_sequencer()
+    zaber_axes.increment_layer(LAYER_HEIGHT*4) #Delamination of the layer
+    zaber_axes.increment_layer(-LAYER_HEIGHT*3)
 
-    # zaber_axes.increment_layer(LAYER_HEIGHT)
+    zaber_axes.XAxis.move_absolute(X_START, Units.LENGTH_MILLIMETRES)
+    zaber_axes.YAxis.move_absolute(Y_START, Units.LENGTH_MILLIMETRES)
+    time.sleep(1) #material refill time
 
-# zaber_axes.ZAxis.move_absolute(30, Units.LENGTH_MILLIMETRES)
-# projector.send(records.SetLedDriverAmplitude(0, 100).bytes()) # Set LED amplitude back to 100
+zaber_axes.ZAxis.move_absolute(20, Units.LENGTH_MILLIMETRES)
+projector.send(records.SetLedDriverAmplitude(0, 100).bytes()) # Set LED amplitude back to 100
+projector.stop_sequencer() # Stop if any running sequencer at the end of the print job
