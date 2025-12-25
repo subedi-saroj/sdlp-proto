@@ -60,11 +60,11 @@ BITPLANES = 4
 
 LAYER_HEIGHT = 0.4 #mm
 
-LED = 100  # LED driver amplitude (0 to 4095)
+LED = 500  # LED driver amplitude (0 to 4095)
 
 # THESE ARE CAREFULLY CALIBRATED VALUES
 # TODO: verify with celestron handheld microscope from the natural resources library
-SCROLLING_VELOCITY = 14.35 # mm/s 10.368 mm in 3.25 s average
+SCROLLING_VELOCITY = 4.734 # mm/s 10.368 mm in 3.25 s average
 SCROLLING_DIST = 46.656 # mm when row size is 4320 pixels * 10.8 um
 LATERAL_INCREMENT = 10.368 # mm when overlap is 960 pixels *10.8 um
 
@@ -76,7 +76,10 @@ if not image_folder:
     raise RuntimeError("No folder selected!")
 
 # Get sorted list of image files (expects names like 1.bmp, 2.bmp, ...)
-image_files = sorted([f for f in os.listdir(image_folder) if f.lower().endswith('.bmp')], key=lambda x: int(os.path.splitext(x)[0]))
+image_files = sorted(
+    [f for f in os.listdir(image_folder) if f.lower().endswith('.bmp') and os.path.splitext(f)[0].isdigit()],
+    key=lambda x: int(os.path.splitext(x)[0])
+)
 LAYERS = len(image_files)
 print(f"Found {LAYERS} layers in {image_folder}")
 
@@ -184,10 +187,6 @@ zaber_axes.YAxis.move_absolute(Y_START, Units.LENGTH_MILLIMETRES)
 # Create output directory for bitplane verification
 os.makedirs("bitplanes", exist_ok=True)
 
-# Set LED driver amplitude to 1500 (0 TO 4095)
-# Ensure water cooling system is functional if amplitude > 100
-projector.send(records.SetLedDriverAmplitude(0, LED).bytes())
-
 for i, img_name in enumerate(image_files):
     print(f"Layer ✅ {i+1} ✅ of {LAYERS}: {img_name}")
     img_path = os.path.join(image_folder, img_name)
@@ -210,6 +209,14 @@ for i, img_name in enumerate(image_files):
         strip.save(f"bitplanes/right_bitplane_{bit}_inum_{inum}.bmp")
         projector.send_strip(strip)
 
+    # Set LED driver amplitude: for first layer use 10x LED, else use LED (0 to 4095)
+    if (i + 1) == 1:
+        led_val = min(LED * 10, 4095)
+    else:
+        led_val = LED
+    # Ensure water cooling system is functional if amplitude > 100 
+    projector.send(records.SetLedDriverAmplitude(0, led_val).bytes())
+
     projector.send_sequencer(sequencers[0]) #forward scroll
     projector.start_sequencer()
     zaber_axes.scroll(SCROLLING_DIST, SCROLLING_VELOCITY)
@@ -223,6 +230,7 @@ for i, img_name in enumerate(image_files):
     zaber_axes.scroll(-SCROLLING_DIST, SCROLLING_VELOCITY)
 
     zaber_axes.increment_layer(LAYER_HEIGHT*4) #Delamination of the layer
+    time.sleep(0.5) 
     zaber_axes.increment_layer(-LAYER_HEIGHT*3)
 
     zaber_axes.XAxis.move_absolute(X_START, Units.LENGTH_MILLIMETRES)
