@@ -60,8 +60,10 @@ BITPLANES = 4
 
 LAYER_HEIGHT = 0.4 #mm
 
-LED = 500  # LED driver amplitude (0 to 4095)
-
+# for sequencer with ledpulseword waitfor time of 10000, t_1080 rows = 3.28 s
+Intensity = 0.81 # User intensity in mW/cm^2, calculate based on the energy required for the layer
+LED =  int(140.99*Intensity-17.761 ) # LED driver amplitude (0 to 4095)
+print(f"\nCalculated LED setting: {LED}")
 # THESE ARE CAREFULLY CALIBRATED VALUES
 # TODO: verify with celestron handheld microscope from the natural resources library
 SCROLLING_VELOCITY = 4.734 # mm/s 10.368 mm in 3.25 s average
@@ -157,6 +159,7 @@ def preprocess_grayscale_image(filepath):
 projector = Projector(IP, DATA_PORT, IMAGE_DATA_PORT)
 
 projector.check_connection()
+projector.stop_sequencer() # Stop if any running sequencer
 
 # Step 5: Create sequencer for 4-bit weighted bitplanes
 # sequencer = seq.Sequencer(r"test\test-seq\seq_scroll_4bit_gray_visitech_back.txt", 1440)
@@ -237,6 +240,6 @@ for i, img_name in enumerate(image_files):
     zaber_axes.YAxis.move_absolute(Y_START, Units.LENGTH_MILLIMETRES)
     time.sleep(1) #material refill time
 
-zaber_axes.ZAxis.move_absolute(20, Units.LENGTH_MILLIMETRES)
+zaber_axes.ZAxis.move_absolute(10, Units.LENGTH_MILLIMETRES)
 projector.send(records.SetLedDriverAmplitude(0, 100).bytes()) # Set LED amplitude back to 100
 projector.stop_sequencer() # Stop if any running sequencer at the end of the print job
