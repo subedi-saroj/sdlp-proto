@@ -50,25 +50,27 @@ The waitfor time for LedPulseWord is set at 10000 should be the middle ground. F
 stepinum is 1699; starting from 0 for left bitplanes and from 4*1699=6796 for right bitplanes.
 '''
 
-Z_START = 100 # mm, initial z position
-X_START = 60 # mm, initial x position
-Y_START = 50 # mm, initial y position
+Z_START = 10 # mm, initial z position #150.5 focal position 
+X_START = 60 # mm, initial x position #60 mm
+Y_START = 40 # mm, initial y position #40 mm
+offset =  0.54   #mm ,calibrated offset for scrolling back gantry 0.54 mm 
 
 # Constants for inum spacing
 STEP_INUM = 1699 #1699  # Changed from 1699 for simpler testing; revert to 1699 if needed
-BITPLANES = 4
+BITPLANES = 4 #4
 
 LAYER_HEIGHT = 0.4 #mm
 
 # for sequencer with ledpulseword waitfor time of 10000, t_1080 rows = 3.28 s
-Intensity = 0.81 # User intensity in mW/cm^2, calculate based on the energy required for the layer
+Intensity = 0.81 # 0.81 User intensity in mW/cm^2, calculate based on the energy required for the layer
+times_first_layer = 5
 LED =  int(140.99*Intensity-17.761 ) # LED driver amplitude (0 to 4095)
 print(f"\nCalculated LED setting: {LED}")
 # THESE ARE CAREFULLY CALIBRATED VALUES
 # TODO: verify with celestron handheld microscope from the natural resources library
-SCROLLING_VELOCITY = 4.734 # mm/s 10.368 mm in 3.25 s average
-SCROLLING_DIST = 46.656 # mm when row size is 4320 pixels * 10.8 um
-LATERAL_INCREMENT = 10.368 # mm when overlap is 960 pixels *10.8 um
+SCROLLING_VELOCITY = 3.55 # 3.55 mm/s 10.368 mm in 3.25 s average
+SCROLLING_DIST =  34.992# 34.992 mm when row size is 4320 pixels - 1080 =  3240* 10.8 um
+LATERAL_INCREMENT = 10.368 # 10.368 mm when overlap is 960 pixels *10.8 um
 
 # Prompt user to select folder containing images
 root = tk.Tk()
@@ -214,7 +216,7 @@ for i, img_name in enumerate(image_files):
 
     # Set LED driver amplitude: for first layer use 10x LED, else use LED (0 to 4095)
     if (i + 1) == 1:
-        led_val = min(LED * 10, 4095)
+        led_val = min(LED * times_first_layer, 4095)
     else:
         led_val = LED
     # Ensure water cooling system is functional if amplitude > 100 
@@ -222,7 +224,7 @@ for i, img_name in enumerate(image_files):
 
     projector.send_sequencer(sequencers[0]) #forward scroll
     projector.start_sequencer()
-    zaber_axes.scroll(SCROLLING_DIST, SCROLLING_VELOCITY)
+    zaber_axes.scroll(SCROLLING_DIST-offset, SCROLLING_VELOCITY)
 
     time.sleep(0.5)  # wait for a second at the end of the scroll
     zaber_axes.increment_lateral(LATERAL_INCREMENT)
