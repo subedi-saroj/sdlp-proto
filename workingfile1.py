@@ -59,8 +59,8 @@ offset =  0.54   #mm ,calibrated offset for scrolling back gantry 0.54 mm
 STEP_INUM = 1699 #1699  # Changed from 1699 for simpler testing; revert to 1699 if needed
 BITPLANES = 4 #4
 
-LAYER_HEIGHT = 0.4 #mm
-solid_base_layers = range(2, 10)  # Layers 2 to 9 # Define solid base layers that should skip image upload
+LAYER_HEIGHT = 0.05 #mm
+solid_base_layers = set(range(2, 10)) | set(range(22, 31))  # Layers 2-9 and 22-30 # Define solid base layers that should skip image upload
 
 # for sequencer with ledpulseword waitfor time of 10000, t_1080 rows = 3.28 s
 Intensity = 0.81 # 0.81 User intensity in mW/cm^2, calculate based on the energy required for the layer
@@ -71,7 +71,7 @@ print(f"\nCalculated LED setting: {LED}")
 # TODO: verify with celestron handheld microscope from the natural resources library
 SCROLLING_VELOCITY = 3.55 # 3.55 mm/s 10.368 mm in 3.25 s average
 SCROLLING_DIST =  34.992# 34.992 mm when row size is 4320 pixels - 1080 =  3240* 10.8 um
-LATERAL_INCREMENT = 10.368 # 10.368 mm when overlap is 960 pixels *10.8 um
+LATERAL_INCREMENT = 2.160 #mm 10.368 mm when overlap is 960 pixels *10.8 um
 
 # Prompt user to select folder containing images
 root = tk.Tk()
@@ -90,7 +90,7 @@ print(f"Found {LAYERS} layers in {image_folder}")
 
 def preprocess_grayscale_image(filepath):
     # Constants
-    FULL_WIDTH = 2880 # width of pre-processed grayscale image
+    FULL_WIDTH = 3640 #3640 when 200 overlaps # width of pre-processed grayscale image #2880
     FULL_HEIGHT = 4320 # height of pre-processed grayscale image
 
     GS_STRIP_WIDTH = 1920 # width of each strip
