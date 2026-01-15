@@ -60,6 +60,7 @@ STEP_INUM = 1699 #1699  # Changed from 1699 for simpler testing; revert to 1699 
 BITPLANES = 4 #4
 
 LAYER_HEIGHT = 0.4 #mm
+solid_base_layers = range(2, 10)  # Layers 2 to 9 # Define solid base layers that should skip image upload
 
 # for sequencer with ledpulseword waitfor time of 10000, t_1080 rows = 3.28 s
 Intensity = 0.81 # 0.81 User intensity in mW/cm^2, calculate based on the energy required for the layer
@@ -194,25 +195,29 @@ os.makedirs("bitplanes", exist_ok=True)
 
 for i, img_name in enumerate(image_files):
     print(f"Layer ✅ {i+1} ✅ of {LAYERS}: {img_name}")
-    img_path = os.path.join(image_folder, img_name)
-    left_planes, right_planes = preprocess_grayscale_image(img_path)
-    # left_planes, right_planes = preprocess_grayscale_image(r"test\test_images\dogbone_grayscale.bmp")
-    
-    # Upload left bitplanes to inums 0, 1699, 3398, 5097
-    print("Uploading left bitplanes...")
-    for bit in range(BITPLANES):
-        inum = bit * (STEP_INUM)
-        strip = Strip(left_planes[bit], inum)
-        strip.save(f"bitplanes/left_bitplane_{bit}_inum_{inum}.bmp")
-        projector.send_strip(strip)
-    
-    # Upload right bitplanes to inums 6876, 8575, 10274, 11973 (offset by 4 * STEP_INUM)
-    print("Uploading right bitplanes...")
-    for bit in range(BITPLANES):
-        inum = (BITPLANES + bit) * STEP_INUM
-        strip = Strip(right_planes[bit], inum)
-        strip.save(f"bitplanes/right_bitplane_{bit}_inum_{inum}.bmp")
-        projector.send_strip(strip)
+    # Skip image upload for solid base layers
+    if (i + 1) in solid_base_layers:
+        print(f"Skipping image upload for solid base layer {i + 1}")
+    else:
+        img_path = os.path.join(image_folder, img_name)
+        left_planes, right_planes = preprocess_grayscale_image(img_path)
+        # left_planes, right_planes = preprocess_grayscale_image(r"test\test_images\dogbone_grayscale.bmp")
+        
+        # Upload left bitplanes to inums 0, 1699, 3398, 5097
+        print("Uploading left bitplanes...")
+        for bit in range(BITPLANES):
+            inum = bit * (STEP_INUM)
+            strip = Strip(left_planes[bit], inum)
+            strip.save(f"bitplanes/left_bitplane_{bit}_inum_{inum}.bmp")
+            projector.send_strip(strip)
+        
+        # Upload right bitplanes to inums 6876, 8575, 10274, 11973 (offset by 4 * STEP_INUM)
+        print("Uploading right bitplanes...")
+        for bit in range(BITPLANES):
+            inum = (BITPLANES + bit) * STEP_INUM
+            strip = Strip(right_planes[bit], inum)
+            strip.save(f"bitplanes/right_bitplane_{bit}_inum_{inum}.bmp")
+            projector.send_strip(strip)
 
     # Set LED driver amplitude: for first layer use 10x LED, else use LED (0 to 4095)
     if (i + 1) == 1:
