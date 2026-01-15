@@ -50,7 +50,7 @@ The waitfor time for LedPulseWord is set at 10000 should be the middle ground. F
 stepinum is 1699; starting from 0 for left bitplanes and from 4*1699=6796 for right bitplanes.
 '''
 
-Z_START = 10 # mm, initial z position #150.5 focal position 
+Z_START = 150 # mm, initial z position #150.5 focal position 
 X_START = 60 # mm, initial x position #60 mm
 Y_START = 40 # mm, initial y position #40 mm
 offset =  0.54   #mm ,calibrated offset for scrolling back gantry 0.54 mm 
@@ -63,15 +63,15 @@ LAYER_HEIGHT = 0.05 #mm
 solid_base_layers = set(range(2, 10)) | set(range(22, 31))  # Layers 2-9 and 22-30 # Define solid base layers that should skip image upload
 
 # for sequencer with ledpulseword waitfor time of 10000, t_1080 rows = 3.28 s
-Intensity = 0.81 # 0.81 User intensity in mW/cm^2, calculate based on the energy required for the layer
-times_first_layer = 5
+Intensity = 0.962 # 0.81 User intensity in mW/cm^2, calculate based on the energy required for the layer
+times_first_layer = 8
 LED =  int(140.99*Intensity-17.761 ) # LED driver amplitude (0 to 4095)
 print(f"\nCalculated LED setting: {LED}")
 # THESE ARE CAREFULLY CALIBRATED VALUES
 # TODO: verify with celestron handheld microscope from the natural resources library
 SCROLLING_VELOCITY = 3.55 # 3.55 mm/s 10.368 mm in 3.25 s average
 SCROLLING_DIST =  34.992# 34.992 mm when row size is 4320 pixels - 1080 =  3240* 10.8 um
-LATERAL_INCREMENT = 2.160 #mm 10.368 mm when overlap is 960 pixels *10.8 um
+LATERAL_INCREMENT = 18.576 #mm for only 200 overlap; 10.368 mm when overlap is 960 pixels *10.8 um
 
 # Prompt user to select folder containing images
 root = tk.Tk()
@@ -102,42 +102,40 @@ def preprocess_grayscale_image(filepath):
     full_grayscale_image = Image.open(filepath)
 
     # Step 1: Split the image into strips
+    # Left strip takes first GS_STRIP_WIDTH columns (0 to GS_STRIP_WIDTH-1)
     left_strip = Image.new('L', (GS_STRIP_WIDTH, FULL_HEIGHT), 0)  # 'L' mode ensures 8-bit grayscale
     left_strip.paste(full_grayscale_image.crop((0, 0, GS_STRIP_WIDTH, FULL_HEIGHT)), (0, 0))
 
+    # Right strip takes last GS_STRIP_WIDTH columns (FULL_WIDTH - GS_STRIP_WIDTH to FULL_WIDTH-1)
     right_strip = Image.new('L', (GS_STRIP_WIDTH, FULL_HEIGHT), 0)  # 'L' mode ensures 8-bit grayscale
-    right_strip.paste(full_grayscale_image.crop((GS_STRIP_WIDTH//2, 0, FULL_WIDTH, FULL_HEIGHT)), (0, 0))
+    right_strip.paste(full_grayscale_image.crop((FULL_WIDTH - GS_STRIP_WIDTH, 0, FULL_WIDTH, FULL_HEIGHT)), (0, 0))
 
     # Step 2: Scale the strips over the overlap
 
     def scale_overlap(strip:Image.Image, side:str) -> Image.Image:
         for y in range(0, FULL_HEIGHT):
-
-            # Note: this indexing only works because the overlap is 960 pixels wide
-            # and the strips are 1920 pixels wide. If the overlap is changed, this
-            # indexing will need to be changed as well.
             for x in range(0, OVERLAP):
-                
                 # Linear overlap scaling functions
                 if side == 'L':
+                    # Left strip: overlap is at the right edge (columns GS_STRIP_WIDTH-OVERLAP to GS_STRIP_WIDTH-1)
+                    pixel_x = GS_STRIP_WIDTH - OVERLAP + x
                     func = lambda x, current: int((current / OVERLAP) * (OVERLAP - x))
-                    pixel_x = x + OVERLAP
                 elif side == 'R':
-                    func = lambda x, current: int((current / OVERLAP) * x)
+                    # Right strip: overlap is at the left edge (columns 0 to OVERLAP-1)
                     pixel_x = x
+                    func = lambda x, current: int((current / OVERLAP) * x)
                 else:
                     raise ValueError("Invalid side. Use 'L' or 'R'.")
-
-                pixel_y = y # for clarity
-
-                val = strip.getpixel((pixel_x, pixel_y)) # New grayscale value for left strip
+                
+                pixel_y = y
+                val = strip.getpixel((pixel_x, pixel_y))
                 
                 if val > 0:
                     strip.putpixel((pixel_x, pixel_y), func(x, val))
         return strip
 
-    # left_strip = scale_overlap(left_strip, 'L')
-    # right_strip = scale_overlap(right_strip, 'R')
+    left_strip = scale_overlap(left_strip, 'L')
+    right_strip = scale_overlap(right_strip, 'R')
 
     # Save strips after overlap scaling for verification
     left_strip.save("bitplanes/left_strip_after_overlap.bmp")
@@ -239,9 +237,9 @@ for i, img_name in enumerate(image_files):
     projector.start_sequencer()
     zaber_axes.scroll(-SCROLLING_DIST, SCROLLING_VELOCITY)
 
-    zaber_axes.increment_layer(LAYER_HEIGHT*4) #Delamination of the layer
+    zaber_axes.increment_layer(LAYER_HEIGHT*60) #Delamination of the layer
     time.sleep(0.5) 
-    zaber_axes.increment_layer(-LAYER_HEIGHT*3)
+    zaber_axes.increment_layer(-LAYER_HEIGHT*59)
 
     zaber_axes.XAxis.move_absolute(X_START, Units.LENGTH_MILLIMETRES)
     zaber_axes.YAxis.move_absolute(Y_START, Units.LENGTH_MILLIMETRES)

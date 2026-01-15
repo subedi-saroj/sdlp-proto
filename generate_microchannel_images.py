@@ -3,10 +3,10 @@ Generate 30 grayscale images with progressive microchannel features.
 
 Images 1-10: Solid white patch (baseline)
 Images 11-20: White patch with microchannels of varying thicknesses
-  - 11.png: 5, 10, 15, 20, 25, 30, 35, 40, 45, 50 px channels
-  - 12.png: 10, 15, 20, 25, 30, 35, 40, 45, 50 px channels
+  - 11.bmp: 5, 10, 15, 20, 25, 30, 35, 40, 45, 50 px channels
+  - 12.bmp: 10, 15, 20, 25, 30, 35, 40, 45, 50 px channels
   - ...continuing until channels are progressively removed
-  - 20.png: only 50 px channel
+  - 20.bmp: only 50 px channel
 Images 21-30: Solid white patch (baseline)
 """
 
@@ -16,12 +16,12 @@ import os
 # Image parameters
 IMG_WIDTH = 3640
 IMG_HEIGHT = 4320
-PATCH_WIDTH = 3200
+PATCH_WIDTH = 1600
 PATCH_HEIGHT = 2000
 
 # Microchannel parameters
 CHANNEL_WIDTHS = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]  # in pixels
-CHANNEL_SPACING = 100  # pixels between channel centerlines
+CHANNEL_SPACING = 120  # pixels between channel centerlines
 NUM_CHANNELS = len(CHANNEL_WIDTHS)
 
 # Calculate centered patch position
@@ -77,7 +77,7 @@ for img_num in range(1, 31):
                         pixels[x, y] = 0  # Black (0) for microchannel
     
     # Save image
-    filename = f"{img_num}.png"
+    filename = f"{img_num}.bmp"
     filepath = os.path.join(output_dir, filename)
     img.save(filepath)
     
