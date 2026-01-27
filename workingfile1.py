@@ -50,8 +50,8 @@ The waitfor time for LedPulseWord is set at 10000 should be the middle ground. F
 stepinum is 1699; starting from 0 for left bitplanes and from 4*1699=6796 for right bitplanes.
 '''
 
-Z_START = 150 # mm, initial z position #150.5 focal position 
-X_START = 60 # mm, initial x position #60 mm
+Z_START = 150 # mm, initial z position #150 focal position 
+X_START = 55 # mm, initial x position #60 mm
 Y_START = 40 # mm, initial y position #40 mm
 offset =  0.54   #mm ,calibrated offset for scrolling back gantry 0.54 mm 
 
@@ -59,11 +59,11 @@ offset =  0.54   #mm ,calibrated offset for scrolling back gantry 0.54 mm
 STEP_INUM = 1699 #1699  # Changed from 1699 for simpler testing; revert to 1699 if needed
 BITPLANES = 4 #4
 
-LAYER_HEIGHT = 0.05 #mm
-solid_base_layers = set(range(2, 10)) | set(range(22, 31))  # Layers 2-9 and 22-30 # Define solid base layers that should skip image upload
-
+LAYER_HEIGHT = 0.1 #mm
+solid_base_layers = set(range(2, 30)) | set(range(22, 31))  # Layers 2-9 and 22-30 # Define solid base layers that should skip image upload
+layers_go_up = 30 # how many layers the Z axis should go up each time
 # for sequencer with ledpulseword waitfor time of 10000, t_1080 rows = 3.28 s
-Intensity = 0.962 # 0.81 User intensity in mW/cm^2, calculate based on the energy required for the layer
+Intensity = 1.7 # 0.81 User intensity in mW/cm^2, calculate based on the energy required for the layer
 times_first_layer = 8
 LED =  int(140.99*Intensity-17.761 ) # LED driver amplitude (0 to 4095)
 print(f"\nCalculated LED setting: {LED}")
@@ -71,7 +71,7 @@ print(f"\nCalculated LED setting: {LED}")
 # TODO: verify with celestron handheld microscope from the natural resources library
 SCROLLING_VELOCITY = 3.55 # 3.55 mm/s 10.368 mm in 3.25 s average
 SCROLLING_DIST =  34.992# 34.992 mm when row size is 4320 pixels - 1080 =  3240* 10.8 um
-LATERAL_INCREMENT = 18.576 #mm for only 200 overlap; 10.368 mm when overlap is 960 pixels *10.8 um
+LATERAL_INCREMENT = 18.576 # 18.576 mm for only 200 overlap; 10.368 mm when overlap is 960 pixels *10.8 um
 
 # Prompt user to select folder containing images
 root = tk.Tk()
@@ -131,7 +131,11 @@ def preprocess_grayscale_image(filepath):
                 val = strip.getpixel((pixel_x, pixel_y))
                 
                 if val > 0:
-                    strip.putpixel((pixel_x, pixel_y), func(x, val))
+                    scaled_val = func(x, val)
+                    # Map any non-zero scaled value into 51-255 range to avoid very dim overlap
+                    if scaled_val > 0:
+                        scaled_val = 51 + int(scaled_val * (255 - 51) / 255)
+                    strip.putpixel((pixel_x, pixel_y), scaled_val)
         return strip
 
     left_strip = scale_overlap(left_strip, 'L')
@@ -237,9 +241,9 @@ for i, img_name in enumerate(image_files):
     projector.start_sequencer()
     zaber_axes.scroll(-SCROLLING_DIST, SCROLLING_VELOCITY)
 
-    zaber_axes.increment_layer(LAYER_HEIGHT*60) #Delamination of the layer
+    zaber_axes.increment_layer(LAYER_HEIGHT*layers_go_up) #Delamination of the layer
     time.sleep(0.5) 
-    zaber_axes.increment_layer(-LAYER_HEIGHT*59)
+    zaber_axes.increment_layer(-LAYER_HEIGHT*(layers_go_up-1))
 
     zaber_axes.XAxis.move_absolute(X_START, Units.LENGTH_MILLIMETRES)
     zaber_axes.YAxis.move_absolute(Y_START, Units.LENGTH_MILLIMETRES)
