@@ -1,8 +1,8 @@
 """
-Convert PNG images to BMP format.
+Convert PNG images to BMP format and replace the original PNG files.
 
 This script allows you to select a folder containing PNG images and converts
-all of them to BMP format, saving them in the same folder.
+all of them to BMP format. The original PNG files are deleted after successful conversion.
 
 Author: GitHub Copilot
 Date: 2026-01-27
@@ -64,8 +64,11 @@ def convert_png_to_bmp():
             # Save as BMP
             img.save(bmp_path, 'BMP')
             
+            # Delete the original PNG file after successful conversion
+            os.remove(png_path)
+            
             converted_count += 1
-            print(f"✓ {png_file} → {bmp_file}")
+            print(f"✓ {png_file} → {bmp_file} (original PNG deleted)")
             
         except Exception as e:
             failed_files.append((png_file, str(e)))
@@ -82,10 +85,13 @@ def convert_png_to_bmp():
             print(f"  - {filename}: {error}")
     
     if converted_count == len(png_files):
-        messagebox.showinfo("Success", f"Successfully converted {converted_count} PNG image(s) to BMP format!")
+        messagebox.showinfo("Success", 
+            f"Successfully converted {converted_count} PNG image(s) to BMP format!\n"
+            f"Original PNG files have been deleted.")
     else:
         messagebox.showwarning("Partial Success", 
             f"Converted {converted_count}/{len(png_files)} files.\n"
+            f"Original PNG files were only deleted for successful conversions.\n"
             f"Check the console for details on failed conversions.")
 
 if __name__ == "__main__":
