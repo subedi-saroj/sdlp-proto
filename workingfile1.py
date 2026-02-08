@@ -59,11 +59,11 @@ offset =  0.54   #mm ,calibrated offset for scrolling back gantry 0.54 mm
 STEP_INUM = 1699 #1699  # Changed from 1699 for simpler testing; revert to 1699 if needed
 BITPLANES = 4 #4
 
-LAYER_HEIGHT = 0.1 #mm
-solid_base_layers = set(range(2, 30)) | set(range(22, 31))  # Layers 2-9 and 22-30 # Define solid base layers that should skip image upload
-layers_go_up = 30 # how many layers the Z axis should go up each time
+LAYER_HEIGHT = 0.05 #mm
+solid_base_layers = set(range(2, 11)) # | set(range(22, 31))  # Layers 2-9 and 22-30 # Define solid base layers that should skip image upload
+layers_go_up = 60 # how many layers the Z axis should go up each time
 # for sequencer with ledpulseword waitfor time of 10000, t_1080 rows = 3.28 s
-Intensity = 1.7 # 0.81 User intensity in mW/cm^2, calculate based on the energy required for the layer
+Intensity = 0.962 # 0.81 User intensity in mW/cm^2, calculate based on the energy required for the layer
 times_first_layer = 8
 LED =  int(140.99*Intensity-17.761 ) # LED driver amplitude (0 to 4095)
 print(f"\nCalculated LED setting: {LED}")
