@@ -132,9 +132,8 @@ def preprocess_grayscale_image(filepath):
                 
                 if val > 0:
                     scaled_val = func(x, val)
-                    # Map any non-zero scaled value into 51-255 range to avoid very dim overlap
                     if scaled_val > 0:
-                        scaled_val = 51 + int(scaled_val * (255 - 51) / 255)
+                        scaled_val = 1 + int(scaled_val * (255 - 1) / 255)
                     strip.putpixel((pixel_x, pixel_y), scaled_val)
         return strip
 

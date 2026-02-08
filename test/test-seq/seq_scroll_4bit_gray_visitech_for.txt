@@ -1,11 +1,11 @@
 # Assign constants and variable
 AssignVar  RowsPrGrp       72 1  # 1+2+4+8=15 groups over 1080 rows => 1080/15=72
 AssignVar  NoOfDMDrows   1080 1  # DMD size in rows
-AssignVar  NoOfInums        4 1  # Test images are 4320 rows, i.e. 1080 row/inum * 4 inums but set #3 to display just enough
+AssignVar  NoOfInums        3 1  # Test images are 4320 rows, i.e. 1080 row/inum * 4 inums but set #3 to display just enough
 AssignVar  MemStartRow      0 1  # Start at row zero
 AssignVar  StartImageNo     0 1  # Start with inum zero
 AssignVar  StepInum      1699 1  # Inum separation between bit-planes.
-AssignVar  Lastrow       4320 1 #CHANGE according to the (image row size - 1080)
+AssignVar  Lastrow       3240 1 #CHANGE according to the (image row size - 1080)
 #-------------------------------------------------------------------------------
 
 Label Scroll 1
