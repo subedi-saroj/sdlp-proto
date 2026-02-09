@@ -63,7 +63,7 @@ LAYER_HEIGHT = 0.05 #mm
 solid_base_layers = set(range(2, 11)) # | set(range(22, 31))  # Layers 2-9 and 22-30 # Define solid base layers that should skip image upload
 layers_go_up = 60 # how many layers the Z axis should go up each time
 # for sequencer with ledpulseword waitfor time of 10000, t_1080 rows = 3.28 s
-Intensity = 0.962 # 0.81 User intensity in mW/cm^2, calculate based on the energy required for the layer
+Intensity = 1 # 0.81 User intensity in mW/cm^2, calculate based on the energy required for the layer
 times_first_layer = 8
 LED =  int(140.99*Intensity-17.761 ) # LED driver amplitude (0 to 4095)
 print(f"\nCalculated LED setting: {LED}")
@@ -113,17 +113,18 @@ def preprocess_grayscale_image(filepath):
     # Step 2: Scale the strips over the overlap
 
     def scale_overlap(strip:Image.Image, side:str) -> Image.Image:
+        MIN_INTENSITY = 30  # Minimum intensity to avoid non-linearity at low values
         for y in range(0, FULL_HEIGHT):
             for x in range(0, OVERLAP):
                 # Linear overlap scaling functions
                 if side == 'L':
                     # Left strip: overlap is at the right edge (columns GS_STRIP_WIDTH-OVERLAP to GS_STRIP_WIDTH-1)
                     pixel_x = GS_STRIP_WIDTH - OVERLAP + x
-                    func = lambda x, current: int((current / OVERLAP) * (OVERLAP - x))
+                    factor = (OVERLAP - x) / OVERLAP
                 elif side == 'R':
                     # Right strip: overlap is at the left edge (columns 0 to OVERLAP-1)
                     pixel_x = x
-                    func = lambda x, current: int((current / OVERLAP) * x)
+                    factor = x / OVERLAP
                 else:
                     raise ValueError("Invalid side. Use 'L' or 'R'.")
                 
@@ -131,9 +132,10 @@ def preprocess_grayscale_image(filepath):
                 val = strip.getpixel((pixel_x, pixel_y))
                 
                 if val > 0:
-                    scaled_val = func(x, val)
-                    if scaled_val > 0:
-                        scaled_val = 1 + int(scaled_val * (255 - 1) / 255)
+                    if val <= MIN_INTENSITY:
+                        scaled_val = val
+                    else:
+                        scaled_val = int(MIN_INTENSITY + (val - MIN_INTENSITY) * factor)
                     strip.putpixel((pixel_x, pixel_y), scaled_val)
         return strip
 
