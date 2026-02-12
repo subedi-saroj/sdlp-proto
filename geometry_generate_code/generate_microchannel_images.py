@@ -21,15 +21,15 @@ PATCH_HEIGHT = 2000
 
 # Microchannel parameters
 CHANNEL_WIDTHS = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]  # in pixels
-CHANNEL_SPACING = 120  # pixels between channel centerlines
+CHANNEL_GAP = 130  # pixel gap between channels (not including channel width)
 NUM_CHANNELS = len(CHANNEL_WIDTHS)
 
 # Calculate centered patch position
 patch_x = (IMG_WIDTH - PATCH_WIDTH) // 2
 patch_y = (IMG_HEIGHT - PATCH_HEIGHT) // 2
 
-# Calculate vertical space needed for all channels
-total_channel_height = CHANNEL_WIDTHS[-1] + CHANNEL_SPACING * (NUM_CHANNELS - 1)
+# Calculate vertical space needed for all channels (sum of widths + gaps between them)
+total_channel_height = sum(CHANNEL_WIDTHS) + CHANNEL_GAP * (NUM_CHANNELS - 1)
 channels_start_offset = (PATCH_HEIGHT - total_channel_height) // 2
 
 # Create output directory
@@ -40,7 +40,7 @@ print(f"Generating 30 images in '{output_dir}/'")
 print(f"Image size: {IMG_WIDTH} × {IMG_HEIGHT}")
 print(f"White patch: {PATCH_WIDTH} × {PATCH_HEIGHT} at ({patch_x}, {patch_y})")
 print(f"Channel widths: {CHANNEL_WIDTHS} px")
-print(f"Channel spacing: {CHANNEL_SPACING} px")
+print(f"Gap between channels: {CHANNEL_GAP} px")
 print()
 
 for img_num in range(1, 31):
@@ -66,7 +66,11 @@ for img_num in range(1, 31):
             channel_width = CHANNEL_WIDTHS[ch_idx]
             
             # Calculate vertical position (centered within patch)
-            channel_y_in_patch = channels_start_offset + ch_idx * CHANNEL_SPACING
+            # Each channel starts after the previous channel + its gap
+            channel_y_in_patch = channels_start_offset
+            for i in range(ch_idx):
+                channel_y_in_patch += CHANNEL_WIDTHS[i] + CHANNEL_GAP
+            
             channel_y_abs = patch_y + channel_y_in_patch
             
             # Draw horizontal channel (dark/black line)

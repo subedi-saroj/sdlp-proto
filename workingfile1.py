@@ -50,7 +50,7 @@ The waitfor time for LedPulseWord is set at 10000 should be the middle ground. F
 stepinum is 1699; starting from 0 for left bitplanes and from 4*1699=6796 for right bitplanes.
 '''
 
-Z_START = 150 # mm, initial z position #150 focal position 
+Z_START = 151.2 # mm, initial z position #150 focal position 
 X_START = 55 # mm, initial x position #60 mm
 Y_START = 40 # mm, initial y position #40 mm
 offset =  0.54   #mm ,calibrated offset for scrolling back gantry 0.54 mm 
