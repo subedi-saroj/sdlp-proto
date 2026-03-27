@@ -47,9 +47,9 @@ The waitfor time for LedPulseWord is set at 10000 should be the middle ground. F
 stepinum is 1699; starting from 0 for left bitplanes and from 4*1699=6796 for right bitplanes.
 '''
 
-Z_START = 147 #149.2 mm, initial z position #150 focal position 
-X_START = 35 # mm, initial x position #60 mm
-Y_START = 25 # mm, initial y position #40 mm
+Z_START = 149.2 #149.2 mm, initial z position #150 focal position 
+X_START = 20 # mm, initial x position #60 mm
+Y_START = 15 # mm, initial y position #40 mm
 offset =  0.54 #0.54   #mm ,calibrated offset for scrolling back gantry 0.54 mm 
 
 # Constants for inum spacing
@@ -59,8 +59,8 @@ LAYER_HEIGHT = 0.1 #mm
 solid_base_layers = set(range(2, 11)) #| set(range(26, 35))  # Layers 2-9 and 22-30 # Define solid base layers that should skip image upload
 layers_go_up = 30 # how many layers the Z axis should go up each time
 # for sequencer with ledpulseword waitfor time of 10000, t_1080 rows = 3.28 s
-Intensity = 3 # 0.81 User intensity in mW/cm^2, calculate based on the energy required for the layer
-times_first_layer = 8
+Intensity = 2 # 0.81 User intensity in mW/cm^2, calculate based on the energy required for the layer
+times_first_layer = 10
 LED =  int(140.99*Intensity-17.761 ) # LED driver amplitude (0 to 4095)
 print(f"\nCalculated LED setting: {LED}")
 # THESE ARE CAREFULLY CALIBRATED VALUES
@@ -209,6 +209,10 @@ for i, img_name in enumerate(image_files):
             zaber_axes.scroll(-SCROLLING_DIST, SCROLLING_VELOCITY)
 
             time.sleep(0.5)
+
+            time.sleep(0.5)  # wait at the end of the scroll
+            zaber_axes.increment_lateral(LATERAL_INCREMENT)
+            time.sleep(0.5)  # wait after lateral increment
 
     # Delamination after all 3 pairs are complete for this layer
     zaber_axes.increment_layer(LAYER_HEIGHT*layers_go_up)
