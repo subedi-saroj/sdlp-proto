@@ -1,0 +1,21 @@
+#--------------------------------------------------------------
+#Command        Parameters					Waitfor
+#--------------------------------------------------------------
+AssignVar       TotalRows   7560                       1 #actual rows 8640
+AssignVar       LoopCount   0                           1   
+AssignVar       MemStartRow 7560                           1
+AssignVar       Inum        799                     1
+AssignVar       DmdStartRow 0                           1
+AssignVar       NoOfRows    1079                        1
+#  
+# Scroll back
+Label           scrollback                              1
+LoadRow         DmdStartRow NoOfRows Inum MemStartRow   200
+Trig            0 4                                     0
+ResetGlobal                                             40
+LightPulseWord  15                                      10000
+Add             MemStartRow -1                          1 
+Add             LoopCount 1                             1
+JumpIf          LoopCount < TotalRows scrollback        1
+Label Stop 1
+Jump Stop 1
