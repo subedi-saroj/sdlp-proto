@@ -48,7 +48,7 @@ stepinum is 1699; starting from 0 for left bitplanes and from 4*1699=6796 for ri
 '''
 
 Z_START = 149.2 #149.2 mm, initial z position #150 focal position 
-X_START = 20 # mm, initial x position #60 mm
+X_START = 15 # mm, initial x position #60 mm
 Y_START = 15 # mm, initial y position #40 mm
 offset =  0.54 #0.54   #mm ,calibrated offset for scrolling back gantry 0.54 mm 
 
@@ -56,8 +56,8 @@ offset =  0.54 #0.54   #mm ,calibrated offset for scrolling back gantry 0.54 mm
 STEP_INUM = 799 #1699  # inum spacing for two strips (left and right)
 
 LAYER_HEIGHT = 0.1 #mm
-solid_base_layers = set(range(2, 11)) #| set(range(26, 35))  # Layers 2-9 and 22-30 # Define solid base layers that should skip image upload
-layers_go_up = 30 # how many layers the Z axis should go up each time
+solid_base_layers = [] #set(range(2, 11)) #| set(range(26, 35))  # Layers 2-9 and 22-30 # Define solid base layers that should skip image upload
+layers_go_up = 40 # how many layers the Z axis should go up each time
 # for sequencer with ledpulseword waitfor time of 10000, t_1080 rows = 3.28 s
 Intensity = 2 # 0.81 User intensity in mW/cm^2, calculate based on the energy required for the layer
 times_first_layer = 10
