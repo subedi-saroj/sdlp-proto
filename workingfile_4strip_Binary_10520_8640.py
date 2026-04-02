@@ -12,7 +12,7 @@ Author: David Alexander
 Date: 2025-12-05
 Last updated: 2025-12-16
 
-This script demonstrates binary printing with 6 strips and 200px overlap.
+This script demonstrates binary printing with 4 strips and 200px overlap.
 
 The overall process is as follows:
     0. Before running this script, create an image 10520x8640 pixels in size.
@@ -20,7 +20,7 @@ The overall process is as follows:
         - FULL_HEIGHT = 8640
        This can be a grayscale image. The grayscale image will be converted to binary (0 or 1).
     
-    1. The image is split into six binary strips of 1920 pixels wide and 8640 rows tall. 
+    1. The image is split into four binary strips of 1920 pixels wide and 8640 rows tall. 
         - STRIP_WIDTH = 1920
         - FULL_HEIGHT = 8640
        There will be an overlap of 200 pixels between consecutive strips.
@@ -28,9 +28,8 @@ The overall process is as follows:
     
     3. Each strip is converted to binary (0 or 1) based on grayscale threshold.
 
-    4. Strips 1 & 2 are uploaded to inums 0, 1699
-       Strips 3 & 4 are uploaded to inums 0, 1699 (reuse same inums)
-       Strips 5 & 6 are uploaded to inums 0, 1699 (reuse same inums)
+    4. Strips 1 & 2 are uploaded to inums 0, 799
+       Strips 3 & 4 are uploaded to inums 0, 799 (reuse same inums)
     
     5. Sequencer loads from these inums to display left and right strips simultaneously.
     
@@ -44,13 +43,13 @@ The overall process is as follows:
 NOTES:
 - The scroling stage (distance and velocity) is calibrated for 4320 rows images; inum set to 3 in 4bit gray sequencer.
 The waitfor time for LedPulseWord is set at 10000 should be the middle ground. For more precise energy, calculate LED power.
-stepinum is 1699; starting from 0 for left bitplanes and from 4*1699=6796 for right bitplanes.
+stepinum is 799; starting from 0 for left bitplanes and from 799 for right bitplanes.
 '''
 
 Z_START = 149.2 #149.2 mm, initial z position #150 focal position 
-X_START = 15 # mm, initial x position #60 mm
+X_START = 37 # mm, initial x position #60 mm
 Y_START = 15 # mm, initial y position #40 mm
-offset =  0.54 #0.54   #mm ,calibrated offset for scrolling back gantry 0.54 mm 
+offset =  1.04 #0.54   #mm ,calibrated offset for scrolling back gantry 0.54 mm 
 
 # Constants for inum spacing
 STEP_INUM = 799 #1699  # inum spacing for two strips (left and right)
@@ -59,7 +58,7 @@ LAYER_HEIGHT = 0.1 #mm
 solid_base_layers = [] #set(range(2, 11)) #| set(range(26, 35))  # Layers 2-9 and 22-30 # Define solid base layers that should skip image upload
 layers_go_up = 40 # how many layers the Z axis should go up each time
 # for sequencer with ledpulseword waitfor time of 10000, t_1080 rows = 3.28 s
-Intensity = 2 # 0.81 User intensity in mW/cm^2, calculate based on the energy required for the layer
+Intensity = 3 # 0.81 User intensity in mW/cm^2, calculate based on the energy required for the layer
 times_first_layer = 10
 LED =  int(140.99*Intensity-17.761 ) # LED driver amplitude (0 to 4095)
 print(f"\nCalculated LED setting: {LED}")
@@ -86,7 +85,7 @@ print(f"Found {LAYERS} layers in {image_folder}")
 
 def preprocess_grayscale_image(filepath):
     # Constants
-    FULL_WIDTH = 10520 # width of pre-processed grayscale image (6 strips of 1920 with 200px overlap)
+    FULL_WIDTH = 7080 # width of pre-processed grayscale image (6 strips of 1920 with 200px overlap)
     FULL_HEIGHT = 8640 # height of pre-processed grayscale image
 
     STRIP_WIDTH = 1920 # width of each strip
@@ -95,15 +94,13 @@ def preprocess_grayscale_image(filepath):
     # Step 0: Load the grayscale image
     full_grayscale_image = Image.open(filepath).convert('L')  # Ensure 8-bit grayscale
 
-    # Step 1: Extract 6 strips with 200px overlap
-    # Strip positions: 0-1920, 1720-3640, 3440-5360, 5160-7080, 6880-8800, 8600-10520
+    # Step 1: Extract 4 strips with 200px overlap
+    # Strip positions: 0-1920, 1720-3640, 3440-5360, 5160-7080
     strip_positions = [
         (0, 1920),           # Strip 1
         (1720, 3640),        # Strip 2 (overlap 200)
         (3440, 5360),        # Strip 3 (overlap 200)
-        (5160, 7080),        # Strip 4 (overlap 200)
-        (6880, 8800),        # Strip 5 (overlap 200)
-        (8600, 10520)        # Strip 6 (overlap 200)
+        (5160, 7080)        # Strip 4 (overlap 200)
     ]
     
     strips = []
@@ -122,7 +119,7 @@ def preprocess_grayscale_image(filepath):
     for i, strip in enumerate(binary_strips):
         strip.save(f"bitplanes/strip_{i+1}_binary.bmp")
 
-    # Return list of 6 binary strips
+    # Return list of 4 binary strips
     return binary_strips
 
 # Step 4: Initialize the projector
@@ -169,8 +166,8 @@ for i, img_name in enumerate(image_files):
         img_path = os.path.join(image_folder, img_name)
         binary_strips = preprocess_grayscale_image(img_path)
         
-        # Process 3 pairs of strips (1-2, 3-4, 5-6)
-        for pair_idx in range(3):
+        # Process 2 pairs of strips (1-2, 3-4)
+        for pair_idx in range(2):
             strip1_idx = pair_idx * 2
             strip2_idx = pair_idx * 2 + 1
             
@@ -206,7 +203,7 @@ for i, img_name in enumerate(image_files):
             # Backward scroll
             projector.send_sequencer(sequencers[1])
             projector.start_sequencer()
-            zaber_axes.scroll(-SCROLLING_DIST, SCROLLING_VELOCITY)
+            zaber_axes.scroll(-(SCROLLING_DIST-offset), SCROLLING_VELOCITY)
 
             time.sleep(0.5)
 
